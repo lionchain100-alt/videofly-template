@@ -47,6 +47,7 @@ export interface VideoModelPricing {
 
 /** 订阅产品配置 */
 export interface SubscriptionProductConfig {
+  billingKey?: string;
   id: string;
   name: string;
   priceUsd: number;
@@ -81,7 +82,7 @@ export const NEW_USER_GIFT = {
   /** 是否启用赠送 */
   enabled: true,
   /** 赠送积分数量 */
-  credits: 2,  // 1 个 Sora 2 视频
+  credits: 2, // 1 个 Sora 2 视频
   /** 积分有效期（天）*/
   validDays: 30,
 };
@@ -121,6 +122,7 @@ export const SUBSCRIPTION_PRODUCTS = [
   // ===== 月付订阅 =====
   {
     id: "prod_jsRIeZmqn3L9NN2fiFIn6", // 从 Creem 后台复制 Basic Monthly Product ID
+    billingKey: "BASIC_MONTHLY",
     name: "Basic Plan",
     priceUsd: 9.9,
     credits: 280, // ~28 Veo 3.1 视频 (60% 毛利率)
@@ -131,28 +133,43 @@ export const SUBSCRIPTION_PRODUCTS = [
   },
   {
     id: "prod_3tlZPSRNHZSaNq21zX2Z16", // 从 Creem 后台复制 Pro Monthly Product ID
+    billingKey: "PRO_MONTHLY",
     name: "Pro Plan",
     priceUsd: 29.9,
     credits: 960, // ~96 Veo 3.1 视频 (55% 毛利率，比 Basic 便宜 12%)
     period: "month" as const,
     popular: true, // 推荐
     enabled: true,
-    features: ["hd_videos", "fast_generation", "no_watermark", "commercial_use"],
+    features: [
+      "hd_videos",
+      "fast_generation",
+      "no_watermark",
+      "commercial_use",
+    ],
   },
   {
     id: "prod_3tlZPSRNHZSaNq22zX2Z18", // 从 Creem 后台复制 Ultimate Monthly Product ID
+    billingKey: "ULTIMATE_MONTHLY",
     name: "Ultimate Plan",
     priceUsd: 79.9,
     credits: 2850, // ~285 Veo 3.1 视频 (50% 毛利率，比 Basic 便宜 21%)
     period: "month" as const,
     popular: false,
     enabled: true,
-    features: ["hd_videos", "fast_generation", "no_watermark", "commercial_use", "priority_support", "api_access"],
+    features: [
+      "hd_videos",
+      "fast_generation",
+      "no_watermark",
+      "commercial_use",
+      "priority_support",
+      "api_access",
+    ],
   },
 
   // ===== 年付订阅（月付 × 10，买 10 送 2） =====
   {
     id: "prod_3tlZPSRNHZSaNq22zX2Z10", // 从 Creem 后台复制 Basic Yearly Product ID
+    billingKey: "BASIC_YEARLY",
     name: "Basic Plan (Yearly)",
     priceUsd: 99, // 月付 × 10 (省 2 个月)
     credits: 3360, // 280 × 12
@@ -163,23 +180,37 @@ export const SUBSCRIPTION_PRODUCTS = [
   },
   {
     id: "prod_3tlZPSRNHZSaNq22zX2Z55", // 从 Creem 后台复制 Pro Yearly Product ID
+    billingKey: "PRO_YEARLY",
     name: "Pro Plan (Yearly)",
     priceUsd: 299, // 月付 × 10 (省 2 个月)
     credits: 11520, // 960 × 12
     period: "year" as const,
     popular: true,
     enabled: true,
-    features: ["hd_videos", "fast_generation", "no_watermark", "commercial_use"],
+    features: [
+      "hd_videos",
+      "fast_generation",
+      "no_watermark",
+      "commercial_use",
+    ],
   },
   {
     id: "prod_3tlZPSRNHZSaNq22zX2Z21", // 从 Creem 后台复制 Ultimate Yearly Product ID
+    billingKey: "ULTIMATE_YEARLY",
     name: "Ultimate Plan (Yearly)",
     priceUsd: 799, // 月付 × 10 (省 2 个月)
     credits: 34200, // 2850 × 12
     period: "year" as const,
     popular: false,
     enabled: true,
-    features: ["hd_videos", "fast_generation", "no_watermark", "commercial_use", "priority_support", "api_access"],
+    features: [
+      "hd_videos",
+      "fast_generation",
+      "no_watermark",
+      "commercial_use",
+      "priority_support",
+      "api_access",
+    ],
   },
 ];
 
@@ -228,7 +259,12 @@ export const CREDIT_PACKAGES: CreditPackageConfig[] = [
     popular: false,
     enabled: true,
     allowFreeUser: false, // 仅订阅用户
-    features: ["hd_videos", "fast_generation", "no_watermark", "commercial_use"],
+    features: [
+      "hd_videos",
+      "fast_generation",
+      "no_watermark",
+      "commercial_use",
+    ],
   },
 ];
 

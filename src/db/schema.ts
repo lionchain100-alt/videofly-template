@@ -389,6 +389,8 @@ export const paymentOrders = pgTable(
       .references(() => users.id),
     requestId: text("request_id").notNull(),
     provider: text("provider").notNull(),
+    kind: text("kind").notNull().default("PURCHASE"),
+    providerProductId: text("provider_product_id"),
     environment: text("environment").notNull(),
     accountId: text("account_id").notNull(),
     productId: text("product_id").notNull(),
@@ -459,6 +461,55 @@ export const paymentFulfillments = pgTable(
       t.paymentId,
     ),
   }),
+);
+
+export const billingSubscriptions = pgTable(
+  "billing_subscriptions",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id),
+    provider: text("provider").notNull(),
+    environment: text("environment").notNull(),
+    accountId: text("account_id").notNull(),
+    externalId: text("external_id").notNull(),
+    customerId: text("customer_id").notNull(),
+    productId: text("product_id").notNull(),
+    status: text("status").notNull(),
+    cancelAtPeriodEnd: boolean("cancel_at_period_end").notNull().default(false),
+    periodStart: timestamp("period_start", { withTimezone: true }).notNull(),
+    periodEnd: timestamp("period_end", { withTimezone: true }).notNull(),
+    observedAt: timestamp("observed_at", { withTimezone: true }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => ({
+    scope: unique().on(t.provider, t.environment, t.accountId, t.externalId),
+  }),
+);
+export const billingCycles = pgTable(
+  "billing_cycles",
+  {
+    subscriptionId: text("subscription_id")
+      .notNull()
+      .references(() => billingSubscriptions.id),
+    periodStart: timestamp("period_start", { withTimezone: true }).notNull(),
+    periodEnd: timestamp("period_end", { withTimezone: true }).notNull(),
+    paymentId: text("payment_id").notNull(),
+    orderId: text("order_id")
+      .notNull()
+      .unique()
+      .references(() => paymentOrders.id),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => ({ cycle: unique().on(t.subscriptionId, t.periodStart, t.periodEnd) }),
 );
 export const paymentEvents = pgTable(
   "payment_events",

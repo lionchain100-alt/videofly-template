@@ -1,4 +1,4 @@
-export type PaymentProvider = "paypal" | "waffo";
+export type PaymentProvider = "paypal" | "waffo" | "stripe" | "creem";
 export type OrderSnapshot = {
   id: string;
   provider: PaymentProvider;
@@ -11,6 +11,8 @@ export type OrderSnapshot = {
   productId: string;
   productName: string;
   externalId: string | null;
+  kind?: string;
+  providerProductId?: string | null;
 };
 export type PaymentFact = {
   internalId: string;
@@ -23,6 +25,7 @@ export type PaymentFact = {
   currency: string;
 };
 export type VerifiedEvent = {
+  fingerprint?: string;
   id: string;
   type: string;
   provider: PaymentProvider;
@@ -32,6 +35,29 @@ export type VerifiedEvent = {
   externalId?: string;
   fact?: PaymentFact;
   refund?: RefundFact;
+  subscription?: SubscriptionFact;
+};
+export type SubscriptionFact = {
+  provider: "stripe" | "creem";
+  environment: string;
+  accountId: string;
+  externalId: string;
+  customerId: string;
+  userId?: string;
+  checkoutOrderId?: string;
+  productId: string;
+  status: string;
+  cancelAtPeriodEnd: boolean;
+  periodStart: string;
+  periodEnd: string;
+  observedAt: string;
+  payment?: {
+    id: string;
+    amount: number;
+    currency: string;
+    periodStart: string;
+    periodEnd: string;
+  };
 };
 export type RefundFact = {
   provider: PaymentProvider;

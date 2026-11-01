@@ -30,3 +30,13 @@
 - Temporary financial/task/file fixtures removed. Main remains 190 available/0 frozen, 5 tasks, 3 orders and 3 refunds; second is 102 test credits after the existing daily login bonus. Both local sites and their three Workers restored.
 - Resulting state: AUD-003 local QA passed, IDLE-000. Recovery: local source tag aud-003-reuse-20261101 and parent .recovery/aud-003-current-after.json; credentials/database/assets excluded.
 - Blocker: None. Next gate: Owner's next scoped request; second-site production/real-provider activation is not implied.
+
+## 2026-11-01/02 — AUD-004 local billing and subscription regression
+
+- Owner requested Stripe/Creem common fulfillment and existing subscription renewal/cancel/resume, retaining PayPal/Waffo/refunds. Only a Creem login account was available; its initial store form rejected localhost and required HTTPS. Owner explicitly chose local work now and real Creem testing after deployment (DEC-AUD004-LOCAL-20261101). No store or public preview was created.
+- Added four-provider dispatch, immutable order kind/product mapping, signed adapters and paid-period subscription ledger with atomic common credit fulfillment. Removed auth-plugin minting callbacks; legacy Creem webhook/access/management paths use the common boundary. Existing Stripe associations and exact Creem first-period grants can be linked without replaying credit issuance.
+- Added migration 0009; no reset of existing data. Updated Stripe SDK/API to verified 23.1.0 / 2026-10-28.endive. Optional empty secret fields now normalize to undefined while required fields remain validated. Common purchase/pricing/subscription UI follows provider/product availability.
+- Evidence: aud-004-results.json; seven retained suites; ten billing groups; browser/API and production isolation; frozen install, typecheck/build, security threshold and independent second-site isolation. All money/provider records in the new tests were isolated fixtures and cleaned. No new real-provider calls.
+- Preserved main 2 users/5 tasks/3 orders/3 refunds. Stripe/Creem stay disabled, no subscriptions retained; main Web/Workers restored and the independent 3002 instance remains at AUD-003. Capability baseline advanced to the accepted nine-capability AUD-003 registry; additive CAP-010 records local billing gates only.
+- Resulting state: AUD-004 local scope QA passed; IDLE-000. Real Stripe/Creem receipts, public signed notifications and recurring periods remain BILL-001, explicitly deferred. New-provider refunds/complex billing/production release are not implied.
+- Recovery: aud-004-before-20261101 -> aud-004-local-20261102 and parent .recovery/aud-004-current-after.json. Exact next gate: Owner resumes account-backed testing after HTTPS deployment.

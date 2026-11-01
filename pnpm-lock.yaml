@@ -266,8 +266,8 @@ importers:
         specifier: ^2.0.7
         version: 2.0.7(react-dom@19.2.9(react@19.2.9))(react@19.2.9)
       stripe:
-        specifier: 14.15.0
-        version: 14.15.0
+        specifier: 23.1.0
+        version: 23.1.0(@types/node@22.20.5)
       superjson:
         specifier: 2.2.1
         version: 2.2.1
@@ -4608,9 +4608,14 @@ packages:
     resolution: {integrity: sha512-vavAMRXOgBVNF6nyEEmL3DBK19iRpDcoIwW+swQ+CbGiu7lju6t+JklA1MHweoWtadgt4ISVUsXLyDq34ddcwA==}
     engines: {node: '>=4'}
 
-  stripe@14.15.0:
-    resolution: {integrity: sha512-KPxNcf0iFWA38pkzeJyJklK9qQJo/6FEBDcLsZxDCVHfn8yT+uP9p1JSYiOhIxCyh+6BD5XEVOMnnBJnVeEnfA==}
-    engines: {node: '>=12.*'}
+  stripe@23.1.0:
+    resolution: {integrity: sha512-fVUfMSfTPoukfoV//MUKAx2+YxyKmYaYtnAL9VkfnHfaPNQylFdWZMD+zgUFerI8rjbaiER8Vzj2XEUQ2AhAsQ==}
+    engines: {node: '>=20'}
+    peerDependencies:
+      '@types/node': '>=20'
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
 
   stubborn-fs@2.0.0:
     resolution: {integrity: sha512-Y0AvSwDw8y+nlSNFXMm2g6L51rBGdAQT20J3YSOqxC53Lo3bjWRtr2BKcfYoAf352WYpsZSTURrA0tqhfgudPA==}
@@ -8838,10 +8843,9 @@ snapshots:
 
   strip-bom@3.0.0: {}
 
-  stripe@14.15.0:
-    dependencies:
+  stripe@23.1.0(@types/node@22.20.5):
+    optionalDependencies:
       '@types/node': 22.20.5
-      qs: 6.17.1
 
   stubborn-fs@2.0.0:
     dependencies:

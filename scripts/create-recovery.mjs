@@ -7,8 +7,10 @@ import { parse } from "dotenv";
 const repo = fileURLToPath(new URL("../", import.meta.url));
 const workspace = path.dirname(repo.replace(/[\\/]$/, ""));
 const name = process.argv[2];
-if (!/^AUD-00[23]-(before|after)-[0-9T-]+$/.test(name || ""))
-  throw Error("Provide a fixed AUD-002/AUD-003 before/after timestamp name");
+if (!/^AUD-00[234]-(before|after)-[0-9T-]+$/.test(name || ""))
+  throw Error(
+    "Provide a fixed AUD-002/AUD-003/AUD-004 before/after timestamp name",
+  );
 const target = path.join(workspace, ".recovery", name);
 try {
   await stat(target);

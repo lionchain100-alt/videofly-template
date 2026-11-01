@@ -2,6 +2,7 @@ import { createEnv } from "@t3-oss/env-nextjs";
 import * as z from "zod";
 
 export const env = createEnv({
+  emptyStringAsUndefined: true,
   shared: {},
   server: {
     STRIPE_API_KEY: z.string().optional(),

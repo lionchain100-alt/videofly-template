@@ -1,6 +1,6 @@
 # Project Tasks
 
-Last reconciled: 2026-11-01
+Last reconciled: 2026-11-02
 
 ## Control rules
 
@@ -9,11 +9,11 @@ Last reconciled: 2026-11-01
 
 ## Active milestone
 
-Milestone: Reusable local V1.2 template with canonical site configuration and an independent second instance.
+Milestone: Local V1.2 template with unified four-channel billing and subscription period regression.
 Active task: IDLE-000
 
-Definition of Ready: AUD-002 accepted; Owner authorized AUD-003 configuration and reuse rehearsal.
-Definition of Done: single site manifest; consistent UI/API tool policy; independent second-site database, credentials, sessions, credits and files; cross-site UI import; six retained suites, both builds and production isolation; usage guide and synchronized evidence.
+Definition of Ready: AUD-003 accepted; Owner authorized AUD-004 and explicitly deferred real Stripe/Creem testing until HTTPS deployment.
+Definition of Done: common order/credit fulfillment, period idempotency and legacy renewal/cancel/resume, seven retained suites, browser/API contract, build/production isolation, unchanged PayPal/Waffo/refunds, recorded account gates and recovery.
 
 ## Backlog
 
@@ -23,6 +23,10 @@ Definition of Done: single site manifest; consistent UI/API tool policy; indepen
 - [x] AUD-002 Establish recovery points and upgrade dependencies without changing current capabilities. Depends on: AUD-001. Acceptance: six integration/API suites, browser/production isolation, frozen install/typecheck/build, audit and recovery; evidence `docs/project-state/aud-002-results.json` and parent `AUD-002-SECURITY-UPGRADE.md`.
 - [x] AUD-003 Unify site configuration and rehearse a second independent site. Depends on: AUD-002. Acceptance: `docs/project-state/aud-003-results.json`, four detailed QA records and parent `AUD-003-SITE-REUSE-GUIDE.md`.
 
+- [x] AUD-004 Unify Stripe/Creem purchases and subscription cycle fulfillment; preserve PayPal/Waffo/refunds. Depends on: AUD-003. Acceptance: local scope passed; `aud-004-results.json`, detailed billing/browser/production/isolation records and parent `AUD-004-BILLING-GUIDE.md`. Real-account testing deferred by Owner (DEC-AUD004-LOCAL-20261101).
+
+- [ ] BILL-001 Verify Stripe/Creem real test-account checkout, two paid periods, public signed callbacks and state changes. Depends on: Owner resumes after HTTPS deployment and supplies provider accounts/products/keys. Acceptance: real test receipts and reconciliation; no fixture substitution.
+
 ## Blocked / decision-needed register
 
-No external blocker for completed local AUD-003. Production OAuth/email, Stripe/Creem channel acceptance and production deployment remain separate unverified scopes.
+No blocker for completed local AUD-004. Stripe account is absent; Creem store/API/products/webhook are not yet configured because a product HTTPS URL is not available. Owner explicitly deferred these external gates. Production activation and new-provider refunds remain separate unverified scopes.

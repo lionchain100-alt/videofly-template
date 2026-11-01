@@ -3,6 +3,11 @@ import { getCurrentUser } from "@/lib/auth";
 import { stripe } from "@/payment";
 import { pricingData } from "@/payment/subscriptions";
 import { eq } from "drizzle-orm";
+import { randomUUID } from "node:crypto";
+import { externalBillingProduct } from "@/payment/billing-catalog";
+import { stripeConfig } from "@/payment/providers/stripe";
+import { listSubscriptions } from "./subscriptions";
+import { reserveOrder, processOrder, listOrders } from "./orders";
 
 export type UserSubscriptionPlan = {
   title: string;
@@ -27,50 +32,23 @@ export type UserSubscriptionPlan = {
 };
 
 export async function createStripeSession(userId: string, planId: string) {
-  const [customer] = await db
-    .select({
-      id: customers.id,
-      plan: customers.plan,
-      stripeCustomerId: customers.stripeCustomerId,
-    })
-    .from(customers)
-    .where(eq(customers.authUserId, userId))
-    .limit(1);
-
-  const returnUrl = process.env.NEXT_PUBLIC_APP_URL
-    ? `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`
-    : "/dashboard";
-
-  if (customer?.plan && customer.plan !== "FREE") {
-    const session = await stripe.billingPortal.sessions.create({
-      customer: customer.stripeCustomerId!,
-      return_url: returnUrl,
-    });
-    return { success: true as const, url: session.url };
-  }
-
-  const user = await getCurrentUser();
-  if (!user) {
-    return { success: false as const, url: null };
-  }
-  const email = user.email!;
-
-  const session = await stripe.checkout.sessions.create({
-    mode: "subscription",
-    payment_method_types: ["card"],
-    customer_email: email,
-    client_reference_id: userId,
-    subscription_data: { metadata: { userId } },
-    cancel_url: returnUrl,
-    success_url: returnUrl,
-    line_items: [{ price: planId, quantity: 1 }],
+  stripeConfig();
+  const product = externalBillingProduct("stripe", planId);
+  if (!product || product.kind !== "SUBSCRIPTION")
+    throw new Error("Subscription price is not configured");
+  const order = await reserveOrder(userId, {
+    requestId: randomUUID(),
+    provider: "stripe",
+    productId: product.id,
   });
-
-  if (!session.url) return { success: false as const, url: null };
-  return { success: true as const, url: session.url };
+  await processOrder(order.id);
+  const saved = (await listOrders(userId, order.id))[0];
+  return { success: !!saved?.checkoutUrl, url: saved?.checkoutUrl || null };
 }
 
-export async function getUserPlans(userId: string): Promise<UserSubscriptionPlan | undefined> {
+export async function getUserPlans(
+  userId: string,
+): Promise<UserSubscriptionPlan | undefined> {
   const [custom] = await db
     .select({
       stripeSubscriptionId: customers.stripeSubscriptionId,
@@ -86,13 +64,32 @@ export async function getUserPlans(userId: string): Promise<UserSubscriptionPlan
     return undefined;
   }
 
-  const isPaid =
-    !!custom.stripePriceId &&
-    !!custom.stripeCurrentPeriodEnd &&
-    custom.stripeCurrentPeriodEnd.getTime() + 86_400_000 > Date.now();
+  const stripeSubscriptions = (await listSubscriptions(userId)).filter(
+    (s) => s.provider === "stripe",
+  );
+  const live =
+    stripeSubscriptions.find((s) => s.hasAccess) ||
+    stripeSubscriptions.find(
+      (s) => s.externalId === custom.stripeSubscriptionId,
+    );
+  if (live) {
+    custom.stripeCustomerId = live.customerId;
+    custom.stripeSubscriptionId = live.externalId;
+    custom.stripePriceId = live.productId;
+    custom.stripeCurrentPeriodEnd = live.paidThrough
+      ? new Date(live.paidThrough)
+      : null;
+  }
+  const isPaid = live
+    ? live.hasAccess
+    : !!custom.stripePriceId &&
+      !!custom.stripeCurrentPeriodEnd &&
+      custom.stripeCurrentPeriodEnd.getTime() > Date.now();
 
   const customPlan =
-    pricingData.find((plan) => plan.stripeIds.monthly === custom.stripePriceId) ??
+    pricingData.find(
+      (plan) => plan.stripeIds.monthly === custom.stripePriceId,
+    ) ??
     pricingData.find((plan) => plan.stripeIds.yearly === custom.stripePriceId);
   const plan = isPaid && customPlan ? customPlan : pricingData[0]!;
 
@@ -104,10 +101,10 @@ export async function getUserPlans(userId: string): Promise<UserSubscriptionPlan
         : null
     : null;
 
-  let isCanceled = false;
-  if (isPaid && custom.stripeSubscriptionId) {
+  let isCanceled = live?.cancelAtPeriodEnd || false;
+  if (!live && isPaid && custom.stripeSubscriptionId) {
     const stripePlan = await stripe.subscriptions.retrieve(
-      custom.stripeSubscriptionId
+      custom.stripeSubscriptionId,
     );
     isCanceled = stripePlan.cancel_at_period_end;
   }
@@ -133,8 +130,28 @@ export async function getMySubscription(userId: string) {
     .limit(1);
 
   if (!customer) return null;
+  const current = (await listSubscriptions(userId)).filter(
+    (s) => s.provider === "stripe",
+  );
+  if (current.length) {
+    const paid = current
+      .filter((s) => s.hasAccess)
+      .sort(
+        (a, b) =>
+          new Date(b.paidThrough!).getTime() -
+          new Date(a.paidThrough!).getTime(),
+      )[0];
+    return {
+      plan: paid ? "PRO" : "FREE",
+      endsAt: paid?.paidThrough ? new Date(paid.paidThrough) : null,
+    };
+  }
   return {
-    plan: customer.plan,
+    plan:
+      customer.stripeCurrentPeriodEnd &&
+      customer.stripeCurrentPeriodEnd > new Date()
+        ? customer.plan
+        : "FREE",
     endsAt: customer.stripeCurrentPeriodEnd,
   };
 }

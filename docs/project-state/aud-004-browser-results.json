@@ -1,0 +1,12 @@
+{
+  "testedAt": "2026-11-01T15:48:36.176Z",
+  "browser": "Local Playwright; Browser plugin not available",
+  "passed": [
+    "HTTP auth, CSRF, invalid input and ownership guards; unconfigured providers return 503 without orders/credits; legacy Creem facade remains reachable",
+    "four-channel purchase buttons and six canonical subscription plans render desktop/mobile; inactive channels cannot initiate checkout; refresh works",
+    "browser subscription submits the canonical POST and handles server-side disabled-provider rejection without an orphaned intent or paid call"
+  ],
+  "pageErrors": [],
+  "providerCalls": 0,
+  "balancesUnchanged": true
+}

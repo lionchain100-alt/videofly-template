@@ -12,16 +12,14 @@ import {
 } from "@/db";
 import { ApiError } from "@/lib/api/error";
 import { creditCatalog } from "@/payment/catalog";
+import { subscriptionCatalog, billingProduct } from "@/payment/billing-catalog";
 import {
-  createPaypalCheckout,
-  paypalConfig,
-  queryPaypal,
-} from "@/payment/providers/paypal";
-import {
-  createWaffoCheckout,
-  waffoConfig,
-  queryWaffo,
-} from "@/payment/providers/waffo";
+  paymentProviders,
+  paymentConfig,
+  createCheckout,
+  queryCheckout,
+} from "@/payment/providers/registry";
+import { queryPaypal } from "@/payment/providers/paypal";
 import type {
   OrderSnapshot,
   PaymentFact,
@@ -32,22 +30,33 @@ import type {
 export const purchaseSchema = z
   .object({
     requestId: z.string().uuid(),
-    provider: z.enum(["paypal", "waffo"]),
+    provider: z.enum(paymentProviders),
     productId: z.string().min(1).max(50),
   })
   .strict();
 type Order = typeof paymentOrders.$inferSelect;
 type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
 function config(provider: PaymentProvider) {
-  return provider === "paypal" ? paypalConfig() : waffoConfig();
+  return paymentConfig(provider);
 }
 function snapshot(order: Order): OrderSnapshot {
   return { ...order, provider: order.provider as PaymentProvider };
 }
 export function publicPayments() {
   return {
-    products: creditCatalog,
-    providers: (["paypal", "waffo"] as const).map((id) => {
+    products: creditCatalog.map((p) => ({
+      ...p,
+      providers: paymentProviders.filter(
+        (id) => id === "paypal" || id === "waffo" || !!billingProduct(id, p.id),
+      ),
+    })),
+    subscriptions: subscriptionCatalog.map((p) => ({
+      ...p,
+      providers: (["stripe", "creem"] as const).filter(
+        (id) => !!billingProduct(id, p.id),
+      ),
+    })),
+    providers: paymentProviders.map((id) => {
       try {
         const c = config(id);
         return { id, enabled: true, environment: c.environment };
@@ -89,9 +98,18 @@ export async function reserveOrder(
         throw new ApiError("请求编号已用于其他购买内容", 409);
       return existing;
     }
-    const product = creditCatalog.find((p) => p.id === input.productId);
-    if (!product) throw new ApiError("积分包不存在", 400);
     const c = config(input.provider);
+    const mapped =
+      input.provider === "stripe" || input.provider === "creem"
+        ? billingProduct(input.provider, input.productId)
+        : undefined;
+    const product =
+      mapped ||
+      (input.provider === "paypal" || input.provider === "waffo"
+        ? creditCatalog.find((p) => p.id === input.productId)
+        : undefined);
+    if (!product)
+      throw new ApiError("支付产品不存在或尚未配置通道产品映射", 400);
     const [count] = await tx
       .select({ value: sql<number>`count(*)`.mapWith(Number) })
       .from(paymentOrders)
@@ -110,6 +128,8 @@ export async function reserveOrder(
         userId,
         requestId: input.requestId,
         provider: input.provider,
+        kind: mapped?.kind || "PURCHASE",
+        providerProductId: mapped?.externalId,
         environment: c.environment,
         accountId: c.accountId,
         productId: product.id,
@@ -161,10 +181,7 @@ export async function processOrder(id?: string) {
       // Both APIs deduplicate transient retries. Never recreate after the conservative one-hour window.
       if (Date.now() - order.createdAt.getTime() > 3600000)
         throw new ApiError("创建结果需人工核实", 409);
-      const checkout =
-        order.provider === "paypal"
-          ? await createPaypalCheckout(snapshot(order))
-          : await createWaffoCheckout(snapshot(order));
+      const checkout = await createCheckout(snapshot(order), order.userId);
       await db
         .update(paymentOrders)
         .set({ ...checkout, status: "PENDING", updatedAt: new Date() })
@@ -175,11 +192,9 @@ export async function processOrder(id?: string) {
             eq(paymentOrders.status, "CREATING"),
           ),
         );
-    } else if (order.provider === "paypal") {
-      const fact = await queryPaypal(snapshot(order));
-      if (fact) await fulfillPayment(fact);
     } else {
-      await queryWaffo(snapshot(order)); // Informational; signed chargedAmount is authoritative.
+      const fact = await queryCheckout(snapshot(order));
+      if (fact) await fulfillPayment(fact);
     }
     if (Date.now() - order.createdAt.getTime() > 7 * 86400000)
       await db
@@ -220,7 +235,12 @@ export async function processOrder(id?: string) {
   }
   return true;
 }
-async function fulfill(tx: Tx, fact: PaymentFact, hint: Order) {
+export async function fulfill(
+  tx: Tx,
+  fact: PaymentFact,
+  hint: Order,
+  subscriptionExpiresAt?: Date,
+) {
   await tx
     .select({ id: users.id })
     .from(users)
@@ -239,7 +259,8 @@ async function fulfill(tx: Tx, fact: PaymentFact, hint: Order) {
     fact.accountId !== order.accountId ||
     fact.amount !== order.amount ||
     fact.currency !== order.currency ||
-    (order.provider === "paypal" && fact.externalId !== order.externalId)
+    (["paypal", "stripe", "creem"].includes(order.provider) &&
+      fact.externalId !== order.externalId)
   )
     throw new ApiError("到账信息与订单不一致，未发积分", 409);
   const [existing] = await tx
@@ -259,10 +280,12 @@ async function fulfill(tx: Tx, fact: PaymentFact, hint: Order) {
       initialCredits: order.credits,
       remainingCredits: order.credits,
       frozenCredits: 0,
-      transType: "ORDER_PAY",
+      transType: order.kind === "SUBSCRIPTION" ? "SUBSCRIPTION" : "ORDER_PAY",
       orderNo: order.id,
       status: "ACTIVE",
-      expiredAt: new Date(now.getTime() + order.expiryDays * 86400000),
+      expiredAt:
+        subscriptionExpiresAt ||
+        new Date(now.getTime() + order.expiryDays * 86400000),
       createdAt: now,
       updatedAt: now,
     })
@@ -287,7 +310,7 @@ async function fulfill(tx: Tx, fact: PaymentFact, hint: Order) {
     .values({
       transNo: `PAY_${order.id}`,
       userId: order.userId,
-      transType: "ORDER_PAY",
+      transType: order.kind === "SUBSCRIPTION" ? "SUBSCRIPTION" : "ORDER_PAY",
       credits: order.credits,
       balanceAfter: balance.value,
       packageId: pkg.id,
@@ -323,6 +346,10 @@ export async function fulfillPayment(fact: PaymentFact) {
   return db.transaction((tx) => fulfill(tx, fact, hint));
 }
 export async function receivePaymentEvent(event: VerifiedEvent) {
+  if (event.subscription) {
+    const { receiveSubscriptionEvent } = await import("./subscriptions");
+    return receiveSubscriptionEvent(event);
+  }
   const scope = and(
     eq(paymentEvents.provider, event.provider),
     eq(paymentEvents.environment, event.environment),
@@ -347,10 +374,23 @@ export async function receivePaymentEvent(event: VerifiedEvent) {
             ),
           )
       : [];
-  if(event.refund){
-    const [linked]=await db.select({order:paymentOrders}).from(paymentFulfillments).innerJoin(paymentOrders,eq(paymentOrders.id,paymentFulfillments.orderId)).where(and(
-      eq(paymentFulfillments.provider,event.provider),eq(paymentFulfillments.environment,event.environment),eq(paymentFulfillments.accountId,event.accountId),eq(paymentFulfillments.paymentId,event.refund.paymentId)));
-    hint=linked?.order;
+  if (event.refund) {
+    const [linked] = await db
+      .select({ order: paymentOrders })
+      .from(paymentFulfillments)
+      .innerJoin(
+        paymentOrders,
+        eq(paymentOrders.id, paymentFulfillments.orderId),
+      )
+      .where(
+        and(
+          eq(paymentFulfillments.provider, event.provider),
+          eq(paymentFulfillments.environment, event.environment),
+          eq(paymentFulfillments.accountId, event.accountId),
+          eq(paymentFulfillments.paymentId, event.refund.paymentId),
+        ),
+      );
+    hint = linked?.order;
   }
   await db
     .insert(paymentEvents)
@@ -374,15 +414,19 @@ export async function receivePaymentEvent(event: VerifiedEvent) {
     throw new ApiError("回调订单账户不一致", 409);
   const [saved] = await db.select().from(paymentEvents).where(scope);
   if (saved.status === "PROCESSED") return;
-  if(event.refund){
-    const{receiveRefundFact}=await import("./refunds");
+  if (event.refund) {
+    const { receiveRefundFact } = await import("./refunds");
     await receiveRefundFact(event.refund);
-    await db.update(paymentEvents).set({status:"PROCESSED",processedAt:new Date()}).where(scope);
+    await db
+      .update(paymentEvents)
+      .set({ status: "PROCESSED", processedAt: new Date() })
+      .where(scope);
     return;
   }
   let fact = event.fact;
   if (
-    event.provider === "paypal" && hint.status !== "PAID" &&
+    event.provider === "paypal" &&
+    hint.status !== "PAID" &&
     ["CHECKOUT.ORDER.APPROVED", "PAYMENT.CAPTURE.COMPLETED"].includes(
       event.type,
     )

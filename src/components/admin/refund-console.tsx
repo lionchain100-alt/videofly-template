@@ -217,6 +217,12 @@ export function RefundConsole({
               未消费且未冻结才自动退款。提交先预留来源积分；只有现金退款成功才结算回收。部分退款按累计金额向上取整。Waffo
               当前接口一笔收款只支持一笔成功退款。
             </p>
+            {!["paypal", "waffo"].includes(o!.provider) && (
+              <p className="text-amber-700">
+                该通道目前尚未接入后台现金退款，自动退款和积分回收均不执行。PayPal、Waffo
+                的测试退款保持可用。
+              </p>
+            )}
             {blocked && (
               <p className="text-amber-700">
                 来源已有消费、失效或任务冻结，提交只会记录审核原因，不调用退款接口。

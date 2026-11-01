@@ -177,6 +177,11 @@ export async function createRefund(
       .where(eq(paymentOrders.id, input.orderId))
       .for("update");
     if (order.status !== "PAID") throw new ApiError("仅已支付订单可退款", 409);
+    if (!["paypal", "waffo"].includes(order.provider))
+      throw new ApiError(
+        "本版后台自动退款目前支持 PayPal、Waffo；此通道退款请先核对供应商账单，不能自动回收积分",
+        501,
+      );
     if (!["sandbox", "test"].includes(order.environment))
       throw new ApiError("本版后台只启用测试环境退款", 403);
     if (input.amount > order.amount - order.refundedAmount)
@@ -249,20 +254,18 @@ export async function createRefund(
           updatedAt: new Date(),
         })
         .where(eq(creditPackages.id, pkg.id));
-      await tx
-        .insert(creditTransactions)
-        .values({
-          transNo: `RH_${r.id}`,
-          userId: order.userId,
-          actorUserId: actorId,
-          transType: "REFUND_HOLD",
-          credits: -delta,
-          balanceAfter: await balance(tx, order.userId),
-          packageId: pkg.id,
-          orderNo: order.id,
-          refundId: r.id,
-          remark: `测试退款待确认，预留来源积分 ${delta}；请求 ${r.id}`,
-        });
+      await tx.insert(creditTransactions).values({
+        transNo: `RH_${r.id}`,
+        userId: order.userId,
+        actorUserId: actorId,
+        transType: "REFUND_HOLD",
+        credits: -delta,
+        balanceAfter: await balance(tx, order.userId),
+        packageId: pkg.id,
+        orderNo: order.id,
+        refundId: r.id,
+        remark: `测试退款待确认，预留来源积分 ${delta}；请求 ${r.id}`,
+      });
     }
     return r;
   });
@@ -298,22 +301,20 @@ async function takeDebt(
     .set({ refundCreditShortfall: debt, updatedAt: new Date() })
     .where(eq(paymentOrders.id, order.id));
   if (take || release || refundId)
-    await tx
-      .insert(creditTransactions)
-      .values({
-        transNo: refundId
-          ? `RC_${refundId}`
-          : `RD_${order.id}_${pkg.refundReclaimedCredits + take}`,
-        userId: order.userId,
-        actorUserId: actorId,
-        transType: "REFUND_RECLAIM",
-        credits: usable(pkg) ? release - take : 0,
-        balanceAfter: await balance(tx, order.userId),
-        packageId: pkg.id,
-        orderNo: order.id,
-        refundId,
-        remark: `现金退款来源积分回收 ${take}；仍待审核 ${debt}，不扣其他来源积分`,
-      });
+    await tx.insert(creditTransactions).values({
+      transNo: refundId
+        ? `RC_${refundId}`
+        : `RD_${order.id}_${pkg.refundReclaimedCredits + take}`,
+      userId: order.userId,
+      actorUserId: actorId,
+      transType: "REFUND_RECLAIM",
+      credits: usable(pkg) ? release - take : 0,
+      balanceAfter: await balance(tx, order.userId),
+      packageId: pkg.id,
+      orderNo: order.id,
+      refundId,
+      remark: `现金退款来源积分回收 ${take}；仍待审核 ${debt}，不扣其他来源积分`,
+    });
   return { take, debt };
 }
 export async function assertRefundUsageAllowed(tx: Tx, userId: string) {
@@ -479,20 +480,18 @@ export async function receiveRefundFact(fact: RefundFact) {
             updatedAt: new Date(),
           })
           .where(eq(creditPackages.id, pkg.id));
-        await tx
-          .insert(creditTransactions)
-          .values({
-            transNo: `RL_${r.id}`,
-            userId: order.userId,
-            actorUserId: r.actorUserId,
-            transType: "REFUND_RELEASE",
-            credits: usable(pkg) ? r.reservedCredits : 0,
-            balanceAfter: await balance(tx, order.userId),
-            packageId: pkg.id,
-            orderNo: order.id,
-            refundId: r.id,
-            remark: "支付平台确认退款失败，释放原来源预留；不延长原到期时间",
-          });
+        await tx.insert(creditTransactions).values({
+          transNo: `RL_${r.id}`,
+          userId: order.userId,
+          actorUserId: r.actorUserId,
+          transType: "REFUND_RELEASE",
+          credits: usable(pkg) ? r.reservedCredits : 0,
+          balanceAfter: await balance(tx, order.userId),
+          packageId: pkg.id,
+          orderNo: order.id,
+          refundId: r.id,
+          remark: "支付平台确认退款失败，释放原来源预留；不延长原到期时间",
+        });
       }
       const [done] = await tx
         .update(paymentRefunds)

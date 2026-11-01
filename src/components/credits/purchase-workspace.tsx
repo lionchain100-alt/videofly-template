@@ -28,16 +28,17 @@ type Catalog = {
     currency: string;
     credits: number;
     expiryDays: number;
+    providers?: string[];
   }[];
   providers: {
-    id: "paypal" | "waffo";
+    id: "paypal" | "waffo" | "stripe" | "creem";
     enabled: boolean;
     environment: string;
   }[];
 };
 type Intent = {
   requestId: string;
-  provider: "paypal" | "waffo";
+  provider: "paypal" | "waffo" | "stripe" | "creem";
   productId: string;
 };
 const labels: Record<string, string> = {
@@ -84,7 +85,7 @@ export function PurchaseWorkspace({ locale }: { locale: string }) {
       if (
         saved &&
         typeof saved.requestId === "string" &&
-        ["paypal", "waffo"].includes(saved.provider) &&
+        ["paypal", "waffo", "stripe", "creem"].includes(saved.provider) &&
         typeof saved.productId === "string"
       )
         setIntent(saved);
@@ -226,7 +227,11 @@ export function PurchaseWorkspace({ locale }: { locale: string }) {
                     type="button"
                     key={provider.id}
                     disabled={
-                      !provider.enabled || auth !== true || busy || !!intent
+                      !provider.enabled ||
+                      !p.providers?.includes(provider.id) ||
+                      auth !== true ||
+                      busy ||
+                      !!intent
                     }
                     onClick={() =>
                       void purchase({
@@ -237,8 +242,15 @@ export function PurchaseWorkspace({ locale }: { locale: string }) {
                     }
                     className="rounded-lg border px-4 py-3 text-sm disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    {provider.id === "paypal" ? "PayPal" : "Waffo"} ·{" "}
-                    {provider.enabled ? provider.environment : "尚未启用"}
+                    {
+                      {
+                        paypal: "PayPal",
+                        waffo: "Waffo",
+                        stripe: "Stripe",
+                        creem: "Creem",
+                      }[provider.id]
+                    }{" "}
+                    · {provider.enabled ? provider.environment : "尚未启用"}
                   </button>
                 ))}
               </div>
