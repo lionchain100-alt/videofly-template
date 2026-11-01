@@ -1,4 +1,5 @@
 "use client";
+import { localePath } from "@/config/site-manifest";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -37,7 +38,7 @@ export function DashboardNav({ items, params: { lang } }: DashboardNavProps) {
           item.href && (
             <Link
               key={index}
-              href={item.disabled ? "/" : `/${lang}` + item.href}
+              href={item.disabled ? "/" : localePath(lang, item.href)}
             >
               <span
                 className={cn(

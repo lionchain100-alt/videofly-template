@@ -1,6 +1,11 @@
 import createMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
 import { NextRequest, NextResponse } from "next/server";
+import {
+  siteManifest,
+  routeAvailable,
+  supportedLocales,
+} from "./config/site-manifest";
 
 const intlMiddleware = createMiddleware(routing);
 
@@ -9,11 +14,16 @@ const intlMiddleware = createMiddleware(routing);
  * Maps old dashboard routes to new routes
  */
 const legacyRedirects: Record<string, string> = {
-  "/dashboard": "/text-to-video",
+  "/dashboard": "/",
   "/dashboard/videos": "/my-creations",
   "/dashboard/billing": "/credits",
   "/dashboard/settings": "/settings",
 };
+const orderedRedirects = Object.entries(legacyRedirects).sort(
+  ([a], [b]) => b.length - a.length,
+);
+const legacyTarget = (to: string, rest: string) =>
+  `${to === "/" ? "" : to}${rest}` || "/";
 
 /**
  * Next-intl middleware with legacy dashboard redirects
@@ -30,14 +40,22 @@ const legacyRedirects: Record<string, string> = {
  */
 export default function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const language = pathname.split("/")[1];
+  if (
+    (supportedLocales.includes(language as "en" | "zh") &&
+      !siteManifest.languages.enabled.includes(language as "en" | "zh")) ||
+    !routeAvailable(pathname)
+  ) {
+    return new NextResponse("Not found", { status: 404 });
+  }
 
   // Check for legacy dashboard routes (without locale prefix)
-  for (const [from, to] of Object.entries(legacyRedirects)) {
+  for (const [from, to] of orderedRedirects) {
     if (pathname === from || pathname.startsWith(from + "/")) {
       // Preserve the rest of the path if any
       const rest = pathname.slice(from.length);
       const url = request.nextUrl.clone();
-      url.pathname = to + rest;
+      url.pathname = legacyTarget(to, rest);
       return NextResponse.redirect(url);
     }
   }
@@ -45,29 +63,36 @@ export default function middleware(request: NextRequest) {
   // Check for legacy dashboard routes (with locale prefix)
   // e.g., /en/dashboard -> /en/image-to-video
   for (const locale of routing.locales) {
-    for (const [from, to] of Object.entries(legacyRedirects)) {
+    for (const [from, to] of orderedRedirects) {
       const localeFrom = `/${locale}${from}`;
       if (pathname === localeFrom || pathname.startsWith(localeFrom + "/")) {
         const rest = pathname.slice(localeFrom.length);
         const url = request.nextUrl.clone();
-        url.pathname = `/${locale}${to}${rest}`;
+        url.pathname = `/${locale}${legacyTarget(to, rest)}`;
         return NextResponse.redirect(url);
       }
     }
   }
 
-  request.headers.set("x-ui-home", /^\/(?:en\/?|zh\/?)?$/.test(pathname) ? "true" : "false");
+  request.headers.set(
+    "x-ui-home",
+    /^\/(?:en\/?|zh\/?)?$/.test(pathname) ? "true" : "false",
+  );
   const response = intlMiddleware(request);
 
   // Add security headers
-  const localPreview = process.env.NODE_ENV === "development" && process.env.UI_STUDIO_ENABLED === "true" && /^\/(?:en\/|zh\/)?ui-preview$/.test(pathname);
+  const localPreview =
+    process.env.NODE_ENV === "development" &&
+    process.env.UI_STUDIO_ENABLED === "true" &&
+    /^\/(?:en\/|zh\/)?ui-preview$/.test(pathname);
   response.headers.set("X-Frame-Options", localPreview ? "SAMEORIGIN" : "DENY");
-  if (localPreview) response.headers.set("Content-Security-Policy", "frame-ancestors 'self'");
+  if (localPreview)
+    response.headers.set("Content-Security-Policy", "frame-ancestors 'self'");
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   response.headers.set(
     "Strict-Transport-Security",
-    "max-age=31536000; includeSubDomains"
+    "max-age=31536000; includeSubDomains",
   );
   // Basic CSP to start with (adjust as needed for scripts/styles)
   // response.headers.set("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data: https:; connect-src 'self' https:;")

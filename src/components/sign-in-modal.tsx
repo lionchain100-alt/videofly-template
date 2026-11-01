@@ -1,4 +1,5 @@
 "use client";
+import { localePath } from "@/config/site-manifest";
 
 import React, { useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -26,7 +27,9 @@ export const SignInModalContent = ({ lang }: SignInModalContentProps) => {
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
 
-  const callbackURL = searchParams?.get("from") ?? `/${lang}${siteConfig.routes.defaultLoginRedirect}`;
+  const callbackURL =
+    searchParams?.get("from") ??
+    localePath(lang, `${siteConfig.routes.defaultLoginRedirect}`);
 
   const handleSocialLogin = async (provider: "google") => {
     setSignInClicked(provider);
@@ -63,7 +66,8 @@ export const SignInModalContent = ({ lang }: SignInModalContentProps) => {
       });
 
       toast.success("Check your email", {
-        description: "We sent you a login link. Be sure to check your spam too.",
+        description:
+          "We sent you a login link. Be sure to check your spam too.",
       });
 
       setEmail("");
@@ -84,12 +88,8 @@ export const SignInModalContent = ({ lang }: SignInModalContentProps) => {
     <div className="w-full">
       {/* Header */}
       <div className="flex flex-col items-center justify-center space-y-3 border-b bg-background px-4 py-6 pt-8 text-center">
-        <h3 className="font-urban text-2xl font-bold">
-          {t("signin_title")}
-        </h3>
-        <p className="text-sm text-muted-foreground">
-          {t("signin_subtitle")}
-        </p>
+        <h3 className="font-urban text-2xl font-bold">{t("signin_title")}</h3>
+        <p className="text-sm text-muted-foreground">{t("signin_subtitle")}</p>
       </div>
 
       {/* Body */}
@@ -153,7 +153,9 @@ export const SignInModalContent = ({ lang }: SignInModalContentProps) => {
               </div>
               <Button
                 type="submit"
-                variant={siteConfig.auth.enableGoogleLogin ? "outline" : "default"}
+                variant={
+                  siteConfig.auth.enableGoogleLogin ? "outline" : "default"
+                }
                 className="w-full"
                 disabled={isLoading}
               >

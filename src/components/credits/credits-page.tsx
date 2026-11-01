@@ -1,4 +1,5 @@
 "use client";
+import { localePath } from "@/config/site-manifest";
 
 // ============================================
 // Credits Page
@@ -38,7 +39,7 @@ export function CreditsPage({ locale }: CreditsPageProps) {
           setHistoryPage((prev) => prev + 1);
         }
       },
-      { threshold: 1.0 }
+      { threshold: 1.0 },
     );
 
     const current = observerTarget.current;
@@ -54,7 +55,7 @@ export function CreditsPage({ locale }: CreditsPageProps) {
   }, [hasMore, historyLoading, fetchNextPage]);
 
   const handleBuyCredits = () => {
-    router.push(`/${locale}/buy-credits`);
+    router.push(localePath(locale, `/buy-credits`));
   };
 
   // 处理支付成功回调

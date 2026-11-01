@@ -1,4 +1,5 @@
 "use client";
+import { siteManifest as siteBrand } from "@/config/site-manifest";
 
 import { useEffect, useMemo, useState, useTransition } from "react";
 import Balancer from "react-wrap-balancer";
@@ -66,27 +67,27 @@ export function CreemPricing({
   const allSubscriptionProducts = useMemo(
     () =>
       getLocalizedSubscriptionPackages(dictCredits).sort(
-        (a, b) => a.credits - b.credits
+        (a, b) => a.credits - b.credits,
       ),
-    [dictCredits]
+    [dictCredits],
   );
 
   const onetimeProducts = useMemo(
     () =>
       getLocalizedOnetimePackages(dictCredits).sort(
-        (a, b) => a.credits - b.credits
+        (a, b) => a.credits - b.credits,
       ),
-    [dictCredits]
+    [dictCredits],
   );
 
   const monthlyProducts = useMemo(
     () => allSubscriptionProducts.filter((p) => p.billingPeriod === "month"),
-    [allSubscriptionProducts]
+    [allSubscriptionProducts],
   );
 
   const yearlyProducts = useMemo(
     () => allSubscriptionProducts.filter((p) => p.billingPeriod === "year"),
-    [allSubscriptionProducts]
+    [allSubscriptionProducts],
   );
 
   useEffect(() => {
@@ -192,7 +193,11 @@ export function CreemPricing({
       </div>
 
       {/* Tab 切换 */}
-      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as PricingTab)} className="w-full">
+      <Tabs
+        value={activeTab}
+        onValueChange={(v) => setActiveTab(v as PricingTab)}
+        className="w-full"
+      >
         <TabsList className="mx-auto grid max-w-2xl grid-cols-3">
           <TabsTrigger value="onetime">一次性积分包</TabsTrigger>
           <TabsTrigger value="monthly">按月订阅</TabsTrigger>
@@ -268,9 +273,9 @@ export function CreemPricing({
           Email{" "}
           <a
             className="font-medium text-primary hover:underline"
-            href="mailto:support@videofly.app"
+            href={`mailto:${siteBrand.contact.supportEmail}`}
           >
-            support@videofly.app
+            {siteBrand.contact.supportEmail}
           </a>{" "}
           {dictPrice.contact}
           <br />
@@ -332,14 +337,15 @@ function PricingGrid({
         const isRecommended = product.popular; // 使用产品配置的 popular 字段
         const isCurrent = activeProductId === product.id && hasAccess;
         const isLoading = loadingProductId === product.id;
-        const isFreeUserAccessible = isOnetime && product.allowFreeUser === true;
+        const isFreeUserAccessible =
+          isOnetime && product.allowFreeUser === true;
 
         return (
           <Card
             key={product.id}
             className={cn(
               "flex flex-col transition-shadow hover:shadow-lg",
-              isRecommended && "border-primary border-2 relative"
+              isRecommended && "border-primary border-2 relative",
             )}
           >
             {/* 推荐标签 - 更醒目 */}

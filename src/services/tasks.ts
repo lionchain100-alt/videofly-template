@@ -1,5 +1,17 @@
 import { randomUUID } from "node:crypto";
-import { and, asc, count, desc, eq, gt, inArray, isNull, lt, or, sql } from "drizzle-orm";
+import {
+  and,
+  asc,
+  count,
+  desc,
+  eq,
+  gt,
+  inArray,
+  isNull,
+  lt,
+  or,
+  sql,
+} from "drizzle-orm";
 import {
   db,
   users,
@@ -16,8 +28,12 @@ import {
   textProviderConfig,
   TextProviderError,
 } from "@/ai/text-provider";
-import { summarySubmissionSchema, type SummaryTask } from "@/tools/text-summary/contract";
+import {
+  summarySubmissionSchema,
+  type SummaryTask,
+} from "@/tools/text-summary/contract";
 import type { z } from "zod";
+import { assertToolEnabled } from "@/config/site-server";
 
 type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
 type Task = typeof tasks.$inferSelect;
@@ -25,14 +41,20 @@ type Allocation = { packageId: number; credits: number };
 async function available(tx: Tx, userId: string) {
   const [row] = await tx
     .select({
-      value: sql<number>`coalesce(sum(${creditPackages.remainingCredits}),0)`.mapWith(Number),
+      value:
+        sql<number>`coalesce(sum(${creditPackages.remainingCredits}),0)`.mapWith(
+          Number,
+        ),
     })
     .from(creditPackages)
     .where(
       and(
         eq(creditPackages.userId, userId),
         eq(creditPackages.status, "ACTIVE"),
-        or(isNull(creditPackages.expiredAt), gt(creditPackages.expiredAt, new Date())),
+        or(
+          isNull(creditPackages.expiredAt),
+          gt(creditPackages.expiredAt, new Date()),
+        ),
       ),
     );
   return row.value;
@@ -41,15 +63,21 @@ export async function submitSummary(
   userId: string,
   submission: z.infer<typeof summarySubmissionSchema>,
 ) {
-  return reserveToolTask(userId, submission.requestId, submission.input, "text-summary", () => {
-    try {
-      const config = textProviderConfig();
-      return { ...config, executionConfig: executionSnapshot(config) };
-    } catch (e) {
-      if (e instanceof TextProviderError) throw new ApiError(e.message, 503);
-      throw e;
-    }
-  });
+  return reserveToolTask(
+    userId,
+    submission.requestId,
+    submission.input,
+    "text-summary",
+    () => {
+      try {
+        const config = textProviderConfig();
+        return { ...config, executionConfig: executionSnapshot(config) };
+      } catch (e) {
+        if (e instanceof TextProviderError) throw new ApiError(e.message, 503);
+        throw e;
+      }
+    },
+  );
 }
 export async function reserveToolTask(
   userId: string,
@@ -65,9 +93,16 @@ export async function reserveToolTask(
   onCreated?: (tx: Tx, id: string) => Promise<void>,
 ) {
   const hash = snapshotHash(input);
+  if (toolId === "text-summary" || toolId === "video-generation")
+    await assertToolEnabled(toolId);
   return db.transaction(async (tx) => {
-    const [owner] = await tx.select().from(users).where(eq(users.id, userId)).for("update");
-    if (!owner || owner.disabled) throw new ApiError("账号不可用，请重新登录", 401);
+    const [owner] = await tx
+      .select()
+      .from(users)
+      .where(eq(users.id, userId))
+      .for("update");
+    if (!owner || owner.disabled)
+      throw new ApiError("账号不可用，请重新登录", 401);
     const [existing] = await tx
       .select()
       .from(tasks)
@@ -78,14 +113,20 @@ export async function reserveToolTask(
         throw new ApiError("同一请求编号不可更改输入", 409);
       return { id: existing.id, replayed: true };
     }
-    const {assertRefundUsageAllowed}=await import("./refunds");
-    await assertRefundUsageAllowed(tx,userId);
+    const { assertRefundUsageAllowed } = await import("./refunds");
+    await assertRefundUsageAllowed(tx, userId);
     const config = resolveConfig();
     const [active] = await tx
       .select({ value: count() })
       .from(tasks)
-      .where(and(eq(tasks.userId, userId), inArray(tasks.status, ["QUEUED", "RUNNING"])));
-    if (active.value >= 3) throw new ApiError("最多同时执行 3 个工具任务，请等待现有任务完成", 429);
+      .where(
+        and(
+          eq(tasks.userId, userId),
+          inArray(tasks.status, ["QUEUED", "RUNNING"]),
+        ),
+      );
+    if (active.value >= 3)
+      throw new ApiError("最多同时执行 3 个工具任务，请等待现有任务完成", 429);
     const packages = await tx
       .select()
       .from(creditPackages)
@@ -94,7 +135,10 @@ export async function reserveToolTask(
           eq(creditPackages.userId, userId),
           eq(creditPackages.status, "ACTIVE"),
           gt(creditPackages.remainingCredits, 0),
-          or(isNull(creditPackages.expiredAt), gt(creditPackages.expiredAt, new Date())),
+          or(
+            isNull(creditPackages.expiredAt),
+            gt(creditPackages.expiredAt, new Date()),
+          ),
         ),
       )
       .orderBy(
@@ -159,12 +203,21 @@ export async function reserveToolTask(
     return { id, replayed: false };
   });
 }
-export async function getSummaryTask(userId: string, id: string): Promise<SummaryTask | null> {
+export async function getSummaryTask(
+  userId: string,
+  id: string,
+): Promise<SummaryTask | null> {
   const [row] = await db
     .select({ task: tasks, creditStatus: creditHolds.status })
     .from(tasks)
     .leftJoin(creditHolds, eq(creditHolds.taskId, tasks.id))
-    .where(and(eq(tasks.userId, userId), eq(tasks.id, id), eq(tasks.toolId, "text-summary")))
+    .where(
+      and(
+        eq(tasks.userId, userId),
+        eq(tasks.id, id),
+        eq(tasks.toolId, "text-summary"),
+      ),
+    )
     .limit(1);
   if (!row) return null;
   return serializeTask(row.task, row.creditStatus);
@@ -216,16 +269,29 @@ export async function finishTask(
     .limit(1);
   if (!hint) return false;
   const apply = async (tx: Tx) => {
-    await tx.select({ id: users.id }).from(users).where(eq(users.id, hint.userId)).for("update");
-    const [task] = await tx.select().from(tasks).where(eq(tasks.id, id)).for("update");
-    if (!task || !["RUNNING", "QUEUED"].includes(task.status) || task.leaseToken !== leaseToken)
+    await tx
+      .select({ id: users.id })
+      .from(users)
+      .where(eq(users.id, hint.userId))
+      .for("update");
+    const [task] = await tx
+      .select()
+      .from(tasks)
+      .where(eq(tasks.id, id))
+      .for("update");
+    if (
+      !task ||
+      !["RUNNING", "QUEUED"].includes(task.status) ||
+      task.leaseToken !== leaseToken
+    )
       return false;
     const [hold] = await tx
       .select()
       .from(creditHolds)
       .where(eq(creditHolds.taskId, id))
       .for("update");
-    if (!hold || hold.status !== "HOLDING") throw new Error("Task credit invariant violated");
+    if (!hold || hold.status !== "HOLDING")
+      throw new Error("Task credit invariant violated");
     const allocations = hold.packageAllocation as Allocation[];
     if (allocations.reduce((n, a) => n + a.credits, 0) !== task.credits)
       throw new Error("Task allocation invariant violated");
@@ -250,9 +316,14 @@ export async function finishTask(
     let released = 0;
     for (const pkg of packages) {
       const credits = allocations.find((a) => a.packageId === pkg.id)!.credits;
-      if (pkg.frozenCredits < credits) throw new Error("Insufficient frozen credits");
+      if (pkg.frozenCredits < credits)
+        throw new Error("Insufficient frozen credits");
       // Restore the original package, including its original expiry. Expired credits are never revived.
-      if (!success && pkg.status === "ACTIVE" && (!pkg.expiredAt || pkg.expiredAt > new Date()))
+      if (
+        !success &&
+        pkg.status === "ACTIVE" &&
+        (!pkg.expiredAt || pkg.expiredAt > new Date())
+      )
         released += credits;
       await tx
         .update(creditPackages)
@@ -304,8 +375,8 @@ export async function finishTask(
       })
       .where(eq(taskAttempts.taskId, id));
     if (finalize) await finalize(tx, task);
-    const{recoverRefundDebtForUser}=await import("./refunds");
-    await recoverRefundDebtForUser(tx,task.userId);
+    const { recoverRefundDebtForUser } = await import("./refunds");
+    await recoverRefundDebtForUser(tx, task.userId);
     return true;
   };
   return externalTx ? apply(externalTx) : db.transaction(apply);
@@ -338,7 +409,9 @@ export async function claimTask(): Promise<Task | null> {
       })
       .where(eq(tasks.id, task.id))
       .returning();
-    await tx.insert(taskAttempts).values({ id: randomUUID(), taskId: task.id, status: "RUNNING" });
+    await tx
+      .insert(taskAttempts)
+      .values({ id: randomUUID(), taskId: task.id, status: "RUNNING" });
     return claimed;
   });
 }
@@ -358,8 +431,10 @@ export async function recoverExpiredTasks() {
     .limit(50);
   for (const task of stale)
     await finishTask(task.id, task.leaseToken, {
-      errorCode: task.status === "QUEUED" ? "QUEUE_TIMEOUT" : "WORKER_INTERRUPTED",
-      errorMessage: "任务等待超时或执行进程中断，冻结积分已释放；未自动重复调用模型。",
+      errorCode:
+        task.status === "QUEUED" ? "QUEUE_TIMEOUT" : "WORKER_INTERRUPTED",
+      errorMessage:
+        "任务等待超时或执行进程中断，冻结积分已释放；未自动重复调用模型。",
     });
   return stale.length;
 }

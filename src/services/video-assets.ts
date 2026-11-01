@@ -7,8 +7,10 @@ import { createReadStream } from "node:fs";
 import { createHash, randomUUID } from "node:crypto";
 import { join } from "node:path";
 import type { IncomingMessage } from "node:http";
+import { siteManifest } from "@/config/site-manifest";
 
-const directory = () => join(process.cwd(), ".local", "generated-videos");
+const directory = () =>
+  join(process.cwd(), siteManifest.isolation.localVideoDirectory);
 export function assetPath(taskId: string) {
   if (!/^[0-9a-f-]{36}$/.test(taskId)) throw Error("Invalid task id");
   return join(directory(), `${taskId}.mp4`);
@@ -37,7 +39,10 @@ export function publicAddress(address: string): boolean {
     !lower.startsWith("2002:")
   );
 }
-export async function safeVideoResponse(value: string, redirects = 0): Promise<IncomingMessage> {
+export async function safeVideoResponse(
+  value: string,
+  redirects = 0,
+): Promise<IncomingMessage> {
   const url = new URL(value);
   const fixture =
     process.env.NODE_ENV !== "production" &&
@@ -47,12 +52,16 @@ export async function safeVideoResponse(value: string, redirects = 0): Promise<I
     url.username ||
     url.password ||
     url.hash ||
-    (!fixture && (url.protocol !== "https:" || (url.port && url.port !== "443")))
+    (!fixture &&
+      (url.protocol !== "https:" || (url.port && url.port !== "443")))
   )
     throw Error("Unsafe video source");
   if (fixture && url.protocol !== "http:") throw Error("Invalid fixture URL");
   const addresses = await lookup(url.hostname, { all: true });
-  if (!addresses.length || (!fixture && addresses.some((a) => !publicAddress(a.address))))
+  if (
+    !addresses.length ||
+    (!fixture && addresses.some((a) => !publicAddress(a.address)))
+  )
     throw Error("Private source addresses are not permitted");
   const target = addresses[0];
   const response = await new Promise<IncomingMessage>((resolve, reject) => {
@@ -63,7 +72,11 @@ export async function safeVideoResponse(value: string, redirects = 0): Promise<I
         lookup: ((
           _hostname: unknown,
           _options: unknown,
-          callback: (error: Error | null, value: unknown, family?: number) => void,
+          callback: (
+            error: Error | null,
+            value: unknown,
+            family?: number,
+          ) => void,
         ) =>
           (_options as { all?: boolean })?.all
             ? callback(null, [target])
@@ -96,7 +109,8 @@ export async function storeVideo(taskId: string, sourceUrl: string) {
     const existing = await stat(destination);
     if (existing.size > 0) {
       const hash = createHash("sha256");
-      for await (const chunk of createReadStream(destination)) hash.update(chunk);
+      for await (const chunk of createReadStream(destination))
+        hash.update(chunk);
       return {
         storageKey: `${taskId}.mp4`,
         mime: "video/mp4",
@@ -107,7 +121,11 @@ export async function storeVideo(taskId: string, sourceUrl: string) {
   } catch {}
   const response = await safeVideoResponse(sourceUrl);
   const type = (response.headers["content-type"] || "").split(";")[0];
-  if (!["video/mp4", "application/octet-stream", "binary/octet-stream"].includes(type)) {
+  if (
+    !["video/mp4", "application/octet-stream", "binary/octet-stream"].includes(
+      type,
+    )
+  ) {
     response.destroy();
     throw Error("Unsupported video content type");
   }
@@ -130,11 +148,13 @@ export async function storeVideo(taskId: string, sourceUrl: string) {
       const value = Buffer.from(chunk);
       bytes += value.length;
       if (bytes > maxBytes) throw Error("Video size exceeds limit");
-      if (header.length < 16) header = Buffer.concat([header, value]).subarray(0, 16);
+      if (header.length < 16)
+        header = Buffer.concat([header, value]).subarray(0, 16);
       hash.update(value);
       await file.writeFile(value);
     }
-    if (bytes < 24 || header.toString("ascii", 4, 8) !== "ftyp") throw Error("Invalid MP4 result");
+    if (bytes < 24 || header.toString("ascii", 4, 8) !== "ftyp")
+      throw Error("Invalid MP4 result");
     await file.sync();
     await file.close();
     await rename(temporary, destination);

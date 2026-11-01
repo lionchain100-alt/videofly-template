@@ -1,3 +1,4 @@
+import { localePath } from "@/config/site-manifest";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getActiveSessionUser } from "./active-user";
@@ -13,5 +14,5 @@ export async function isAdmin() {
   return !!user?.isAdmin && !!user.emailVerified;
 }
 export function getLoginRedirect(locale: Locale = "en"): string {
-  return `/${locale}/login`;
+  return localePath(locale, `/login`);
 }

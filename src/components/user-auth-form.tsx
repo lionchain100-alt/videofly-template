@@ -1,4 +1,5 @@
 "use client";
+import { localePath } from "@/config/site-manifest";
 
 import * as React from "react";
 import { useSearchParams } from "next/navigation";
@@ -50,11 +51,13 @@ export function UserAuthForm({
     try {
       await authClient.signIn.magicLink({
         email: data.email.toLowerCase(),
-        callbackURL: searchParams?.get("from") ?? `/${lang}/my-creations`,
+        callbackURL:
+          searchParams?.get("from") ?? localePath(lang, `/my-creations`),
       });
 
       toast.success("Check your email", {
-        description: "We sent you a login link. Be sure to check your spam too.",
+        description:
+          "We sent you a login link. Be sure to check your spam too.",
       });
     } catch (error) {
       console.error("Error during sign in:", error);
@@ -120,7 +123,8 @@ export function UserAuthForm({
           authClient.signIn
             .social({
               provider: "google",
-              callbackURL: searchParams?.get("from") ?? `/${lang}/my-creations`,
+              callbackURL:
+                searchParams?.get("from") ?? localePath(lang, `/my-creations`),
             })
             .catch((error) => {
               console.error("Google signIn error:", error);

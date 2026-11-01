@@ -5,20 +5,15 @@ import { magicLink } from "better-auth/plugins";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
 
-import {
-  CreditTransType,
-  creditService,
-} from "@/services/credit";
-import {
-  getProductById,
-  getProductExpiryDays,
-} from "@/config/credits";
+import { CreditTransType, creditService } from "@/services/credit";
+import { getProductById, getProductExpiryDays } from "@/config/credits";
 
 import { creditPackages, db, users } from "@/db";
 import * as schema from "@/db/schema";
 import { env } from "./env.mjs";
 import { eq } from "drizzle-orm";
 import { localTestAuthEnabled } from "./local-test";
+import { siteManifest } from "@/config/site-manifest";
 
 const localTestAuth = localTestAuthEnabled();
 
@@ -28,13 +23,13 @@ const toLogString = (value: unknown) => {
   const normalized =
     value instanceof Error
       ? {
-        name: value.name,
-        message: value.message,
-        stack: value.stack,
-        status: (value as unknown as Record<string, unknown>).status,
-        statusText: (value as unknown as Record<string, unknown>).statusText,
-        error: (value as unknown as Record<string, unknown>).error,
-      }
+          name: value.name,
+          message: value.message,
+          stack: value.stack,
+          status: (value as unknown as Record<string, unknown>).status,
+          statusText: (value as unknown as Record<string, unknown>).statusText,
+          error: (value as unknown as Record<string, unknown>).error,
+        }
       : value;
   const seen = new WeakSet();
   try {
@@ -55,15 +50,21 @@ const toLogString = (value: unknown) => {
 const debugLogger =
   process.env.NODE_ENV === "development"
     ? {
-      level: "debug" as const,
-      log: (level: "debug" | "info" | "warn" | "error", message: string, ...args: unknown[]) => {
-        const suffix = args.length ? ` ${args.map(toLogString).join(" ")}` : "";
-        const line = `[Better Auth] ${message}${suffix}`.trimEnd();
-        if (level === "error") console.error(line);
-        else if (level === "warn") console.warn(line);
-        else console.log(line);
-      },
-    }
+        level: "debug" as const,
+        log: (
+          level: "debug" | "info" | "warn" | "error",
+          message: string,
+          ...args: unknown[]
+        ) => {
+          const suffix = args.length
+            ? ` ${args.map(toLogString).join(" ")}`
+            : "";
+          const line = `[Better Auth] ${message}${suffix}`.trimEnd();
+          if (level === "error") console.error(line);
+          else if (level === "warn") console.warn(line);
+          else console.log(line);
+        },
+      }
     : undefined;
 
 type AuthPlugin =
@@ -74,49 +75,53 @@ type AuthPlugin =
 const plugins: AuthPlugin[] = [
   // Avoid Next.js dev DataCloneError from cookies() in some environments.
   ...(process.env.NODE_ENV === "development" ? [] : [nextCookies()]),
-  ...(localTestAuth ? [] : [magicLink({
-    sendMagicLink: async ({ email, url }) => {
-      // Dynamic import to avoid Edge Runtime issues in middleware
-      const { MagicLinkEmail } = await import(
-        "@/lib/emails/magic-link-email"
-      );
-      const { resend } = await import("@/lib/email");
-      const { siteConfig } = await import("@/config/site");
+  ...(localTestAuth
+    ? []
+    : [
+        magicLink({
+          sendMagicLink: async ({ email, url }) => {
+            // Dynamic import to avoid Edge Runtime issues in middleware
+            const { MagicLinkEmail } = await import(
+              "@/lib/emails/magic-link-email"
+            );
+            const { resend } = await import("@/lib/email");
+            const { siteConfig } = await import("@/config/site");
 
-      // Check if user exists to determine email type
-      const [existingUser] = await db
-        .select({ name: users.name, emailVerified: users.emailVerified })
-        .from(users)
-        .where(eq(users.email, email))
-        .limit(1);
+            // Check if user exists to determine email type
+            const [existingUser] = await db
+              .select({ name: users.name, emailVerified: users.emailVerified })
+              .from(users)
+              .where(eq(users.email, email))
+              .limit(1);
 
-      const userVerified = !!existingUser?.emailVerified;
-      const authSubject = userVerified
-        ? `Sign-in link for ${(siteConfig as { name: string }).name}`
-        : "Activate your account";
+            const userVerified = !!existingUser?.emailVerified;
+            const authSubject = userVerified
+              ? `Sign-in link for ${(siteConfig as { name: string }).name}`
+              : "Activate your account";
 
-      try {
-        await resend.emails.send({
-          from: env.RESEND_FROM,
-          to: email,
-          subject: authSubject,
-          react: MagicLinkEmail({
-            firstName: existingUser?.name ?? "",
-            actionUrl: url,
-            mailType: userVerified ? "login" : "register",
-            siteName: (siteConfig as { name: string }).name,
-          }),
-          headers: {
-            "X-Entity-Ref-ID": new Date().getTime() + "",
+            try {
+              await resend.emails.send({
+                from: env.RESEND_FROM,
+                to: email,
+                subject: authSubject,
+                react: MagicLinkEmail({
+                  firstName: existingUser?.name ?? "",
+                  actionUrl: url,
+                  mailType: userVerified ? "login" : "register",
+                  siteName: (siteConfig as { name: string }).name,
+                }),
+                headers: {
+                  "X-Entity-Ref-ID": new Date().getTime() + "",
+                },
+              });
+            } catch (error) {
+              console.error("Failed to send magic link email:", error);
+              throw error;
+            }
           },
-        });
-      } catch (error) {
-        console.error("Failed to send magic link email:", error);
-        throw error;
-      }
-    },
-    expiresIn: 300, // 5 minutes
-  })]),
+          expiresIn: 300, // 5 minutes
+        }),
+      ]),
 ];
 
 if (env.CREEM_API_KEY) {
@@ -149,7 +154,9 @@ if (env.CREEM_API_KEY) {
         const userId = meta.referenceId as string | undefined;
 
         if (!userId) {
-          console.error(`[Creem] No referenceId in metadata, cannot process subscription`);
+          console.error(
+            `[Creem] No referenceId in metadata, cannot process subscription`,
+          );
           return;
         }
 
@@ -181,7 +188,9 @@ if (env.CREEM_API_KEY) {
 
         const productName = product?.name ?? productConfig.id;
 
-        console.log(`[Creem] Processing subscription: ${productName}, credits: ${credits}, userId: ${userId}`);
+        console.log(
+          `[Creem] Processing subscription: ${productName}, credits: ${credits}, userId: ${userId}`,
+        );
 
         await creditService.recharge({
           userId,
@@ -205,7 +214,9 @@ if (env.CREEM_API_KEY) {
         // billing_type 可能是 "onetime" 或 "one-time" 取决于 API 版本
         const productType = checkoutData.product?.billing_type as string;
         if (productType !== "onetime" && productType !== "one-time") {
-          console.log(`[Creem] Skipping checkout.completed for subscription product`);
+          console.log(
+            `[Creem] Skipping checkout.completed for subscription product`,
+          );
           return;
         }
 
@@ -220,16 +231,19 @@ if (env.CREEM_API_KEY) {
         if (credits <= 0) return;
 
         // 从 metadata 获取用户 ID
-        const referenceId = checkoutData.metadata?.referenceId as string | undefined;
+        const referenceId = checkoutData.metadata?.referenceId as
+          | string
+          | undefined;
         if (!referenceId) {
           console.error(`[Creem] No referenceId in checkout metadata`);
           return;
         }
 
         // 使用 order ID 作为唯一标识
-        const orderId = typeof checkoutData.order === "object"
-          ? checkoutData.order?.id
-          : checkoutData.order;
+        const orderId =
+          typeof checkoutData.order === "object"
+            ? checkoutData.order?.id
+            : checkoutData.order;
         const orderNo = orderId
           ? `creem_${orderId}`
           : `creem_onetime_${referenceId}_${Date.now()}`;
@@ -248,7 +262,9 @@ if (env.CREEM_API_KEY) {
 
         const productName = product?.name ?? productConfig.id;
 
-        console.log(`[Creem] Processing one-time purchase: ${productName}, credits: ${credits}, userId: ${referenceId}`);
+        console.log(
+          `[Creem] Processing one-time purchase: ${productName}, credits: ${credits}, userId: ${referenceId}`,
+        );
 
         await creditService.recharge({
           userId: referenceId,
@@ -261,11 +277,12 @@ if (env.CREEM_API_KEY) {
 
         console.log(`[Creem] One-time purchase completed: ${orderNo}`);
       },
-    })
+    }),
   );
 }
 
 export const auth = betterAuth({
+  advanced: { cookiePrefix: siteManifest.isolation.cookiePrefix },
   baseURL: env.NEXT_PUBLIC_APP_URL,
   basePath: "/api/auth",
   secret: env.BETTER_AUTH_SECRET,
@@ -293,8 +310,15 @@ export const auth = betterAuth({
     session: {
       create: {
         before: async (session) => {
-          const [user] = await db.select({ disabled: users.disabled }).from(users).where(eq(users.id, session.userId)).limit(1);
-          if (!user || user.disabled) throw new APIError("FORBIDDEN", { message: "该账户已停用，请联系管理员" });
+          const [user] = await db
+            .select({ disabled: users.disabled })
+            .from(users)
+            .where(eq(users.id, session.userId))
+            .limit(1);
+          if (!user || user.disabled)
+            throw new APIError("FORBIDDEN", {
+              message: "该账户已停用，请联系管理员",
+            });
           return { data: session };
         },
       },
@@ -322,13 +346,15 @@ export const auth = betterAuth({
   },
 
   // Google OAuth
-  socialProviders: localTestAuth ? {} : {
-    google: {
-      clientId: env.GOOGLE_CLIENT_ID,
-      clientSecret: env.GOOGLE_CLIENT_SECRET,
-      prompt: "select_account", // Always show account picker
-    },
-  },
+  socialProviders: localTestAuth
+    ? {}
+    : {
+        google: {
+          clientId: env.GOOGLE_CLIENT_ID,
+          clientSecret: env.GOOGLE_CLIENT_SECRET,
+          prompt: "select_account", // Always show account picker
+        },
+      },
 
   // Custom user fields
   user: {

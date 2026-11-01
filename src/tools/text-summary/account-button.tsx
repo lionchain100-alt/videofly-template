@@ -1,4 +1,6 @@
 "use client";
+import { localePath } from "@/config/site-manifest";
+
 import { useEffect, useState } from "react";
 import { useCreditsStore } from "@/stores/credits-store";
 import styles from "@/ui-presets/site.module.css";
@@ -32,7 +34,7 @@ export function AccountButton({ locale }: { locale: "zh" | "en" }) {
       className={styles.secondary}
       onClick={() =>
         window.location.assign(
-          `${locale === "zh" ? "/zh" : ""}/${authenticated ? "credits" : "login"}`,
+          localePath(locale, authenticated ? "/credits" : "/login"),
         )
       }
     >

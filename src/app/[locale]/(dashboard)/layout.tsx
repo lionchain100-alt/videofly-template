@@ -1,3 +1,4 @@
+import { localePath } from "@/config/site-manifest";
 import { notFound } from "next/navigation";
 
 import { requireAuth } from "@/lib/auth";
@@ -22,7 +23,7 @@ export default async function DashboardLayout({
   params,
 }: DashboardLayoutProps) {
   const { locale } = await params;
-  const user = await requireAuth(`/${locale}/login`);
+  const user = await requireAuth(localePath(locale, `/login`));
 
   return (
     <div className="min-h-screen bg-background">

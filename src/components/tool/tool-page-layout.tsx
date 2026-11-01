@@ -1,3 +1,6 @@
+"use client";
+import { localePath } from "@/config/site-manifest";
+
 /**
  * Tool Page Layout Component
  *
@@ -10,8 +13,6 @@
  * SEO 友好，支持服务端渲染
  */
 
-"use client";
-
 import { useState, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -20,13 +21,19 @@ import { useCredits } from "@/stores/credits-store";
 import { useVideoPolling } from "@/hooks/use-video-polling";
 import { useNotificationDeduplication } from "@/hooks/use-notification-deduplication";
 import { videoTaskStorage } from "@/lib/video-task-storage";
-import { videoHistoryStorage, type VideoHistoryItem } from "@/lib/video-history-storage";
+import {
+  videoHistoryStorage,
+  type VideoHistoryItem,
+} from "@/lib/video-history-storage";
 import { useUpgradeModal } from "@/hooks/use-upgrade-modal";
 import { UpgradeModal } from "@/components/upgrade/upgrade-modal";
 import { siteConfig } from "@/config/site";
 import type { Video } from "@/db";
 import type { ToolPageConfig } from "@/config/tool-pages";
-import { GeneratorPanel, type GeneratorData } from "@/components/tool/generator-panel";
+import {
+  GeneratorPanel,
+  type GeneratorData,
+} from "@/components/tool/generator-panel";
 import { uploadImage } from "@/lib/video-api";
 import { ToolLandingPage } from "@/components/tool/tool-landing-page";
 import { VideoHistoryPanel } from "@/components/tool/video-history-panel";
@@ -85,9 +92,11 @@ export function ToolPageLayout({
 }: ToolPageLayoutProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { balance, optimisticFreeze, optimisticRelease, invalidate } = useCredits();
+  const { balance, optimisticFreeze, optimisticRelease, invalidate } =
+    useCredits();
   const { openModal } = useUpgradeModal();
-  const { shouldNotify, markNotified, resetNotification } = useNotificationDeduplication();
+  const { shouldNotify, markNotified, resetNotification } =
+    useNotificationDeduplication();
   const videoIdFromQuery = searchParams.get("id");
   const NOTIFICATION_ASKED_KEY = "videofly_notification_asked";
   const tNotify = useTranslations("Notifications");
@@ -99,7 +108,9 @@ export function ToolPageLayout({
   const [currentVideos, setCurrentVideos] = useState<Video[]>([]);
   const [generatingIds, setGeneratingIds] = useState<string[]>([]);
   const [historyItems, setHistoryItems] = useState<VideoHistoryItem[]>([]);
-  const [activeTab, setActiveTab] = useState<"generator" | "result">("generator");
+  const [activeTab, setActiveTab] = useState<"generator" | "result">(
+    "generator",
+  );
   const [prefillData, setPrefillData] = useState<{
     prompt?: string;
     model?: string;
@@ -110,7 +121,9 @@ export function ToolPageLayout({
   } | null>(null);
 
   const addGeneratingId = useCallback((videoId: string) => {
-    setGeneratingIds((prev) => (prev.includes(videoId) ? prev : [videoId, ...prev]));
+    setGeneratingIds((prev) =>
+      prev.includes(videoId) ? prev : [videoId, ...prev],
+    );
   }, []);
 
   const removeGeneratingId = useCallback((videoId: string) => {
@@ -128,7 +141,7 @@ export function ToolPageLayout({
           thumbnailUrl: video.thumbnailUrl || undefined,
           duration: video.duration || undefined,
         },
-        user?.id
+        user?.id,
       );
       setHistoryItems(videoHistoryStorage.getHistory(user?.id));
 
@@ -147,7 +160,7 @@ export function ToolPageLayout({
         videoTaskStorage.updateTask(
           video.uuid,
           { status: "completed" },
-          user.id
+          user.id,
         );
       }
 
@@ -157,9 +170,10 @@ export function ToolPageLayout({
       }
 
       // 准备提示词（截断过长的提示词）
-      const promptPreview = video.prompt?.length > 50
-        ? `${video.prompt.slice(0, 50)}...`
-        : video.prompt || "";
+      const promptPreview =
+        video.prompt?.length > 50
+          ? `${video.prompt.slice(0, 50)}...`
+          : video.prompt || "";
 
       // 显示通知（浏览器通知或 toast）
       if (typeof window !== "undefined" && "Notification" in window) {
@@ -169,15 +183,17 @@ export function ToolPageLayout({
               tNotify("videoReadyTitle", { siteName: siteConfig.name }),
               {
                 body: tNotify("videoReadyBody", { prompt: promptPreview }),
-              }
+              },
             );
           } catch (error) {
             console.warn("Notification dispatch failed:", error);
             toast.success(
               tNotify("videoReadyTitle", { siteName: siteConfig.name }),
               {
-                description: tNotify("videoReadyBody", { prompt: promptPreview }),
-              }
+                description: tNotify("videoReadyBody", {
+                  prompt: promptPreview,
+                }),
+              },
             );
           }
         } else {
@@ -187,7 +203,7 @@ export function ToolPageLayout({
               description: promptPreview
                 ? tNotify("videoReadyBody", { prompt: promptPreview })
                 : tNotify("videoReadyBodyShort"),
-            }
+            },
           );
         }
       } else {
@@ -197,14 +213,21 @@ export function ToolPageLayout({
             description: promptPreview
               ? tNotify("videoReadyBody", { prompt: promptPreview })
               : tNotify("videoReadyBodyShort"),
-          }
+          },
         );
       }
 
       // 标记为已通知，防止其他标签页重复通知
       markNotified(video.uuid);
     },
-    [removeGeneratingId, user?.id, invalidate, tNotify, shouldNotify, markNotified]
+    [
+      removeGeneratingId,
+      user?.id,
+      invalidate,
+      tNotify,
+      shouldNotify,
+      markNotified,
+    ],
   );
 
   const handleFailed = useCallback(
@@ -215,7 +238,7 @@ export function ToolPageLayout({
         {
           status: "failed",
         },
-        user?.id
+        user?.id,
       );
       setHistoryItems(videoHistoryStorage.getHistory(user?.id));
 
@@ -224,11 +247,7 @@ export function ToolPageLayout({
       // 刷新积分（生成失败，积分已释放）
       invalidate();
       if (user?.id) {
-        videoTaskStorage.updateTask(
-          videoId,
-          { status: "failed" },
-          user.id
-        );
+        videoTaskStorage.updateTask(videoId, { status: "failed" }, user.id);
       }
       const notificationKey = `${videoId}:failed`;
       if (shouldNotify(notificationKey)) {
@@ -237,7 +256,7 @@ export function ToolPageLayout({
         markNotified(notificationKey);
       }
     },
-    [removeGeneratingId, user?.id, invalidate, shouldNotify, markNotified]
+    [removeGeneratingId, user?.id, invalidate, shouldNotify, markNotified],
   );
 
   const { startPolling, stopPolling, isPolling } = useVideoPolling({
@@ -312,9 +331,12 @@ export function ToolPageLayout({
     if (!videoIdFromQuery) return;
 
     // 立即添加到历史记录（即使是正在生成中）
-    const existingItem = videoHistoryStorage.getHistory(user.id).find(item => item.uuid === videoIdFromQuery);
+    const existingItem = videoHistoryStorage
+      .getHistory(user.id)
+      .find((item) => item.uuid === videoIdFromQuery);
     const existingStatus = existingItem?.status?.toLowerCase();
-    const isTerminalStatus = existingStatus === "completed" || existingStatus === "failed";
+    const isTerminalStatus =
+      existingStatus === "completed" || existingStatus === "failed";
     if (!existingItem) {
       const newItem: VideoHistoryItem = {
         uuid: videoIdFromQuery,
@@ -341,7 +363,7 @@ export function ToolPageLayout({
       removeGeneratingId(videoIdFromQuery);
       stopPolling(videoIdFromQuery);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [videoIdFromQuery, user?.id]);
 
   // SSE: listen for backend completion events
@@ -387,141 +409,153 @@ export function ToolPageLayout({
   }, [user?.id, handleCompleted, handleFailed, stopPolling]);
 
   // 处理生成提交
-  const handleSubmit = useCallback(async (data: GeneratorData) => {
-    // 检查登录
-    if (!user) {
-      router.push(`/${locale}/login`);
-      return;
-    }
+  const handleSubmit = useCallback(
+    async (data: GeneratorData) => {
+      // 检查登录
+      if (!user) {
+        router.push(localePath(locale, `/login`));
+        return;
+      }
 
-    // 检查积分
-    const requiredCredits = data.estimatedCredits || 0;
-    const availableCredits = balance?.availableCredits ?? 0;
+      // 检查积分
+      const requiredCredits = data.estimatedCredits || 0;
+      const availableCredits = balance?.availableCredits ?? 0;
 
-    if (availableCredits < requiredCredits) {
-      // 打开升级弹窗
-      openModal({
-        reason: "insufficient_credits",
-        requiredCredits,
-      });
-      return;
-    }
+      if (availableCredits < requiredCredits) {
+        // 打开升级弹窗
+        openModal({
+          reason: "insufficient_credits",
+          requiredCredits,
+        });
+        return;
+      }
 
-    // 乐观更新：立即冻结积分（UI 立即反映变化）
-    optimisticFreeze(requiredCredits);
+      // 乐观更新：立即冻结积分（UI 立即反映变化）
+      optimisticFreeze(requiredCredits);
 
-    // 开始提交
-    setIsSubmitting(true);
+      // 开始提交
+      setIsSubmitting(true);
 
-    try {
-      if (typeof window !== "undefined" && "Notification" in window) {
-        const asked = localStorage.getItem(NOTIFICATION_ASKED_KEY);
-        if (!asked && Notification.permission === "default") {
-          localStorage.setItem(NOTIFICATION_ASKED_KEY, "1");
-          toast.info(tNotify("generationWillNotify"), {
-            description: tNotify("notificationDescription"),
-            duration: Number.POSITIVE_INFINITY, // 保持显示直到用户操作
-            closeButton: true,  // 显示关闭按钮
-            action: {
-              label: tNotify("enableNotifications"),
-              onClick: () => {
-                Notification.requestPermission().catch((error) => {
-                  console.warn("Notification permission request failed:", error);
-                });
+      try {
+        if (typeof window !== "undefined" && "Notification" in window) {
+          const asked = localStorage.getItem(NOTIFICATION_ASKED_KEY);
+          if (!asked && Notification.permission === "default") {
+            localStorage.setItem(NOTIFICATION_ASKED_KEY, "1");
+            toast.info(tNotify("generationWillNotify"), {
+              description: tNotify("notificationDescription"),
+              duration: Number.POSITIVE_INFINITY, // 保持显示直到用户操作
+              closeButton: true, // 显示关闭按钮
+              action: {
+                label: tNotify("enableNotifications"),
+                onClick: () => {
+                  Notification.requestPermission().catch((error) => {
+                    console.warn(
+                      "Notification permission request failed:",
+                      error,
+                    );
+                  });
+                },
               },
-            },
+            });
+          }
+        }
+      } catch (error) {
+        console.warn("Notification permission request failed:", error);
+      }
+
+      try {
+        const selectedMode = config.generator.mode || toolRoute;
+        const imageUrl = data.imageFile
+          ? await uploadImage(data.imageFile)
+          : data.imageUrl;
+        const imageUrls = imageUrl ? [imageUrl] : undefined;
+        const response = await fetch("/api/v1/video/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            prompt: data.prompt,
+            model: data.model,
+            mode: selectedMode,
+            duration: data.duration,
+            aspectRatio: data.aspectRatio,
+            quality: data.quality,
+            outputNumber: data.outputNumber ?? 1,
+            generateAudio: data.generateAudio,
+            imageUrls,
+            imageUrl,
+          }),
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(
+            error?.error?.message ||
+              error?.message ||
+              "Failed to generate video",
+          );
+        }
+
+        const result = await response.json();
+        const videoUuid = result.data.videoUuid as string;
+
+        toast.success("Generation started");
+
+        // 添加到历史记录
+        videoHistoryStorage.addHistory({
+          uuid: videoUuid,
+          userId: user.id,
+          prompt: data.prompt,
+          model: data.model,
+          status: "generating",
+          creditsUsed: data.estimatedCredits,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        });
+        setHistoryItems(videoHistoryStorage.getHistory(user.id));
+
+        setActiveTab("result");
+        addGeneratingId(videoUuid);
+        startPolling(videoUuid);
+
+        if (user?.id) {
+          videoTaskStorage.addTask({
+            userId: user.id,
+            videoId: videoUuid,
+            taskId: result.data.taskId,
+            prompt: data.prompt,
+            model: data.model,
+            mode: selectedMode,
+            status: "generating",
+            createdAt: Date.now(),
+            notified: false,
           });
         }
+      } catch (error) {
+        console.error("Generation error:", error);
+        // API 调用失败，回滚乐观更新（释放积分）
+        const requiredCredits = data.estimatedCredits || 0;
+        optimisticRelease(requiredCredits);
+        // 显示错误提示
+        toast.error(
+          error instanceof Error ? error.message : "Failed to generate video",
+        );
       }
-    } catch (error) {
-      console.warn("Notification permission request failed:", error);
-    }
-
-    try {
-      const selectedMode = config.generator.mode || toolRoute;
-      const imageUrl = data.imageFile
-        ? await uploadImage(data.imageFile)
-        : data.imageUrl;
-      const imageUrls = imageUrl ? [imageUrl] : undefined;
-      const response = await fetch("/api/v1/video/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          prompt: data.prompt,
-          model: data.model,
-          mode: selectedMode,
-          duration: data.duration,
-          aspectRatio: data.aspectRatio,
-          quality: data.quality,
-          outputNumber: data.outputNumber ?? 1,
-          generateAudio: data.generateAudio,
-          imageUrls,
-          imageUrl,
-        }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error?.error?.message || error?.message || "Failed to generate video");
-      }
-
-      const result = await response.json();
-      const videoUuid = result.data.videoUuid as string;
-
-      toast.success("Generation started");
-
-      // 添加到历史记录
-      videoHistoryStorage.addHistory({
-        uuid: videoUuid,
-        userId: user.id,
-        prompt: data.prompt,
-        model: data.model,
-        status: "generating",
-        creditsUsed: data.estimatedCredits,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      });
-      setHistoryItems(videoHistoryStorage.getHistory(user.id));
-
-      setActiveTab("result");
-      addGeneratingId(videoUuid);
-      startPolling(videoUuid);
-
-      if (user?.id) {
-        videoTaskStorage.addTask({
-          userId: user.id,
-          videoId: videoUuid,
-          taskId: result.data.taskId,
-          prompt: data.prompt,
-          model: data.model,
-          mode: selectedMode,
-          status: "generating",
-          createdAt: Date.now(),
-          notified: false,
-        });
-      }
-    } catch (error) {
-      console.error("Generation error:", error);
-      // API 调用失败，回滚乐观更新（释放积分）
-      const requiredCredits = data.estimatedCredits || 0;
-      optimisticRelease(requiredCredits);
-      // 显示错误提示
-      toast.error(error instanceof Error ? error.message : "Failed to generate video");
-    }
-    setIsSubmitting(false);
-  }, [
-    user,
-    locale,
-    router,
-    balance,
-    config.generator.mode,
-    toolRoute,
-    startPolling,
-    addGeneratingId,
-    optimisticFreeze,
-    optimisticRelease,
-    tNotify,
-  ]);
+      setIsSubmitting(false);
+    },
+    [
+      user,
+      locale,
+      router,
+      balance,
+      config.generator.mode,
+      toolRoute,
+      startPolling,
+      addGeneratingId,
+      optimisticFreeze,
+      optimisticRelease,
+      tNotify,
+    ],
+  );
 
   // 处理重新生成
   const handleRegenerate = useCallback(() => {
@@ -529,53 +563,61 @@ export function ToolPageLayout({
   }, []);
 
   // 处理删除视频
-  const handleDelete = useCallback(async (uuid: string) => {
-    try {
-      const response = await fetch(`/api/v1/video/${uuid}`, {
-        method: "DELETE",
-      });
-      if (!response.ok) {
-        throw new Error("Failed to delete video");
+  const handleDelete = useCallback(
+    async (uuid: string) => {
+      try {
+        const response = await fetch(`/api/v1/video/${uuid}`, {
+          method: "DELETE",
+        });
+        if (!response.ok) {
+          throw new Error("Failed to delete video");
+        }
+
+        // 从历史记录中删除
+        videoHistoryStorage.removeHistory(uuid, user?.id);
+        setHistoryItems(videoHistoryStorage.getHistory(user?.id));
+
+        // 更新 currentVideos（兼容旧逻辑）
+        setCurrentVideos((prev) => prev.filter((v) => v.uuid !== uuid));
+        toast.success("Video deleted successfully");
+      } catch (error) {
+        console.error("Delete error:", error);
+        toast.error("Failed to delete video");
       }
-
-      // 从历史记录中删除
-      videoHistoryStorage.removeHistory(uuid, user?.id);
-      setHistoryItems(videoHistoryStorage.getHistory(user?.id));
-
-      // 更新 currentVideos（兼容旧逻辑）
-      setCurrentVideos((prev) => prev.filter((v) => v.uuid !== uuid));
-      toast.success("Video deleted successfully");
-    } catch (error) {
-      console.error("Delete error:", error);
-      toast.error("Failed to delete video");
-    }
-  }, [user?.id]);
+    },
+    [user?.id],
+  );
 
   // 处理重试失败的视频
-  const handleRetry = useCallback(async (uuid: string) => {
-    try {
-      const response = await fetch(`/api/v1/video/${uuid}/retry`, {
-        method: "POST",
-      });
-      if (!response.ok) {
-        throw new Error("Failed to retry video");
+  const handleRetry = useCallback(
+    async (uuid: string) => {
+      try {
+        const response = await fetch(`/api/v1/video/${uuid}/retry`, {
+          method: "POST",
+        });
+        if (!response.ok) {
+          throw new Error("Failed to retry video");
+        }
+        await response.json();
+        resetNotification(uuid);
+        resetNotification(`${uuid}:failed`);
+        addGeneratingId(uuid);
+        startPolling(uuid);
+        setCurrentVideos((prev) =>
+          prev.map((v) =>
+            v.uuid === uuid
+              ? { ...v, status: "GENERATING", errorMessage: null }
+              : v,
+          ),
+        );
+        toast.success("Video retry started");
+      } catch (error) {
+        console.error("Retry error:", error);
+        toast.error("Failed to retry video");
       }
-      await response.json();
-      resetNotification(uuid);
-      resetNotification(`${uuid}:failed`);
-      addGeneratingId(uuid);
-      startPolling(uuid);
-      setCurrentVideos((prev) =>
-        prev.map((v) =>
-          v.uuid === uuid ? { ...v, status: "GENERATING", errorMessage: null } : v
-        )
-      );
-      toast.success("Video retry started");
-    } catch (error) {
-      console.error("Retry error:", error);
-      toast.error("Failed to retry video");
-    }
-  }, [addGeneratingId, startPolling, resetNotification]);
+    },
+    [addGeneratingId, startPolling, resetNotification],
+  );
 
   // 移动端：显示标签导航
   const showMobileTabs = true;
@@ -591,20 +633,22 @@ export function ToolPageLayout({
               <button
                 type="button"
                 onClick={() => setActiveTab("generator")}
-                className={`flex-1 py-3 text-sm font-medium transition-colors ${activeTab === "generator"
-                  ? "text-foreground border-b-2 border-primary"
-                  : "text-muted-foreground hover:text-foreground"
-                  }`}
+                className={`flex-1 py-3 text-sm font-medium transition-colors ${
+                  activeTab === "generator"
+                    ? "text-foreground border-b-2 border-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
               >
                 {tTool("generator")}
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab("result")}
-                className={`flex-1 py-3 text-sm font-medium transition-colors ${activeTab === "result"
-                  ? "text-foreground border-b-2 border-primary"
-                  : "text-muted-foreground hover:text-foreground"
-                  }`}
+                className={`flex-1 py-3 text-sm font-medium transition-colors ${
+                  activeTab === "result"
+                    ? "text-foreground border-b-2 border-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
               >
                 {tTool("result")}
               </button>
@@ -616,12 +660,20 @@ export function ToolPageLayout({
           <div className="flex-1 overflow-y-auto custom-scrollbar">
             {/* Tool Area Container */}
             <div className="container mx-auto max-w-[1600px] p-6 lg:p-8">
-              <div className={`flex flex-col lg:flex-row gap-6 ${activeTab === "generator" ? "" : "lg:flex"}`}>
-
+              <div
+                className={`flex flex-col lg:flex-row gap-6 ${activeTab === "generator" ? "" : "lg:flex"}`}
+              >
                 {/* Generator Panel Side */}
-                <div className={`${activeTab === "generator" ? "block" : "hidden"} lg:block w-full lg:w-[380px] shrink-0`}>
+                <div
+                  className={`${activeTab === "generator" ? "block" : "hidden"} lg:block w-full lg:w-[380px] shrink-0`}
+                >
                   <GeneratorPanel
-                    toolType={toolRoute as "image-to-video" | "text-to-video" | "reference-to-video"}
+                    toolType={
+                      toolRoute as
+                        | "image-to-video"
+                        | "text-to-video"
+                        | "reference-to-video"
+                    }
                     isLoading={isSubmitting}
                     onSubmit={handleSubmit}
                     availableModelIds={config.generator.models.available}
@@ -636,27 +688,45 @@ export function ToolPageLayout({
                 </div>
 
                 {/* Result/Preview Side */}
-                <div className={`${activeTab === "result" ? "block" : "hidden"} lg:block flex-1 min-h-[500px] rounded-2xl border border-border bg-muted/20 overflow-hidden relative`}>
+                <div
+                  className={`${activeTab === "result" ? "block" : "hidden"} lg:block flex-1 min-h-[500px] rounded-2xl border border-border bg-muted/20 overflow-hidden relative`}
+                >
                   {/* Preview Placeholder for Unauthenticated Users */}
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-8 text-muted-foreground">
                     <div className="w-16 h-16 rounded-full bg-muted/50 mb-4 flex items-center justify-center">
-                      <svg className="w-8 h-8 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      <svg
+                        className="w-8 h-8 opacity-50"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
                       </svg>
                     </div>
-                    <h3 className="text-lg font-medium mb-2">Detailed Preview</h3>
-                    <p className="text-sm max-w-xs">Login to generate and view your high-quality AI videos.</p>
+                    <h3 className="text-lg font-medium mb-2">
+                      Detailed Preview
+                    </h3>
+                    <p className="text-sm max-w-xs">
+                      Login to generate and view your high-quality AI videos.
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Landing Page Content */}
-            <ToolLandingPage
-              config={config}
-              locale={locale}
-            />
+            <ToolLandingPage config={config} locale={locale} />
           </div>
         </div>
 
@@ -676,20 +746,22 @@ export function ToolPageLayout({
             <button
               type="button"
               onClick={() => setActiveTab("generator")}
-              className={`flex-1 py-3 text-sm font-medium transition-colors ${activeTab === "generator"
-                ? "text-foreground border-b-2 border-primary"
-                : "text-muted-foreground hover:text-foreground"
-                }`}
+              className={`flex-1 py-3 text-sm font-medium transition-colors ${
+                activeTab === "generator"
+                  ? "text-foreground border-b-2 border-primary"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
             >
               {tTool("generator")}
             </button>
             <button
               type="button"
               onClick={() => setActiveTab("result")}
-              className={`flex-1 py-3 text-sm font-medium transition-colors ${activeTab === "result"
-                ? "text-foreground border-b-2 border-primary"
-                : "text-muted-foreground hover:text-foreground"
-                }`}
+              className={`flex-1 py-3 text-sm font-medium transition-colors ${
+                activeTab === "result"
+                  ? "text-foreground border-b-2 border-primary"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
             >
               {tTool("result")}
             </button>
@@ -699,12 +771,18 @@ export function ToolPageLayout({
         <div className="grid min-h-0 h-fit max-h-[calc(100svh-120px)] grid-cols-1 lg:grid-cols-[380px_minmax(0,1.2fr)] gap-5">
           {/* Generator Panel */}
           <div
-            className={`${activeTab === "generator" ? "flex" : "hidden"
-              } lg:flex flex-col h-full min-h-0`}
+            className={`${
+              activeTab === "generator" ? "flex" : "hidden"
+            } lg:flex flex-col h-full min-h-0`}
           >
             <div className="h-full min-h-0 rounded-2xl bg-card/70 p-3">
               <GeneratorPanel
-                toolType={toolRoute as "image-to-video" | "text-to-video" | "reference-to-video"}
+                toolType={
+                  toolRoute as
+                    | "image-to-video"
+                    | "text-to-video"
+                    | "reference-to-video"
+                }
                 isLoading={isSubmitting}
                 onSubmit={handleSubmit}
                 availableModelIds={config.generator.models.available}
@@ -721,8 +799,9 @@ export function ToolPageLayout({
 
           {/* Result Panel */}
           <div
-            className={`${activeTab === "result" ? "flex" : "hidden"
-              } lg:flex flex-1 h-full min-h-0`}
+            className={`${
+              activeTab === "result" ? "flex" : "hidden"
+            } lg:flex flex-1 h-full min-h-0`}
           >
             <VideoHistoryPanel
               historyItems={historyItems}
@@ -731,7 +810,6 @@ export function ToolPageLayout({
               className="h-full min-h-0"
             />
           </div>
-
         </div>
       </div>
 

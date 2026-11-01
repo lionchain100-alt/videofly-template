@@ -59,3 +59,7 @@ src/config/site-ui.json.*.tmp
 
 # Persistent local PostgreSQL data, logs and development credentials
 .local/
+
+# Canonical site manifest editor backup
+src/config/site.previous.json
+src/config/site.json.*.tmp

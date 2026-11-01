@@ -1,3 +1,4 @@
+import { localePath, siteManifest } from "@/config/site-manifest";
 import { z } from "zod";
 export const dynamic = "force-dynamic";
 // This route only brings the browser home. It never captures money or grants credits.
@@ -6,7 +7,10 @@ export function GET(request: Request) {
   const params = new URL(request.url).searchParams;
   const id = params.get("order");
   const base = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  const target = new URL("/zh/buy-credits", base);
+  const target = new URL(
+    localePath(siteManifest.languages.default, "/buy-credits"),
+    base,
+  );
   if (z.string().uuid().safeParse(id).success)
     target.searchParams.set("order", id!);
   if (params.get("cancelled") === "1")

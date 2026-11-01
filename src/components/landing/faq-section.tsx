@@ -1,4 +1,5 @@
 "use client";
+import { siteManifest as siteBrand } from "@/config/site-manifest";
 
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
@@ -117,7 +118,9 @@ export function FAQSection() {
                           <span className="flex-shrink-0 w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-semibold">
                             {index + 1}
                           </span>
-                          <span className="font-medium">{t(item.questionKey)}</span>
+                          <span className="font-medium">
+                            {t(item.questionKey)}
+                          </span>
                         </span>
                       </AccordionTrigger>
                       <AccordionContent className="pl-10 text-muted-foreground leading-relaxed">
@@ -142,10 +145,10 @@ export function FAQSection() {
               <p className="text-muted-foreground">
                 {t("contact")}
                 <a
-                  href="mailto:support@videofly.app"
+                  href={`mailto:${siteBrand.contact.supportEmail}`}
                   className="text-primary hover:underline mx-1"
                 >
-                  support@videofly.app
+                  {siteBrand.contact.supportEmail}
                 </a>
               </p>
             </motion.div>

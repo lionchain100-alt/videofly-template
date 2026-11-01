@@ -1,3 +1,5 @@
+import { siteManifest } from "@/config/site-manifest";
+import { localePath } from "@/config/site-manifest";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import type { Params } from "@/lib/admin/queries";
@@ -5,7 +7,7 @@ import styles from "./management.module.css";
 
 export { styles as adminStyles };
 export function adminPath(locale: string, path = "") {
-  return `${locale === "en" ? "" : `/${locale}`}/admin${path}`;
+  return `${locale === siteManifest.languages.default ? "" : `/${locale}`}/admin${path}`;
 }
 export function formatDate(value: Date | string | null | undefined) {
   return value
@@ -35,7 +37,10 @@ export function SectionTitle({
     </header>
   );
 }
-export function Panel({ title, children }: { title?: string; children: ReactNode }) {
+export function Panel({
+  title,
+  children,
+}: { title?: string; children: ReactNode }) {
   return (
     <section className={styles.panel}>
       {title && <h2>{title}</h2>}
@@ -49,10 +54,15 @@ export function StatusBadge({
 }: { children: ReactNode; tone?: "neutral" | "good" | "bad" | "warn" }) {
   return <span className={`${styles.badge} ${styles[tone]}`}>{children}</span>;
 }
-export function EmptyState({ children = "暂无符合条件的数据" }: { children?: ReactNode }) {
+export function EmptyState({
+  children = "暂无符合条件的数据",
+}: { children?: ReactNode }) {
   return <div className={styles.empty}>{children}</div>;
 }
-export function DataTable({ headings, children }: { headings: string[]; children: ReactNode }) {
+export function DataTable({
+  headings,
+  children,
+}: { headings: string[]; children: ReactNode }) {
   return (
     <div className={styles.tableScroll}>
       <table className={styles.table}>
@@ -108,7 +118,12 @@ export function Filter({
   label,
   defaultValue = "",
   children,
-}: { name: string; label: string; defaultValue?: string; children?: ReactNode }) {
+}: {
+  name: string;
+  label: string;
+  defaultValue?: string;
+  children?: ReactNode;
+}) {
   return (
     <div className={styles.filter}>
       <label htmlFor={`filter-${name}`}>{label}</label>
@@ -117,7 +132,12 @@ export function Filter({
           {children}
         </select>
       ) : (
-        <input id={`filter-${name}`} name={name} defaultValue={defaultValue} placeholder={label} />
+        <input
+          id={`filter-${name}`}
+          name={name}
+          defaultValue={defaultValue}
+          placeholder={label}
+        />
       )}
     </div>
   );

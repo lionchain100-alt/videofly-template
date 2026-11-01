@@ -1,4 +1,5 @@
 "use client";
+import { localePath } from "@/config/site-manifest";
 
 import { useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -23,10 +24,7 @@ import { uploadImage } from "@/lib/video-api";
 import { useSigninModal } from "@/hooks/use-signin-modal";
 import { videoTaskStorage } from "@/lib/video-task-storage";
 import type { ProviderType } from "@/ai";
-import {
-  isModelModeSupported,
-  type GenerationMode,
-} from "@/ai/model-mapping";
+import { isModelModeSupported, type GenerationMode } from "@/ai/model-mapping";
 
 import {
   AlertDialog,
@@ -78,7 +76,9 @@ export function HeroSection({ currentProvider }: HeroSectionProps) {
   const { data: session } = authClient.useSession();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showNotifyDialog, setShowNotifyDialog] = useState(false);
-  const [pendingSubmitData, setPendingSubmitData] = useState<SubmitData | null>(null);
+  const [pendingSubmitData, setPendingSubmitData] = useState<SubmitData | null>(
+    null,
+  );
 
   const generatorConfig = useMemo(() => {
     const availableModels = getAvailableModels({
@@ -86,19 +86,26 @@ export function HeroSection({ currentProvider }: HeroSectionProps) {
     });
     const availableIds = new Set(availableModels.map((model) => model.id));
     const providerByModel = new Map(
-      availableModels.map((model) => [model.id, currentProvider || model.provider])
+      availableModels.map((model) => [
+        model.id,
+        currentProvider || model.provider,
+      ]),
     );
     const videoModels = DEFAULT_CONFIG.videoModels ?? [];
-    const filteredVideoModels = videoModels.filter((model) => availableIds.has(model.id));
+    const filteredVideoModels = videoModels.filter((model) =>
+      availableIds.has(model.id),
+    );
     const filteredVideoModes = (DEFAULT_CONFIG.videoModes ?? [])
       .map((mode) => {
         const normalizedMode = normalizeGeneratorMode(mode.id);
-        const supportedModels = (mode.supportedModels ?? []).filter((modelId) => {
-          if (!availableIds.has(modelId)) return false;
-          const provider = providerByModel.get(modelId);
-          if (!provider) return false;
-          return isModelModeSupported(modelId, provider, normalizedMode);
-        });
+        const supportedModels = (mode.supportedModels ?? []).filter(
+          (modelId) => {
+            if (!availableIds.has(modelId)) return false;
+            const provider = providerByModel.get(modelId);
+            if (!provider) return false;
+            return isModelModeSupported(modelId, provider, normalizedMode);
+          },
+        );
         return {
           ...mode,
           supportedModels,
@@ -114,7 +121,8 @@ export function HeroSection({ currentProvider }: HeroSectionProps) {
   }, [currentProvider]);
 
   const generatorDefaults = useMemo(() => {
-    const preferredModel = (generatorConfig.videoModels ?? [])[0]?.id ?? DEFAULT_DEFAULTS.videoModel;
+    const preferredModel =
+      (generatorConfig.videoModels ?? [])[0]?.id ?? DEFAULT_DEFAULTS.videoModel;
     return {
       ...DEFAULT_DEFAULTS,
       videoModel: preferredModel,
@@ -122,7 +130,8 @@ export function HeroSection({ currentProvider }: HeroSectionProps) {
   }, [generatorConfig.videoModels]);
 
   const defaultDuration = useMemo(() => {
-    const rawDuration = generatorDefaults.duration ?? generatorConfig.durations?.[0];
+    const rawDuration =
+      generatorDefaults.duration ?? generatorConfig.durations?.[0];
     if (!rawDuration) return 10;
     const parsed = Number.parseInt(String(rawDuration), 10);
     return Number.isNaN(parsed) ? 10 : parsed;
@@ -135,21 +144,24 @@ export function HeroSection({ currentProvider }: HeroSectionProps) {
     return Number.isNaN(parsed) ? undefined : parsed;
   };
 
-  const calculateCredits = useCallback((params: {
-    type: "video" | "image";
-    model: string;
-    outputNumber: number;
-    duration?: string;
-    resolution?: string;
-  }) => {
-    if (params.type !== "video") return 0;
-    const parsedDuration = parseDuration(params.duration) ?? defaultDuration;
-    const baseCredits = calculateModelCredits(params.model, {
-      duration: parsedDuration,
-      quality: params.resolution,
-    });
-    return baseCredits * params.outputNumber;
-  }, [defaultDuration, parseDuration]);
+  const calculateCredits = useCallback(
+    (params: {
+      type: "video" | "image";
+      model: string;
+      outputNumber: number;
+      duration?: string;
+      resolution?: string;
+    }) => {
+      if (params.type !== "video") return 0;
+      const parsedDuration = parseDuration(params.duration) ?? defaultDuration;
+      const baseCredits = calculateModelCredits(params.model, {
+        duration: parsedDuration,
+        quality: params.resolution,
+      });
+      return baseCredits * params.outputNumber;
+    },
+    [defaultDuration, parseDuration],
+  );
 
   const resolveImageUrls = async (data: SubmitData) => {
     if (data.images && data.images.length > 0) {
@@ -173,8 +185,12 @@ export function HeroSection({ currentProvider }: HeroSectionProps) {
     setIsSubmitting(true);
     try {
       const normalizedMode = normalizeGeneratorMode(data.mode);
-      const hasImages = (data.images && data.images.length > 0) || (data.imageUrls && data.imageUrls.length > 0);
-      const resolvedImageUrls = hasImages ? await resolveImageUrls(data) : undefined;
+      const hasImages =
+        (data.images && data.images.length > 0) ||
+        (data.imageUrls && data.imageUrls.length > 0);
+      const resolvedImageUrls = hasImages
+        ? await resolveImageUrls(data)
+        : undefined;
       const response = await fetch("/api/v1/video/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -195,7 +211,7 @@ export function HeroSection({ currentProvider }: HeroSectionProps) {
       if (!response.ok) {
         const error = await response.json();
         throw new Error(
-          error?.error?.message || error?.message || "Failed to generate video"
+          error?.error?.message || error?.message || "Failed to generate video",
         );
       }
 
@@ -214,7 +230,7 @@ export function HeroSection({ currentProvider }: HeroSectionProps) {
               aspectRatio: data.aspectRatio,
               quality: data.quality ?? data.resolution,
               imageUrl: resolvedImageUrls?.[0],
-            })
+            }),
           );
         }
       } catch (storageError) {
@@ -233,14 +249,22 @@ export function HeroSection({ currentProvider }: HeroSectionProps) {
           notified: false,
         });
       }
-      router.push(`/${locale}/${toolRoute}?id=${result.data.videoUuid}`);
+      router.push(
+        localePath(locale, `/${toolRoute}?id=${result.data.videoUuid}`),
+      );
     } catch (error) {
       console.error("Generation error:", error);
-      const message = error instanceof Error ? error.message : "Failed to generate video. Please try again.";
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Failed to generate video. Please try again.";
       // Check for common errors and provide helpful messages
       if (message.includes("credits") || message.includes("Credit")) {
         toast.error("Insufficient credits. Please top up and try again.");
-      } else if (message.includes("database") || message.includes("DATABASE_URL")) {
+      } else if (
+        message.includes("database") ||
+        message.includes("DATABASE_URL")
+      ) {
         toast.error("Service temporarily unavailable. Please try again later.");
       } else {
         toast.error(message || "Failed to generate video. Please try again.");
@@ -311,10 +335,19 @@ export function HeroSection({ currentProvider }: HeroSectionProps) {
   };
 
   return (
-    <section id="generator" className="relative min-h-screen overflow-hidden pb-20">
+    <section
+      id="generator"
+      className="relative min-h-screen overflow-hidden pb-20"
+    >
       {/* 动画流星效果 */}
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-        <Meteors number={15} minDelay={0.5} maxDelay={2} minDuration={3} maxDuration={8} />
+        <Meteors
+          number={15}
+          minDelay={0.5}
+          maxDelay={2}
+          minDuration={3}
+          maxDuration={8}
+        />
       </div>
 
       <div className="container mx-auto px-4 py-12 md:py-16">
@@ -351,11 +384,27 @@ export function HeroSection({ currentProvider }: HeroSectionProps) {
             </BlurFade>
 
             {/* 特性标签 */}
-            <BlurFade delay={0.3} inView className="flex flex-wrap justify-center gap-3">
+            <BlurFade
+              delay={0.3}
+              inView
+              className="flex flex-wrap justify-center gap-3"
+            >
               {[
-                { icon: Zap, label: t("features.fast"), color: "text-yellow-500" },
-                { icon: Play, label: t("features.easy"), color: "text-primary" },
-                { icon: Sparkles, label: t("features.ai"), color: "text-primary" },
+                {
+                  icon: Zap,
+                  label: t("features.fast"),
+                  color: "text-yellow-500",
+                },
+                {
+                  icon: Play,
+                  label: t("features.easy"),
+                  color: "text-primary",
+                },
+                {
+                  icon: Sparkles,
+                  label: t("features.ai"),
+                  color: "text-primary",
+                },
               ].map((feature, idx) => {
                 const Icon = feature.icon;
                 return (
@@ -382,7 +431,13 @@ export function HeroSection({ currentProvider }: HeroSectionProps) {
             className="w-full max-w-4xl mx-auto relative"
           >
             {/* 装饰性光晕效果 */}
-            <div className="absolute -inset-4 rounded-3xl blur-3xl -z-10 opacity-30 dark:opacity-10" style={{ backgroundImage: "linear-gradient(to right, oklch(from var(--primary) l c h), oklch(from var(--primary) l c calc(h + 30)))" }} />
+            <div
+              className="absolute -inset-4 rounded-3xl blur-3xl -z-10 opacity-30 dark:opacity-10"
+              style={{
+                backgroundImage:
+                  "linear-gradient(to right, oklch(from var(--primary) l c h), oklch(from var(--primary) l c calc(h + 30)))",
+              }}
+            />
 
             {/* 视频生成器 - 不需要外层容器，直接使用组件 */}
             {generatorConfig.videoModels.length > 0 ? (
@@ -396,7 +451,8 @@ export function HeroSection({ currentProvider }: HeroSectionProps) {
               />
             ) : (
               <div className="rounded-3xl border border-border bg-card/80 p-8 text-center text-sm text-muted-foreground">
-                No enabled models are available for the current AI provider configuration.
+                No enabled models are available for the current AI provider
+                configuration.
               </div>
             )}
 
@@ -417,14 +473,20 @@ export function HeroSection({ currentProvider }: HeroSectionProps) {
       <AlertDialog open={showNotifyDialog} onOpenChange={setShowNotifyDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{tNotify("enableNotifications")}</AlertDialogTitle>
+            <AlertDialogTitle>
+              {tNotify("enableNotifications")}
+            </AlertDialogTitle>
             <AlertDialogDescription>
               {tNotify("notificationDescription")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={handleSkipNotify}>{tNotify("maybeLater")}</AlertDialogCancel>
-            <AlertDialogAction onClick={handleAllowNotify}>{tNotify("allow")}</AlertDialogAction>
+            <AlertDialogCancel onClick={handleSkipNotify}>
+              {tNotify("maybeLater")}
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleAllowNotify}>
+              {tNotify("allow")}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

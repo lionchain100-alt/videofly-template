@@ -1,3 +1,5 @@
+import { routeAvailable } from "./site-manifest";
+import { siteManifest as siteBrand } from "@/config/site-manifest";
 // ============================================
 // 导航配置
 // 统一管理所有导航菜单项
@@ -19,7 +21,7 @@ export interface NavGroup {
 }
 
 // 左侧导航菜单 (工具页和管理页使用)
-export const sidebarNavigation: NavGroup[] = [
+const sidebarNavigationAll: NavGroup[] = [
   {
     id: "video",
     title: "VIDEO",
@@ -85,7 +87,7 @@ export const sidebarNavigation: NavGroup[] = [
 ];
 
 // 落地页顶部导航 - Models 下拉菜单
-export const headerModels = [
+const headerModelsAll = [
   { id: "sora", title: "Sora 2", subtitle: "by OpenAI", href: "/sora-2" },
   { id: "veo", title: "Veo 3.1", subtitle: "by Google", href: "/veo-3-1" },
   {
@@ -98,7 +100,7 @@ export const headerModels = [
 ];
 
 // 落地页顶部导航 - Tools 下拉菜单
-export const headerTools = [
+const headerToolsAll = [
   {
     id: "txt2vid",
     title: "Text to Video",
@@ -123,13 +125,26 @@ export const headerTools = [
 export const headerDocs = {
   id: "docs",
   title: "Docs",
-  href: "https://docs.videofly.app",
+  href: `${siteBrand.contact.docsUrl || siteBrand.origin}`,
   external: true,
 };
 
 // 用户菜单项 (HeaderSimple 组件使用)
 export const userMenuItems = [
-  { id: "creations", title: "My Creations", href: "/my-creations", icon: "FolderOpen" },
+  {
+    id: "creations",
+    title: "My Creations",
+    href: "/my-creations",
+    icon: "FolderOpen",
+  },
   { id: "credits", title: "Credits", href: "/credits", icon: "Gem" },
   { id: "settings", title: "Account", href: "/settings", icon: "User" },
 ];
+
+export const sidebarNavigation = sidebarNavigationAll
+  .map((g) => ({ ...g, items: g.items.filter((i) => routeAvailable(i.href)) }))
+  .filter((g) => g.items.length);
+export const headerModels = headerModelsAll.filter((i) =>
+  routeAvailable(i.href),
+);
+export const headerTools = headerToolsAll.filter((i) => routeAvailable(i.href));

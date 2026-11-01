@@ -1,4 +1,5 @@
 "use client";
+import { siteManifest as siteBrand } from "@/config/site-manifest";
 
 import React from "react";
 import { useTranslations } from "next-intl";
@@ -15,12 +16,9 @@ interface MainNavProps {
   children?: React.ReactNode;
 }
 
-export function MainNav({
-  items,
-  children,
-}: MainNavProps) {
-  const t = useTranslations('MainNav');
-  const intro = t('introducing');
+export function MainNav({ items, children }: MainNavProps) {
+  const t = useTranslations("MainNav");
+  const intro = t("introducing");
   const [showMobileMenu, setShowMobileMenu] = React.useState<boolean>(false);
   const toggleMenu = () => {
     setShowMobileMenu(!showMobileMenu);
@@ -32,18 +30,16 @@ export function MainNav({
     <div className="flex gap-6 md:gap-10">
       <div className="flex items-center">
         <LocaleLink href="/" className="hidden items-center space-x-2 md:flex">
-          <div className="text-3xl">VideoFly</div>
+          <div className="text-3xl">{siteBrand.ui.brand.name}</div>
         </LocaleLink>
 
         <a
-          href="https://docs.videofly.app"
+          href={`${siteBrand.contact.docsUrl || siteBrand.origin}`}
           target="_blank"
           rel="noopener noreferrer"
           className="ml-4 hidden md:flex lg:flex xl:flex"
         >
-          <DocumentGuide>
-            {intro}
-          </DocumentGuide>
+          <DocumentGuide>{intro}</DocumentGuide>
         </a>
       </div>
 
@@ -52,7 +48,7 @@ export function MainNav({
         className="flex items-center space-x-2 md:hidden"
         onClick={() => setShowMobileMenu(!showMobileMenu)}
       >
-        {showMobileMenu ? <Icons.Close/> : <Icons.Logo/>}
+        {showMobileMenu ? <Icons.Close /> : <Icons.Logo />}
         <span className="font-bold">Menu</span>
       </button>
       {showMobileMenu && items && (

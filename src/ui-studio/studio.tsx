@@ -1,4 +1,5 @@
 "use client";
+import { localePath, siteManifest } from "@/config/site-manifest";
 
 import {
   Children,
@@ -41,10 +42,18 @@ import {
 import s from "./studio.module.css";
 
 type Drafts = Record<PresetId, UIConfig>;
-const DRAFT_KEY = "laconic-ui-studio-drafts-v1";
+const DRAFT_KEY = `${siteManifest.id}-ui-studio-drafts-v1`;
 const widthMap = { desktop: 1280, tablet: 768, mobile: 390 };
-const sectionNames = { examples: "使用步骤", features: "功能介绍", faq: "常见问题" };
-function Field({ label, children, hint }: { label: string; children: ReactNode; hint?: string }) {
+const sectionNames = {
+  examples: "使用步骤",
+  features: "功能介绍",
+  faq: "常见问题",
+};
+function Field({
+  label,
+  children,
+  hint,
+}: { label: string; children: ReactNode; hint?: string }) {
   const id = useId();
   const child = Children.only(children);
   if (
@@ -92,7 +101,9 @@ export function Studio({ initialConfig }: { initialConfig: UIConfig }) {
   const [leftOpen, setLeftOpen] = useState(false);
   const [rightOpen, setRightOpen] = useState(false);
   const [historyVersion, bumpHistory] = useState(0);
-  const history = useRef<Record<PresetId, { past: UIConfig[]; future: UIConfig[] }>>({
+  const history = useRef<
+    Record<PresetId, { past: UIConfig[]; future: UIConfig[] }>
+  >({
     minimal: { past: [], future: [] },
     studio: { past: [], future: [] },
     portal: { past: [], future: [] },
@@ -107,7 +118,9 @@ export function Studio({ initialConfig }: { initialConfig: UIConfig }) {
   const dirty = JSON.stringify(config) !== JSON.stringify(applied);
 
   async function readApplied(replaceDraft = false) {
-    const response = await fetch("/api/ui-studio/config", { cache: "no-store" });
+    const response = await fetch("/api/ui-studio/config", {
+      cache: "no-store",
+    });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error ?? "无法读取本地配置");
     const clean = uiConfigSchema.parse(data.config);
@@ -123,7 +136,10 @@ export function Studio({ initialConfig }: { initialConfig: UIConfig }) {
   useEffect(() => {
     try {
       const stored = JSON.parse(localStorage.getItem(DRAFT_KEY) ?? "null");
-      if (stored?.schemaVersion === 1 && ["minimal", "studio", "portal"].includes(stored.active)) {
+      if (
+        stored?.schemaVersion === 1 &&
+        ["minimal", "studio", "portal"].includes(stored.active)
+      ) {
         const clean = Object.fromEntries(
           PRESETS.map((p) => [p.id, uiConfigSchema.parse(stored.drafts[p.id])]),
         );
@@ -139,7 +155,10 @@ export function Studio({ initialConfig }: { initialConfig: UIConfig }) {
   useEffect(() => {
     if (!ready) return;
     try {
-      localStorage.setItem(DRAFT_KEY, JSON.stringify({ schemaVersion: 1, active, drafts }));
+      localStorage.setItem(
+        DRAFT_KEY,
+        JSON.stringify({ schemaVersion: 1, active, drafts }),
+      );
     } catch {
       setStorageIssue("浏览器存储不可用。请导出 JSON 或应用到本地站点保存。");
     }
@@ -153,10 +172,16 @@ export function Studio({ initialConfig }: { initialConfig: UIConfig }) {
         );
     };
     const receive = (event: MessageEvent) => {
-      if (event.origin !== window.location.origin || event.source !== frame.current?.contentWindow)
+      if (
+        event.origin !== window.location.origin ||
+        event.source !== frame.current?.contentWindow
+      )
         return;
       if (event.data?.type === "laconic:ready") send();
-      if (event.data?.type === "laconic:height" && Number.isFinite(event.data.height))
+      if (
+        event.data?.type === "laconic:height" &&
+        Number.isFinite(event.data.height)
+      )
         setHeight(Math.min(6000, Math.max(700, event.data.height)));
     };
     window.addEventListener("message", receive);
@@ -173,7 +198,12 @@ export function Studio({ initialConfig }: { initialConfig: UIConfig }) {
     const node = stage.current;
     if (!node) return;
     const observer = new ResizeObserver(([entry]) =>
-      setScale(Math.min(1, Math.max(0.15, (entry.contentRect.width - 56) / widthMap[device]))),
+      setScale(
+        Math.min(
+          1,
+          Math.max(0.15, (entry.contentRect.width - 56) / widthMap[device]),
+        ),
+      ),
     );
     observer.observe(node);
     return () => observer.disconnect();
@@ -208,11 +238,13 @@ export function Studio({ initialConfig }: { initialConfig: UIConfig }) {
       return;
     }
     const url = URL.createObjectURL(
-      new Blob([JSON.stringify(checked.data, null, 2)], { type: "application/json" }),
+      new Blob([JSON.stringify(checked.data, null, 2)], {
+        type: "application/json",
+      }),
     );
     const a = document.createElement("a");
     a.href = url;
-    a.download = `laconic-${active}-ui.json`;
+    a.download = `${siteManifest.id}-${active}-ui.json`;
     a.click();
     URL.revokeObjectURL(url);
     setNotice("配置已导出。可在另一浏览器或新站导入。");
@@ -248,7 +280,10 @@ export function Studio({ initialConfig }: { initialConfig: UIConfig }) {
     try {
       const response = await fetch("/api/ui-studio/config", {
         method: rollback ? "POST" : "PUT",
-        headers: { "Content-Type": "application/json", "x-ui-studio-token": token },
+        headers: {
+          "Content-Type": "application/json",
+          "x-ui-studio-token": token,
+        },
         body: JSON.stringify(rollback ? { revision } : { revision, config }),
       });
       const data = await response.json();
@@ -265,7 +300,9 @@ export function Studio({ initialConfig }: { initialConfig: UIConfig }) {
           : "已应用到本地站点，并备份上一版。刷新首页即可查看，重启后仍保留。",
       );
     } catch (error) {
-      setNotice(error instanceof Error ? error.message : "保存失败，原配置未改变。");
+      setNotice(
+        error instanceof Error ? error.message : "保存失败，原配置未改变。",
+      );
     } finally {
       setBusy(false);
     }
@@ -275,9 +312,9 @@ export function Studio({ initialConfig }: { initialConfig: UIConfig }) {
     <div className={s.studio}>
       <header className={s.topbar}>
         <a className={s.logo} href="/" target="_blank" rel="noreferrer">
-          <span>L</span>
+          <span>{siteManifest.ui.brand.mark}</span>
           <strong>
-            Laconic <i>/</i> UI Studio
+            {siteManifest.ui.brand.name} <i>/</i> UI Studio
           </strong>
         </a>
         <span className={s.local}>本地工作室</span>
@@ -357,11 +394,13 @@ export function Studio({ initialConfig }: { initialConfig: UIConfig }) {
               >
                 <div
                   className={`${s.thumbnail} ${s[`thumb_${preset.id}`]}`}
-                  style={{ "--thumb-accent": preset.color } as React.CSSProperties}
+                  style={
+                    { "--thumb-accent": preset.color } as React.CSSProperties
+                  }
                 >
                   <div className={s.thumbNav}>
-                    <b>L</b>
-                    <span>Laconic</span>
+                    <b>{siteManifest.ui.brand.mark}</b>
+                    <span>{siteManifest.ui.brand.name}</span>
                     <i />
                     <i />
                     <i />
@@ -428,7 +467,9 @@ export function Studio({ initialConfig }: { initialConfig: UIConfig }) {
             </button>
             <button
               type="button"
-              onClick={() => readApplied(true).catch((e) => setNotice(e.message))}
+              onClick={() =>
+                readApplied(true).catch((e) => setNotice(e.message))
+              }
             >
               <RotateCcw size={15} />
               读取已应用配置
@@ -436,14 +477,21 @@ export function Studio({ initialConfig }: { initialConfig: UIConfig }) {
             <button
               type="button"
               onClick={() => {
-                if (window.confirm("恢复到上一个已应用版本？当前草稿不会发布。")) apply(true);
+                if (
+                  window.confirm("恢复到上一个已应用版本？当前草稿不会发布。")
+                )
+                  apply(true);
               }}
               disabled={busy}
             >
               <Undo2 size={15} />
               恢复上一个应用版本
             </button>
-            <a href="/zh" target="_blank" rel="noreferrer">
+            <a
+              href={localePath(siteManifest.languages.default)}
+              target="_blank"
+              rel="noreferrer"
+            >
               <ExternalLink size={15} />
               打开本地首页
             </a>
@@ -522,33 +570,47 @@ export function Studio({ initialConfig }: { initialConfig: UIConfig }) {
           <div className={s.stage} ref={stage}>
             <div
               className={s.frameSpace}
-              style={{ width: widthMap[device] * scale, height: height * scale }}
+              style={{
+                width: widthMap[device] * scale,
+                height: height * scale,
+              }}
             >
               <iframe
                 ref={frame}
                 title="站点实时预览"
                 src="/ui-preview"
                 className={s.frame}
-                style={{ width: widthMap[device], height, transform: `scale(${scale})` }}
+                style={{
+                  width: widthMap[device],
+                  height,
+                  transform: `scale(${scale})`,
+                }}
               />
             </div>
           </div>
           <footer className={s.statusbar}>
             <span>
               <CheckCircle2 size={14} />
-              {storageIssue || (ready ? "草稿已自动保存到此浏览器" : "正在载入草稿…")}
+              {storageIssue ||
+                (ready ? "草稿已自动保存到此浏览器" : "正在载入草稿…")}
             </span>
             <button
               type="button"
               onClick={() => {
-                if (window.confirm(`恢复「${selected.name}」的默认配置？可以撤销。`))
+                if (
+                  window.confirm(
+                    `恢复「${selected.name}」的默认配置？可以撤销。`,
+                  )
+                )
                   replace(defaultConfig(active));
               }}
             >
               <RotateCcw size={14} />
               恢复方案默认值
             </button>
-            <span className={s.appliedState}>{dirty ? "有未应用的更改" : "与已应用配置一致"}</span>
+            <span className={s.appliedState}>
+              {dirty ? "有未应用的更改" : "与已应用配置一致"}
+            </span>
           </footer>
         </main>
         <aside className={`${s.inspector} ${rightOpen ? s.drawerOpen : ""}`}>
@@ -614,7 +676,8 @@ export function Studio({ initialConfig }: { initialConfig: UIConfig }) {
                       value={config.theme.font}
                       onChange={(e) =>
                         edit((v) => {
-                          v.theme.font = e.target.value as UIConfig["theme"]["font"];
+                          v.theme.font = e.target
+                            .value as UIConfig["theme"]["font"];
                         })
                       }
                     >
@@ -640,22 +703,24 @@ export function Studio({ initialConfig }: { initialConfig: UIConfig }) {
                   </div>
                 </Field>
                 <div className={s.swatches}>
-                  {["#5146e5", "#17645b", "#2458b5", "#a0442c", "#292d3e"].map((color) => (
-                    <button
-                      type="button"
-                      key={color}
-                      style={{ background: color }}
-                      aria-label={`主题色 ${color}`}
-                      aria-pressed={config.theme.accent === color}
-                      onClick={() =>
-                        edit((v) => {
-                          v.theme.accent = color;
-                        })
-                      }
-                    >
-                      {config.theme.accent === color && <Check size={13} />}
-                    </button>
-                  ))}
+                  {["#5146e5", "#17645b", "#2458b5", "#a0442c", "#292d3e"].map(
+                    (color) => (
+                      <button
+                        type="button"
+                        key={color}
+                        style={{ background: color }}
+                        aria-label={`主题色 ${color}`}
+                        aria-pressed={config.theme.accent === color}
+                        onClick={() =>
+                          edit((v) => {
+                            v.theme.accent = color;
+                          })
+                        }
+                      >
+                        {config.theme.accent === color && <Check size={13} />}
+                      </button>
+                    ),
+                  )}
                 </div>
                 <Field label="浅色背景">
                   <div className={s.colorRow}>
@@ -684,7 +749,9 @@ export function Studio({ initialConfig }: { initialConfig: UIConfig }) {
                       <button
                         type="button"
                         key={id}
-                        className={config.theme.mode === id ? s.segmentActive : ""}
+                        className={
+                          config.theme.mode === id ? s.segmentActive : ""
+                        }
                         onClick={(e) => {
                           e.preventDefault();
                           edit((v) => {
@@ -729,7 +796,8 @@ export function Studio({ initialConfig }: { initialConfig: UIConfig }) {
                     value={config.theme.shadow}
                     onChange={(e) =>
                       edit((v) => {
-                        v.theme.shadow = e.target.value as UIConfig["theme"]["shadow"];
+                        v.theme.shadow = e.target
+                          .value as UIConfig["theme"]["shadow"];
                       })
                     }
                   >
@@ -756,7 +824,9 @@ export function Studio({ initialConfig }: { initialConfig: UIConfig }) {
             ) : tab === "layout" ? (
               <>
                 <h2>空间与布局</h2>
-                <Field label={`内容最大宽度 · ${config.layout.contentMaxWidth}px`}>
+                <Field
+                  label={`内容最大宽度 · ${config.layout.contentMaxWidth}px`}
+                >
                   <input
                     type="range"
                     min={880}
@@ -775,7 +845,8 @@ export function Studio({ initialConfig }: { initialConfig: UIConfig }) {
                     value={config.layout.density}
                     onChange={(e) =>
                       edit((v) => {
-                        v.layout.density = e.target.value as UIConfig["layout"]["density"];
+                        v.layout.density = e.target
+                          .value as UIConfig["layout"]["density"];
                       })
                     }
                   >
@@ -788,7 +859,9 @@ export function Studio({ initialConfig }: { initialConfig: UIConfig }) {
                     value={config.layout.arrangement}
                     onChange={(e) =>
                       edit((v) => {
-                        v.layout.arrangement = e.target.value as "split" | "stacked";
+                        v.layout.arrangement = e.target.value as
+                          | "split"
+                          | "stacked";
                       })
                     }
                   >
@@ -899,7 +972,8 @@ export function Studio({ initialConfig }: { initialConfig: UIConfig }) {
                 })}
                 <div className={s.orderList}>
                   当前顺序：
-                  {config.sections.map((id) => sectionNames[id]).join(" → ") || "仅工具工作区"}
+                  {config.sections.map((id) => sectionNames[id]).join(" → ") ||
+                    "仅工具工作区"}
                 </div>
               </>
             ) : (
@@ -966,7 +1040,11 @@ export function Studio({ initialConfig }: { initialConfig: UIConfig }) {
         <div className={s.toast} aria-live="polite">
           <CheckCircle2 size={18} />
           <span>{notice}</span>
-          <button type="button" aria-label="关闭通知" onClick={() => setNotice("")}>
+          <button
+            type="button"
+            aria-label="关闭通知"
+            onClick={() => setNotice("")}
+          >
             <X size={16} />
           </button>
         </div>

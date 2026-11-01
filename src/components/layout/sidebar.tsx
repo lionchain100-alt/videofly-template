@@ -1,4 +1,5 @@
 "use client";
+import { localePath } from "@/config/site-manifest";
 
 // ============================================
 // 左侧导航组件
@@ -7,7 +8,15 @@
 import { useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ImagePlay, Type, Video, FolderOpen, Gem, User, Sparkles } from "lucide-react";
+import {
+  ImagePlay,
+  Type,
+  Video,
+  FolderOpen,
+  Gem,
+  User,
+  Sparkles,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/components/ui";
 import { sidebarNavigation } from "@/config/navigation";
@@ -36,7 +45,11 @@ interface SidebarProps {
   onMobileClose?: () => void;
 }
 
-export function Sidebar({ lang = "en", mobileOpen, onMobileClose }: SidebarProps) {
+export function Sidebar({
+  lang = "en",
+  mobileOpen,
+  onMobileClose,
+}: SidebarProps) {
   const pathname = usePathname();
   const pathWithoutLang = pathname.replace(new RegExp(`^/${lang}`), "");
   const t = useTranslations("Sidebar");
@@ -63,12 +76,12 @@ export function Sidebar({ lang = "en", mobileOpen, onMobileClose }: SidebarProps
     return (
       <Link
         key={item.id}
-        href={`/${lang}${item.href}`}
+        href={localePath(lang, `${item.href}`)}
         className={cn(
           "flex items-center gap-2 px-2 py-1.5 rounded-md text-sm font-medium transition-colors",
           isActive
             ? "bg-primary text-primary-foreground"
-            : "text-muted-foreground hover:bg-muted hover:text-foreground"
+            : "text-muted-foreground hover:bg-muted hover:text-foreground",
         )}
       >
         {Icon && <Icon className="h-4 w-4 shrink-0" />}
@@ -147,13 +160,13 @@ export function Sidebar({ lang = "en", mobileOpen, onMobileClose }: SidebarProps
                 return (
                   <SheetClose key={item.id} asChild>
                     <Link
-                      href={`/${lang}${item.href}`}
+                      href={localePath(lang, `${item.href}`)}
                       onClick={onMobileClose}
                       className={cn(
                         "flex items-center gap-2 px-2 py-1.5 rounded-md text-sm font-medium transition-colors",
                         isActive
                           ? "bg-primary text-primary-foreground"
-                          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                          : "text-muted-foreground hover:bg-muted hover:text-foreground",
                       )}
                     >
                       {(() => {
@@ -212,7 +225,10 @@ export function Sidebar({ lang = "en", mobileOpen, onMobileClose }: SidebarProps
 
       {/* Mobile Sidebar */}
       {mobileOpen && (
-        <Sheet open={mobileOpen} onOpenChange={onMobileClose ? () => onMobileClose() : undefined}>
+        <Sheet
+          open={mobileOpen}
+          onOpenChange={onMobileClose ? () => onMobileClose() : undefined}
+        >
           <SheetContent position="left" className="w-[280px] p-0">
             <div className="flex flex-col h-full">
               <SheetHeader className="sr-only">

@@ -1,3 +1,4 @@
+import { siteManifest as siteBrand } from "@/config/site-manifest";
 import {
   Body,
   Button,
@@ -35,7 +36,7 @@ export const ResetPasswordEmail = ({
   locale = "en",
   translations,
   resetUrl,
-  appUrl = "https://videofly.app",
+  appUrl = `${siteBrand.origin}`,
 }: ResetPasswordEmailProps) => {
   const currentYear = new Date().getFullYear();
 
@@ -66,12 +67,14 @@ export const ResetPasswordEmail = ({
                 color: "#18181b",
               }}
             >
-              VideoFly
+              {siteBrand.ui.brand.name}
             </Text>
           </Section>
 
           {/* Greeting */}
-          <Text style={{ fontSize: "16px", lineHeight: "26px", color: "#333333" }}>
+          <Text
+            style={{ fontSize: "16px", lineHeight: "26px", color: "#333333" }}
+          >
             {translations.greeting.replace("{name}", name || "there")}
           </Text>
 
@@ -89,7 +92,9 @@ export const ResetPasswordEmail = ({
           </Text>
 
           {/* Body */}
-          <Text style={{ fontSize: "16px", lineHeight: "26px", color: "#333333" }}>
+          <Text
+            style={{ fontSize: "16px", lineHeight: "26px", color: "#333333" }}
+          >
             {translations.body}
           </Text>
 

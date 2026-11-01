@@ -1,4 +1,5 @@
 "use client";
+import { localePath } from "@/config/site-manifest";
 
 import { Play, ArrowRight, Sparkles } from "lucide-react";
 import Link from "next/link";
@@ -44,7 +45,8 @@ export function ContentPanel({ lang = "en" }: ContentPanelProps) {
             Transform Your Images into Stunning Videos
           </h2>
           <p className="text-muted-foreground">
-            Powered by the latest AI models: Sora 2, Veo 3.1, Seedance 1.5, and Wan 2.6
+            Powered by the latest AI models: Sora 2, Veo 3.1, Seedance 1.5, and
+            Wan 2.6
           </p>
         </div>
 
@@ -88,10 +90,14 @@ export function ContentPanel({ lang = "en" }: ContentPanelProps) {
         {/* CTA */}
         <div className="text-center space-y-4">
           <p className="text-muted-foreground">
-            Sign up now and get <span className="font-semibold text-foreground">50 free credits</span> to try!
+            Sign up now and get{" "}
+            <span className="font-semibold text-foreground">
+              50 free credits
+            </span>{" "}
+            to try!
           </p>
           <Link
-            href={`/${lang}/login`}
+            href={localePath(lang, `/login`)}
             className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-lg font-medium hover:from-pink-600 hover:to-purple-600 transition-all"
           >
             Login to Get Started

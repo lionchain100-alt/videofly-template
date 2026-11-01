@@ -1,3 +1,4 @@
+import { localePath } from "@/config/site-manifest";
 import { redirect } from "next/navigation";
 
 import { requireAdmin } from "@/lib/auth/admin";
@@ -17,7 +18,7 @@ export default async function AdminLayout({
   const { locale } = await params;
 
   // 检查管理员权限
-  const user = await requireAdmin(`/${locale}/login`);
+  const user = await requireAdmin(localePath(locale, `/login`));
 
   return (
     <div className="min-h-screen bg-background">

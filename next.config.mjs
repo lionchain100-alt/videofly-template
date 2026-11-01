@@ -1,6 +1,15 @@
 // @ts-check
+import { readFileSync } from "node:fs";
 import createNextIntlPlugin from "next-intl/plugin";
 
+const site = JSON.parse(
+  readFileSync(new URL("./src/config/site.json", import.meta.url), "utf8"),
+);
+if (
+  process.env.NEXT_PUBLIC_APP_URL &&
+  process.env.NEXT_PUBLIC_APP_URL !== site.origin
+)
+  throw new Error("NEXT_PUBLIC_APP_URL must match site.json origin");
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 if (!process.env.SKIP_ENV_VALIDATION) {

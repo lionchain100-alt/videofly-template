@@ -1,3 +1,5 @@
+import { routeAvailable } from "@/config/site-manifest";
+import { siteManifest as siteBrand } from "@/config/site-manifest";
 import { MetadataRoute } from "next";
 import { i18n } from "@/config/i18n-config";
 import { execFileSync } from "node:child_process";
@@ -10,7 +12,11 @@ export const revalidate = 3600;
 const getLastModified = (filePath: string): Date => {
   try {
     // Argument arrays work on Windows and avoid shell interpretation of file paths.
-    const timestamp = execFileSync("git", ["log", "-1", "--format=%cI", "--", filePath], { stdio: ["ignore", "pipe", "pipe"] })
+    const timestamp = execFileSync(
+      "git",
+      ["log", "-1", "--format=%cI", "--", filePath],
+      { stdio: ["ignore", "pipe", "pipe"] },
+    )
       .toString()
       .trim();
     if (timestamp) {
@@ -28,9 +34,21 @@ const getLastModified = (filePath: string): Date => {
  */
 async function scanPages(
   dir: string,
-  baseDir: string
-): Promise<{ path: string; file: string; priority: number; changeFrequency: 'daily' | 'weekly' | 'monthly' }[]> {
-  const pages: { path: string; file: string; priority: number; changeFrequency: 'daily' | 'weekly' | 'monthly' }[] = [];
+  baseDir: string,
+): Promise<
+  {
+    path: string;
+    file: string;
+    priority: number;
+    changeFrequency: "daily" | "weekly" | "monthly";
+  }[]
+> {
+  const pages: {
+    path: string;
+    file: string;
+    priority: number;
+    changeFrequency: "daily" | "weekly" | "monthly";
+  }[] = [];
 
   try {
     const entries = await readdir(dir, { withFileTypes: true });
@@ -40,11 +58,11 @@ async function scanPages(
 
       // 跳过特定目录
       if (
-        entry.name.startsWith('_') ||  // Next.js 私有目录
-        entry.name.startsWith('.') ||  // 隐藏文件
-        entry.name === 'node_modules' ||
-        entry.name === 'api' ||
-        entry.name === '(ui)'          // Local editor/preview must never enter public sitemaps
+        entry.name.startsWith("_") || // Next.js 私有目录
+        entry.name.startsWith(".") || // 隐藏文件
+        entry.name === "node_modules" ||
+        entry.name === "api" ||
+        entry.name === "(ui)" // Local editor/preview must never enter public sitemaps
       ) {
         continue;
       }
@@ -53,44 +71,55 @@ async function scanPages(
         // 递归扫描子目录
         const subPages = await scanPages(fullPath, baseDir);
         pages.push(...subPages);
-      } else if (entry.name === 'page.tsx') {
+      } else if (entry.name === "page.tsx") {
         // 计算路由路径
-        const relativePath = fullPath.replace(baseDir, '').replace(/\\/g, '/');
-        const routePath = relativePath
-          .replace(/\/page\.tsx$/, '')           // 移除 /page.tsx
-          .replace(/\[.*?\]/g, '')                // 移除动态路由参数
-          .replace(/\/\([^)]+\)/g, '')            // 移除路由组 (marketing)/(tool)
-          .replace('//', '/')                     // 修复双斜杠
-          .replace(/^\//, '')                     // 移除开头的斜杠
-          || '/';                                 // 根路径
+        const relativePath = fullPath.replace(baseDir, "").replace(/\\/g, "/");
+        const routePath =
+          relativePath
+            .replace(/\/page\.tsx$/, "") // 移除 /page.tsx
+            .replace(/\[.*?\]/g, "") // 移除动态路由参数
+            .replace(/\/\([^)]+\)/g, "") // 移除路由组 (marketing)/(tool)
+            .replace("//", "/") // 修复双斜杠
+            .replace(/^\//, "") || // 移除开头的斜杠
+          "/"; // 根路径
 
         // 跳过 dashboard、admin 等不需要 SEO 的页面
-        const skipRoutes = ['dashboard', 'admin', 'auth', 'login', 'register', 'settings'];
-        if (skipRoutes.some(route => routePath.includes(route))) {
+        const skipRoutes = [
+          "dashboard",
+          "admin",
+          "auth",
+          "login",
+          "register",
+          "settings",
+        ];
+        if (skipRoutes.some((route) => routePath.includes(route))) {
           continue;
         }
 
         // 根据路径确定优先级和更新频率
         let priority = 0.8;
-        let changeFrequency: 'daily' | 'weekly' | 'monthly' = 'weekly';
+        let changeFrequency: "daily" | "weekly" | "monthly" = "weekly";
 
-        if (routePath === '' || routePath === '/') {
+        if (routePath === "" || routePath === "/") {
           priority = 1.0;
-          changeFrequency = 'daily';
-        } else if (routePath.includes('pricing')) {
+          changeFrequency = "daily";
+        } else if (routePath.includes("pricing")) {
           priority = 0.9;
-          changeFrequency = 'weekly';
-        } else if (routePath.includes('privacy') || routePath.includes('terms')) {
+          changeFrequency = "weekly";
+        } else if (
+          routePath.includes("privacy") ||
+          routePath.includes("terms")
+        ) {
           priority = 0.3;
-          changeFrequency = 'monthly';
-        } else if (routePath.includes('-to-') || /\d/.test(routePath)) {
+          changeFrequency = "monthly";
+        } else if (routePath.includes("-to-") || /\d/.test(routePath)) {
           // 工具页面和模型页面
           priority = 0.7;
-          changeFrequency = 'weekly';
+          changeFrequency = "weekly";
         }
 
         pages.push({
-          path: routePath === '/' ? '' : routePath,
+          path: routePath === "/" ? "" : routePath,
           file: fullPath,
           priority,
           changeFrequency,
@@ -105,22 +134,22 @@ async function scanPages(
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://videofly.app";
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || `${siteBrand.origin}`;
 
   // 自动扫描所有页面
-  const appDir = join(process.cwd(), 'src', 'app', '[locale]');
+  const appDir = join(process.cwd(), "src", "app", "[locale]");
   const routes = await scanPages(appDir, appDir);
 
-  console.log('🗺️  Sitemap: 发现页面:', routes.length);
+  console.log("🗺️  Sitemap: 发现页面:", routes.length);
 
   const sitemap: MetadataRoute.Sitemap = [];
 
-  for (const route of routes) {
+  for (const route of routes.filter((r) => routeAvailable(`/${r.path}`))) {
     const lastModified = getLastModified(route.file);
 
     for (const locale of i18n.locales) {
       const localePath = locale === i18n.defaultLocale ? "" : `/${locale}`;
-      const url = `${baseUrl}${localePath}${route.path ? `/${route.path}` : ''}`;
+      const url = `${baseUrl}${localePath}${route.path ? `/${route.path}` : ""}`;
 
       sitemap.push({
         url,

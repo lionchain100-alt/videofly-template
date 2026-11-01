@@ -28,8 +28,6 @@ const fontHeading = localFont({
   variable: "--font-heading",
 });
 
-
-
 export function generateStaticParams() {
   return i18n.locales.map((locale) => ({ locale }));
 }
@@ -56,7 +54,7 @@ export const metadata = {
   creator: siteConfig.name,
   openGraph: {
     type: "website",
-    locale: "en_US",
+    locale: i18n.defaultLocale === "zh" ? "zh_CN" : "en_US",
     url: siteConfig.url,
     title: siteConfig.name,
     description: siteConfig.description,
@@ -68,11 +66,7 @@ export const metadata = {
     description: siteConfig.description,
   },
   icons: {
-    icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
-      { url: "/favicon.ico", sizes: "32x32" },
-    ],
-    apple: "/apple-touch-icon.png",
+    icon: [{ url: "/api/site/icon", type: "image/svg+xml" }],
   },
   metadataBase: new URL(siteConfig.url),
 };
@@ -81,9 +75,7 @@ interface RootLayoutProps {
   children: React.ReactNode;
 }
 
-export default async function RootLayout({
-  children,
-}: RootLayoutProps) {
+export default async function RootLayout({ children }: RootLayoutProps) {
   const locale = await getLocale();
   const messages = await getMessages();
 
@@ -101,13 +93,13 @@ export default async function RootLayout({
                   name: siteConfig.name,
                   url: siteConfig.url,
                   description: siteConfig.description,
-                  inLanguage: ["en", "zh"],
+                  inLanguage: i18n.locales,
                 },
                 {
                   "@type": "Organization",
                   name: siteConfig.name,
                   url: siteConfig.url,
-                  logo: `${siteConfig.url}/logo.svg`,
+                  logo: `${siteConfig.url}/api/site/icon`,
                 },
               ],
             }),

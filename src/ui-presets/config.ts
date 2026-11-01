@@ -1,4 +1,5 @@
 import { z } from "zod";
+import initialSite from "@/config/site.json";
 
 export const PRESETS = [
   {
@@ -24,10 +25,19 @@ export const PRESETS = [
   },
 ] as const;
 export type PresetId = (typeof PRESETS)[number]["id"];
-export type DemoState = "empty" | "loading" | "success" | "error" | "credits" | "signed-out";
+export type DemoState =
+  | "empty"
+  | "loading"
+  | "success"
+  | "error"
+  | "credits"
+  | "signed-out";
 export const SECTIONS = ["examples", "features", "faq"] as const;
 const bilingual = z
-  .object({ zh: z.string().trim().min(1).max(160), en: z.string().trim().min(1).max(200) })
+  .object({
+    zh: z.string().trim().min(1).max(160),
+    en: z.string().trim().min(1).max(200),
+  })
   .strict();
 export const uiConfigSchema = z
   .object({
@@ -44,7 +54,8 @@ export const uiConfigSchema = z
           .refine(
             (v) =>
               v === "" ||
-              (/^\/(?!\/)[a-zA-Z0-9_./-]+\.(svg|png|webp|jpg)$/.test(v) && !v.includes("..")),
+              (/^\/(?!\/)[a-zA-Z0-9_./-]+\.(svg|png|webp|jpg)$/.test(v) &&
+                !v.includes("..")),
             "Logo 必须是 public 中的本地图片路径",
           ),
       })
@@ -69,7 +80,9 @@ export const uiConfigSchema = z
         columns: z.number().int().min(1).max(3),
       })
       .strict(),
-    content: z.object({ title: bilingual, subtitle: bilingual, cta: bilingual }).strict(),
+    content: z
+      .object({ title: bilingual, subtitle: bilingual, cta: bilingual })
+      .strict(),
     defaultTool: z.enum(["text", "video"]),
     sections: z
       .array(z.enum(SECTIONS))
@@ -81,14 +94,20 @@ export type UIConfig = z.infer<typeof uiConfigSchema>;
 export function defaultConfig(id: PresetId = "studio"): UIConfig {
   const titles = {
     minimal: { zh: "把复杂的事，变简单。", en: "Less effort. More clarity." },
-    studio: { zh: "把灵感，变成作品。", en: "A little space for your next big idea." },
-    portal: { zh: "好工具，让想法更进一步。", en: "Find the right tool for your next idea." },
+    studio: {
+      zh: "把灵感，变成作品。",
+      en: "A little space for your next big idea.",
+    },
+    portal: {
+      zh: "好工具，让想法更进一步。",
+      en: "Find the right tool for your next idea.",
+    },
   };
   return {
     schemaVersion: 1,
     presetVersion: "1.0.0",
     presetId: id,
-    brand: { name: "Laconic", mark: "L", logoPath: "" },
+    brand: initialSite.ui.brand,
     theme: {
       mode: "light",
       accent: PRESETS.find((p) => p.id === id)!.color,
@@ -131,9 +150,19 @@ export function readableAccent(accent: string, background: string) {
   const bg = luminance(background);
   const target = contrastText(background) === "#ffffff" ? 255 : 0;
   for (let step = 0; step <= 20; step++) {
-    const color = `#${[1, 3, 5].map(i => Math.round(Number.parseInt(accent.slice(i, i + 2), 16) * (1 - step / 20) + target * step / 20).toString(16).padStart(2, "0")).join("")}`;
+    const color = `#${[1, 3, 5]
+      .map((i) =>
+        Math.round(
+          Number.parseInt(accent.slice(i, i + 2), 16) * (1 - step / 20) +
+            (target * step) / 20,
+        )
+          .toString(16)
+          .padStart(2, "0"),
+      )
+      .join("")}`;
     const value = luminance(color);
-    if ((Math.max(value, bg) + .05) / (Math.min(value, bg) + .05) >= 4.5) return color;
+    if ((Math.max(value, bg) + 0.05) / (Math.min(value, bg) + 0.05) >= 4.5)
+      return color;
   }
   return contrastText(background);
 }

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import {
+  studioCookieName,
   checkLocalHeaders,
   getStudioToken,
   readUIConfig,
@@ -11,7 +12,10 @@ import { uiConfigSchema } from "@/ui-presets/config";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 function deny() {
-  return NextResponse.json({ error: "本地 UI Studio 未启用或请求来源不受信任。" }, { status: 403 });
+  return NextResponse.json(
+    { error: "本地 UI Studio 未启用或请求来源不受信任。" },
+    { status: 403 },
+  );
 }
 export async function GET(request: Request) {
   if (!checkLocalHeaders(request.headers)) return deny();
@@ -19,7 +23,7 @@ export async function GET(request: Request) {
     { ...(await readUIConfig()), token: getStudioToken() },
     { headers: { "Cache-Control": "no-store" } },
   );
-  response.cookies.set("ui-studio-session", getStudioToken(), {
+  response.cookies.set(studioCookieName, getStudioToken(), {
     httpOnly: true,
     sameSite: "strict",
     path: "/api/ui-studio",
@@ -32,7 +36,10 @@ async function save(request: Request, rollback: boolean) {
   try {
     const raw = await request.text();
     if (Buffer.byteLength(raw) > 16_384)
-      return NextResponse.json({ error: "配置文件超过 16KB。" }, { status: 413 });
+      return NextResponse.json(
+        { error: "配置文件超过 16KB。" },
+        { status: 413 },
+      );
     const input = z
       .object({
         revision: z.string().regex(/^[a-f0-9]{64}$/),

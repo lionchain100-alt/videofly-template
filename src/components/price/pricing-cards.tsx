@@ -1,4 +1,5 @@
 "use client";
+import { siteManifest as siteBrand } from "@/config/site-manifest";
 
 import { useState } from "react";
 import Balancer from "react-wrap-balancer";
@@ -9,7 +10,10 @@ import * as Icons from "@/components/ui/icons";
 import { Switch } from "@/components/ui/switch";
 
 import { BillingFormButton } from "@/components/price/billing-form-button";
-import { priceDataMap, type SubscriptionPlanTranslation } from "@/config/price/price-data";
+import {
+  priceDataMap,
+  type SubscriptionPlanTranslation,
+} from "@/config/price/price-data";
 import { useSigninModal } from "@/hooks/use-signin-modal";
 import { UserSubscriptionPlan } from "@/types";
 import { LocaleLink } from "@/i18n/navigation";
@@ -19,16 +23,13 @@ interface PricingCardsProps {
   subscriptionPlan?: UserSubscriptionPlan;
 }
 
-export function PricingCards({
-  userId,
-  subscriptionPlan,
-}: PricingCardsProps) {
-  const t = useTranslations('PricingCards');
+export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
+  const t = useTranslations("PricingCards");
   const locale = useLocale();
   const isYearlyDefault = true;
   const [isYearly, setIsYearly] = useState<boolean>(isYearlyDefault);
   const signInModal = useSigninModal();
-  const pricingData = priceDataMap[locale] || priceDataMap['en'];
+  const pricingData = priceDataMap[locale] || priceDataMap["en"];
   const toggleBilling = () => {
     setIsYearly(!isYearly);
   };
@@ -36,22 +37,22 @@ export function PricingCards({
     <section className="container flex flex-col items-center text-center">
       <div className="mx-auto mb-10 flex w-full flex-col gap-5">
         <p className="text-sm font-medium uppercase tracking-widest text-muted-foreground">
-          {t('pricing')}
+          {t("pricing")}
         </p>
         <h2 className="font-heading text-3xl leading-[1.1] md:text-5xl">
-          {t('slogan')}
+          {t("slogan")}
         </h2>
       </div>
 
       <div className="mb-4 flex items-center gap-5">
-        <span>{t('monthly_bill')}</span>
+        <span>{t("monthly_bill")}</span>
         <Switch
           checked={isYearly}
           onCheckedChange={toggleBilling}
           role="switch"
           aria-label="switch-year"
         />
-        <span>{t('annual_bill')}</span>
+        <span>{t("annual_bill")}</span>
       </div>
 
       <div className="mx-auto grid max-w-screen-lg gap-5 bg-inherit py-5 md:grid-cols-3 lg:grid-cols-3">
@@ -80,15 +81,15 @@ export function PricingCards({
                     )}
                   </div>
                   <div className="-mb-1 ml-2 text-left text-sm font-medium">
-                    <div>{t('mo')}</div>
+                    <div>{t("mo")}</div>
                   </div>
                 </div>
               </div>
               {offer.prices.monthly > 0 ? (
                 <div className="text-left text-sm text-muted-foreground">
                   {isYearly
-                    ? `$${offer.prices.yearly} ${t('annual_info')}`
-                    : `${t('monthly_info')}`}
+                    ? `$${offer.prices.yearly} ${t("annual_info")}`
+                    : `${t("monthly_info")}`}
                 </div>
               ) : null}
             </div>
@@ -121,7 +122,7 @@ export function PricingCards({
                   subscriptionPlan={subscriptionPlan}
                 />
               ) : (
-                <Button onClick={signInModal.onOpen}>{t('signup')}</Button>
+                <Button onClick={signInModal.onOpen}>{t("signup")}</Button>
               )}
             </div>
           </div>
@@ -133,13 +134,13 @@ export function PricingCards({
           Email{" "}
           <a
             className="font-medium text-primary hover:underline"
-            href="mailto:support@videofly.app"
+            href={`mailto:${siteBrand.contact.supportEmail}`}
           >
-            support@videofly.app
+            {siteBrand.contact.supportEmail}
           </a>{" "}
-          {t('contact')}
+          {t("contact")}
           <br />
-          <strong>{t('contact_2')}</strong>
+          <strong>{t("contact_2")}</strong>
         </Balancer>
       </p>
     </section>

@@ -4,13 +4,19 @@ import { requireUserMutation } from "@/lib/api/auth";
 import { apiSuccess, apiError, handleApiError } from "@/lib/api/response";
 import { submitVideo } from "@/services/video-jobs";
 import { z } from "zod";
+import { assertToolEnabled, readSiteManifest } from "@/config/site-server";
 export const dynamic = "force-dynamic";
-export function GET() {
-  return apiSuccess(publicVideoConfig());
+export async function GET() {
+  const enabled = (await readSiteManifest()).tools["video-generation"];
+  return apiSuccess({
+    ...publicVideoConfig(),
+    ...(!enabled ? { enabled: false, reason: "TOOL_DISABLED" } : {}),
+  });
 }
 export async function POST(request: Request) {
   try {
     const user = await requireUserMutation(request);
+    await assertToolEnabled("video-generation");
     const reader = request.body?.getReader();
     if (!reader) return apiError("缺少输入", 400);
     const chunks: Uint8Array[] = [];
@@ -25,7 +31,9 @@ export async function POST(request: Request) {
       }
       chunks.push(value);
     }
-    const data = videoSubmissionSchema.parse(JSON.parse(Buffer.concat(chunks).toString("utf8")));
+    const data = videoSubmissionSchema.parse(
+      JSON.parse(Buffer.concat(chunks).toString("utf8")),
+    );
     const result = await submitVideo(user.id, data.requestId, data.input);
     return apiSuccess(result, result.replayed ? 200 : 202);
   } catch (e) {

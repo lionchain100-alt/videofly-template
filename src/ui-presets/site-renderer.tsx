@@ -23,10 +23,16 @@ import {
   WandSparkles,
   X,
 } from "lucide-react";
-import { contrastText, readableAccent, type DemoState, type UIConfig } from "./config";
+import {
+  contrastText,
+  readableAccent,
+  type DemoState,
+  type UIConfig,
+} from "./config";
 import styles from "./site.module.css";
 import { SummaryWorkspace } from "@/tools/text-summary/workspace";
 import { VideoWorkspace } from "@/tools/video/workspace";
+import { siteManifest, localePath } from "@/config/site-manifest";
 import { AccountButton } from "@/tools/text-summary/account-button";
 
 export interface SiteProps {
@@ -52,15 +58,26 @@ export function SiteRenderer({
   const c = config;
   const en = locale === "en";
   const t = (zh: string, english: string) => (en ? english : zh);
-  const [tool, setTool] = useState<ToolId>(c.defaultTool);
+  const toolEnabled = (id: ToolId) =>
+    siteManifest.tools[id === "text" ? "text-summary" : "video-generation"];
+  const firstTool: ToolId = toolEnabled(c.defaultTool)
+    ? c.defaultTool
+    : toolEnabled("text")
+      ? "text"
+      : "video";
+  const [tool, setTool] = useState<ToolId>(firstTool);
   const [inputs, setInputs] = useState({ text: "", video: "" });
   const [state, setState] = useState<DemoState>(scenario);
   const [portalOpen, setPortalOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("all");
-  const [modal, setModal] = useState<"login" | "pricing" | "history" | null>(null);
+  const [modal, setModal] = useState<"login" | "pricing" | "history" | null>(
+    null,
+  );
   const [mobileNav, setMobileNav] = useState(false);
-  const [history, setHistory] = useState<{ id: number; tool: ToolId; input: string }[]>([]);
+  const [history, setHistory] = useState<
+    { id: number; tool: ToolId; input: string }[]
+  >([]);
   const [recent, setRecent] = useState<ToolId[]>([]);
   const [feedback, setFeedback] = useState("");
   const [length, setLength] = useState("short");
@@ -71,8 +88,8 @@ export function SiteRenderer({
     if (modal) dialogRef.current?.showModal();
   }, [modal]);
   useEffect(() => {
-    setTool(c.defaultTool);
-  }, [c.defaultTool]);
+    setTool(firstTool);
+  }, [firstTool]);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
     setState(scenario);
@@ -81,7 +98,8 @@ export function SiteRenderer({
   useEffect(() => {
     setDark(
       c.theme.mode === "dark" ||
-        (c.theme.mode === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches),
+        (c.theme.mode === "system" &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches),
     );
   }, [c.theme.mode]);
   useEffect(() => {
@@ -91,25 +109,38 @@ export function SiteRenderer({
   }, []);
   useEffect(() => {
     try {
-      const saved: unknown = JSON.parse(localStorage.getItem("laconic-recent-v1") ?? "[]");
+      const saved: unknown = JSON.parse(
+        localStorage.getItem(`${siteManifest.id}-recent-v1`) ?? "[]",
+      );
       if (Array.isArray(saved))
-        setRecent(saved.filter((v): v is ToolId => v === "text" || v === "video").slice(0, 2));
+        setRecent(
+          saved
+            .filter((v): v is ToolId => v === "text" || v === "video")
+            .slice(0, 2),
+        );
     } catch {}
   }, []);
   function openTool(id: ToolId) {
+    if (!toolEnabled(id)) return;
     setTool(id);
     setPortalOpen(true);
     setMobileNav(false);
     const next = [id, ...recent.filter((v) => v !== id)];
     setRecent(next);
     try {
-      localStorage.setItem("laconic-recent-v1", JSON.stringify(next));
+      localStorage.setItem(
+        `${siteManifest.id}-recent-v1`,
+        JSON.stringify(next),
+      );
     } catch {}
   }
   function runDemo() {
     if (!inputs[tool].trim()) {
       setFeedback(
-        t("先输入一些内容，或使用下方示例。", "Add some content, or try the example below."),
+        t(
+          "先输入一些内容，或使用下方示例。",
+          "Add some content, or try the example below.",
+        ),
       );
       return;
     }
@@ -124,11 +155,11 @@ export function SiteRenderer({
   }
   function openLogin() {
     if (preview) setModal("login");
-    else window.location.assign(locale === "zh" ? "/zh/login" : "/login");
+    else window.location.assign(localePath(locale, "/login"));
   }
   function openHistory() {
     if (preview) setModal("history");
-    else openTool("text");
+    else openTool(firstTool);
   }
   const input = inputs[tool];
   const summary = t(
@@ -140,9 +171,11 @@ export function SiteRenderer({
     : summary;
   function download() {
     const a = document.createElement("a");
-    const url = URL.createObjectURL(new Blob([result], { type: "text/plain;charset=utf-8" }));
+    const url = URL.createObjectURL(
+      new Blob([result], { type: "text/plain;charset=utf-8" }),
+    );
     a.href = url;
-    a.download = "laconic-demo-summary.txt";
+    a.download = `${siteManifest.id}-demo-summary.txt`;
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -151,11 +184,19 @@ export function SiteRenderer({
       await navigator.clipboard.writeText(result);
       setFeedback(t("已复制到剪贴板", "Copied to clipboard"));
     } catch {
-      setFeedback(t("复制不可用，请选中文字手动复制。", "Select the text and copy it manually."));
+      setFeedback(
+        t(
+          "复制不可用，请选中文字手动复制。",
+          "Select the text and copy it manually.",
+        ),
+      );
     }
   }
   const tokens = {
-    "--site-accent": readableAccent(c.theme.accent, dark ? "#14161d" : c.theme.background),
+    "--site-accent": readableAccent(
+      c.theme.accent,
+      dark ? "#14161d" : c.theme.background,
+    ),
     "--site-brand": c.theme.accent,
     "--site-on-accent": contrastText(c.theme.accent),
     "--site-bg": dark ? "#14161d" : c.theme.background,
@@ -166,8 +207,12 @@ export function SiteRenderer({
         ? "#d4d7e1"
         : "#626b7b",
     "--site-surface": dark ? "#1d202a" : c.theme.background,
-    "--site-soft": dark ? "#232734" : "color-mix(in srgb, var(--site-bg) 95%, var(--site-accent))",
-    "--site-border": dark ? "#363b4b" : "color-mix(in srgb, var(--site-text) 13%, var(--site-bg))",
+    "--site-soft": dark
+      ? "#232734"
+      : "color-mix(in srgb, var(--site-bg) 95%, var(--site-accent))",
+    "--site-border": dark
+      ? "#363b4b"
+      : "color-mix(in srgb, var(--site-text) 13%, var(--site-bg))",
     "--site-radius": `${c.theme.radius}px`,
     "--site-width": `${c.layout.contentMaxWidth}px`,
     "--site-sidebar": `${c.layout.sidebarWidth}px`,
@@ -187,7 +232,9 @@ export function SiteRenderer({
           : 'Inter, "Segoe UI", "Microsoft YaHei", sans-serif',
   } as CSSProperties;
   const toolName =
-    tool === "text" ? t("文本摘要", "Text summary") : t("视频生成", "Video generation");
+    tool === "text"
+      ? t("文本摘要", "Text summary")
+      : t("视频生成", "Video generation");
   const toolCards = [
     {
       id: "text" as const,
@@ -209,7 +256,7 @@ export function SiteRenderer({
       ),
       icon: Video,
     },
-  ];
+  ].filter((card) => toolEnabled(card.id));
   const filtered = toolCards.filter(
     (card) =>
       (category === "all" || category === card.category) &&
@@ -274,7 +321,11 @@ export function SiteRenderer({
             </span>
             {tool === "text" && (
               <div>
-                <button type="button" aria-label={t("复制结果", "Copy result")} onClick={copy}>
+                <button
+                  type="button"
+                  aria-label={t("复制结果", "Copy result")}
+                  onClick={copy}
+                >
                   <Copy size={16} />
                 </button>
                 <button
@@ -289,7 +340,9 @@ export function SiteRenderer({
           </div>
           {tool === "text" ? (
             <>
-              <h3>{t("让重点，浮出水面。", "Make the important things clear.")}</h3>
+              <h3>
+                {t("让重点，浮出水面。", "Make the important things clear.")}
+              </h3>
               <p className={styles.summaryText}>{result}</p>
               <div className={styles.resultNote}>
                 {t(
@@ -305,7 +358,10 @@ export function SiteRenderer({
                 <div className={styles.hills} />
                 <Play size={36} />
                 <span>
-                  {t("分镜示例 · 非生成视频", "Storyboard example · not a generated video")}
+                  {t(
+                    "分镜示例 · 非生成视频",
+                    "Storyboard example · not a generated video",
+                  )}
                 </span>
               </div>
               <p>
@@ -330,14 +386,21 @@ export function SiteRenderer({
           {t("从这里开始。", "starts right here.")}
         </h3>
         <p>
-          {t("在左侧写下内容，或试试示例。", "Add your content, or try an example.")}
+          {t(
+            "在左侧写下内容，或试试示例。",
+            "Add your content, or try an example.",
+          )}
           <br />
           {t("给想法一点空间。", "Give your ideas a little space.")}
         </p>
       </div>
     );
   }
-  const workspace = !preview ? (
+  const workspace = !toolEnabled(tool) ? (
+    <section role="status">
+      {t("本站暂未开放工具", "No tools are currently enabled")}
+    </section>
+  ) : !preview ? (
     tool === "text" ? (
       <SummaryWorkspace
         locale={locale}
@@ -369,27 +432,34 @@ export function SiteRenderer({
             <WandSparkles size={17} />
             {t("创作内容", "Your content")}
           </span>
-          <button type="button" onClick={() => setInputs((v) => ({ ...v, [tool]: "" }))}>
+          <button
+            type="button"
+            onClick={() => setInputs((v) => ({ ...v, [tool]: "" }))}
+          >
             {t("清空", "Clear")}
           </button>
         </div>
         <div className={styles.toolTabs}>
-          <button
-            type="button"
-            className={tool === "text" ? styles.activeTab : ""}
-            onClick={() => openTool("text")}
-          >
-            <FileText size={14} />
-            {t("文本摘要", "Summary")}
-          </button>
-          <button
-            type="button"
-            className={tool === "video" ? styles.activeTab : ""}
-            onClick={() => openTool("video")}
-          >
-            <Video size={14} />
-            {t("视频生成", "Video")}
-          </button>
+          {toolEnabled("text") && (
+            <button
+              type="button"
+              className={tool === "text" ? styles.activeTab : ""}
+              onClick={() => openTool("text")}
+            >
+              <FileText size={14} />
+              {t("文本摘要", "Summary")}
+            </button>
+          )}
+          {toolEnabled("video") && (
+            <button
+              type="button"
+              className={tool === "video" ? styles.activeTab : ""}
+              onClick={() => openTool("video")}
+            >
+              <Video size={14} />
+              {t("视频生成", "Video")}
+            </button>
+          )}
         </div>
         <label className={styles.srOnly} htmlFor="tool-content">
           {t("输入内容", "Input content")}
@@ -435,11 +505,15 @@ export function SiteRenderer({
         </div>
         <div className={styles.actionRow}>
           <label className={styles.parameter}>
-            {tool === "text" ? t("摘要长度", "Length") : t("画面比例", "Aspect ratio")}
+            {tool === "text"
+              ? t("摘要长度", "Length")
+              : t("画面比例", "Aspect ratio")}
             <select
               value={tool === "text" ? length : aspect}
               onChange={(e) =>
-                tool === "text" ? setLength(e.target.value) : setAspect(e.target.value)
+                tool === "text"
+                  ? setLength(e.target.value)
+                  : setAspect(e.target.value)
               }
             >
               {tool === "text" ? (
@@ -463,11 +537,16 @@ export function SiteRenderer({
             disabled={state === "loading"}
           >
             <Sparkles size={15} />
-            {tool === "text" ? c.content.cta[locale] : t("预览分镜", "Preview storyboard")}
+            {tool === "text"
+              ? c.content.cta[locale]
+              : t("预览分镜", "Preview storyboard")}
           </button>
         </div>
         <p className={styles.demoHint}>
-          {t("演示模式 · 不调用模型，不扣积分", "Demo mode · no model calls, no credits used")}
+          {t(
+            "演示模式 · 不调用模型，不扣积分",
+            "Demo mode · no model calls, no credits used",
+          )}
         </p>
       </div>
       <div className={styles.resultPanel} aria-live="polite">
@@ -505,6 +584,16 @@ export function SiteRenderer({
           <strong>{c.brand.name}</strong>
         </button>
         <nav>
+          {siteManifest.languages.enabled.length > 1 &&
+            siteManifest.languages.enabled.map((language) => (
+              <a
+                key={language}
+                href={localePath(language)}
+                aria-current={language === locale ? "page" : undefined}
+              >
+                {language === "zh" ? "中文" : "English"}
+              </a>
+            ))}
           <button
             type="button"
             onClick={() => {
@@ -515,7 +604,14 @@ export function SiteRenderer({
           >
             {t("探索工具", "Explore")}
           </button>
-          <button type="button" onClick={() => preview ? setModal("pricing") : window.location.assign(`${locale === "zh" ? "/zh" : ""}/buy-credits`)}>
+          <button
+            type="button"
+            onClick={() =>
+              preview
+                ? setModal("pricing")
+                : window.location.assign(localePath(locale, "/buy-credits"))
+            }
+          >
             {t("价格", "Pricing")}
           </button>
           <button type="button" onClick={() => openHistory()}>
@@ -531,7 +627,11 @@ export function SiteRenderer({
             {dark ? <Sun size={17} /> : <Moon size={17} />}
           </button>
           {preview ? (
-            <button type="button" className={styles.secondary} onClick={() => openLogin()}>
+            <button
+              type="button"
+              className={styles.secondary}
+              onClick={() => openLogin()}
+            >
               {t("登录", "Sign in")}
               <ArrowRight size={13} />
             </button>
@@ -581,10 +681,16 @@ export function SiteRenderer({
       )}
       <div className={styles.body}>
         {c.presetId === "studio" && (
-          <aside className={`${styles.sidebar} ${mobileNav ? styles.navOpen : ""}`}>
+          <aside
+            className={`${styles.sidebar} ${mobileNav ? styles.navOpen : ""}`}
+          >
             <div className={styles.sidebarTop}>
               <span>{t("你的工作空间", "YOUR WORKSPACE")}</span>
-              <button type="button" className={styles.sidebarActive} onClick={() => setModal(null)}>
+              <button
+                type="button"
+                className={styles.sidebarActive}
+                onClick={() => setModal(null)}
+              >
                 <Layers3 size={17} />
                 {t("创作空间", "Workspace")}
               </button>
@@ -593,7 +699,9 @@ export function SiteRenderer({
                 {t("我的作品", "My creations")}
               </button>
             </div>
-            <span className={styles.navCaption}>{t("AI 工具", "AI TOOLS")}</span>
+            <span className={styles.navCaption}>
+              {t("AI 工具", "AI TOOLS")}
+            </span>
             {toolCards.map((card) => (
               <button
                 type="button"
@@ -608,8 +716,20 @@ export function SiteRenderer({
             <div className={styles.sidebarBottom}>
               <Sparkles size={20} />
               <strong>{t("留一点时间给灵感", "Make room for ideas")}</strong>
-              <p>{t("从小小的尝试，开始新的创作。", "Small experiments. New possibilities.")}</p>
-              <button type="button" onClick={() => preview ? setModal("pricing") : window.location.assign(`${locale === "zh" ? "/zh" : ""}/buy-credits`)}>
+              <p>
+                {t(
+                  "从小小的尝试，开始新的创作。",
+                  "Small experiments. New possibilities.",
+                )}
+              </p>
+              <button
+                type="button"
+                onClick={() =>
+                  preview
+                    ? setModal("pricing")
+                    : window.location.assign(localePath(locale, "/buy-credits"))
+                }
+              >
                 {t("了解方案", "Explore plans")}
                 <ArrowRight size={13} />
               </button>
@@ -618,12 +738,20 @@ export function SiteRenderer({
         )}
         <main className={styles.main}>
           {c.presetId === "portal" && portalOpen ? (
-            <button type="button" className={styles.back} onClick={() => setPortalOpen(false)}>
+            <button
+              type="button"
+              className={styles.back}
+              onClick={() => setPortalOpen(false)}
+            >
               ← {t("全部工具", "All tools")} / {toolName}
             </button>
           ) : null}
           <div className={styles.hero}>
-            <h1>{c.presetId === "portal" && portalOpen ? toolName : c.content.title[locale]}</h1>
+            <h1>
+              {c.presetId === "portal" && portalOpen
+                ? toolName
+                : c.content.title[locale]}
+            </h1>
             <p>{c.content.subtitle[locale]}</p>
           </div>
           {c.presetId === "portal" && !portalOpen ? (
@@ -646,22 +774,24 @@ export function SiteRenderer({
                   ["all", t("所有工具", "All tools")],
                   ["text", t("文字处理", "Writing")],
                   ["video", t("影像创作", "Video")],
-                ].map(([id, title]) => (
-                  <button
-                    type="button"
-                    key={id}
-                    className={category === id ? styles.categoryActive : ""}
-                    onClick={() => setCategory(id)}
-                  >
-                    {title}
-                  </button>
-                ))}
+                ]
+                  .filter(([id]) => id === "all" || toolEnabled(id as ToolId))
+                  .map(([id, title]) => (
+                    <button
+                      type="button"
+                      key={id}
+                      className={category === id ? styles.categoryActive : ""}
+                      onClick={() => setCategory(id)}
+                    >
+                      {title}
+                    </button>
+                  ))}
               </div>
               {recent.length > 0 && (
                 <div className={styles.recent}>
                   <Clock3 size={14} />
                   {t("最近使用", "Recently used")}
-                  {recent.map((id) => (
+                  {recent.filter(toolEnabled).map((id) => (
                     <button type="button" key={id} onClick={() => openTool(id)}>
                       {toolCards.find((v) => v.id === id)!.title}
                       <ArrowRight size={12} />
@@ -690,7 +820,9 @@ export function SiteRenderer({
                     className={styles.toolCard}
                     onClick={() => openTool(card.id)}
                   >
-                    <div className={`${styles.cardArt} ${i === 1 ? styles.videoArt : ""}`}>
+                    <div
+                      className={`${styles.cardArt} ${i === 1 ? styles.videoArt : ""}`}
+                    >
                       <card.icon size={44} strokeWidth={1.3} />
                       <span>{i === 0 ? "Aa" : "16:9"}</span>
                     </div>
@@ -734,23 +866,30 @@ export function SiteRenderer({
           ) : (
             <>
               {!preview && (
-                <div className={styles.toolTabs} aria-label={t("切换工具", "Switch tool")}>
-                  <button
-                    type="button"
-                    onClick={() => openTool("text")}
-                    className={tool === "text" ? styles.activeTab : ""}
-                    aria-label={t("切换到文本摘要", "Switch to text summary")}
-                  >
-                    {t("文本摘要", "Text summary")}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => openTool("video")}
-                    className={tool === "video" ? styles.activeTab : ""}
-                    aria-label={t("切换到视频生成", "Switch to video")}
-                  >
-                    {t("视频生成", "Video generation")}
-                  </button>
+                <div
+                  className={styles.toolTabs}
+                  aria-label={t("切换工具", "Switch tool")}
+                >
+                  {toolEnabled("text") && (
+                    <button
+                      type="button"
+                      onClick={() => openTool("text")}
+                      className={tool === "text" ? styles.activeTab : ""}
+                      aria-label={t("切换到文本摘要", "Switch to text summary")}
+                    >
+                      {t("文本摘要", "Text summary")}
+                    </button>
+                  )}
+                  {toolEnabled("video") && (
+                    <button
+                      type="button"
+                      onClick={() => openTool("video")}
+                      className={tool === "video" ? styles.activeTab : ""}
+                      aria-label={t("切换到视频生成", "Switch to video")}
+                    >
+                      {t("视频生成", "Video generation")}
+                    </button>
+                  )}
                 </div>
               )}
               {workspace}
@@ -783,7 +922,10 @@ export function SiteRenderer({
                   [
                     "02",
                     t("选择合适的工具", "Find your tool"),
-                    t("把时间留给思考，让工具完成整理。", "Let the tool handle the small details."),
+                    t(
+                      "把时间留给思考，让工具完成整理。",
+                      "Let the tool handle the small details.",
+                    ),
                   ],
                   [
                     "03",
@@ -804,7 +946,12 @@ export function SiteRenderer({
             ) : section === "features" ? (
               <section className={styles.featureStrip} key={section}>
                 <div>
-                  <h2>{t("好工具，应该轻一点。", "Good tools get out of your way.")}</h2>
+                  <h2>
+                    {t(
+                      "好工具，应该轻一点。",
+                      "Good tools get out of your way.",
+                    )}
+                  </h2>
                   <p>
                     {t(
                       "清楚的步骤、及时的反馈，还有值得信赖的掌控感。",
@@ -829,10 +976,15 @@ export function SiteRenderer({
               </section>
             ) : (
               <section className={styles.faq} key={section}>
-                <h2>{t("开始之前，你可能想知道", "A few things before you start")}</h2>
+                <h2>
+                  {t("开始之前，你可能想知道", "A few things before you start")}
+                </h2>
                 <details>
                   <summary>
-                    {t("这里会调用真实 AI 模型吗？", "Does this call a real AI model?")}
+                    {t(
+                      "这里会调用真实 AI 模型吗？",
+                      "Does this call a real AI model?",
+                    )}
                   </summary>
                   <p>
                     {t(
@@ -847,7 +999,10 @@ export function SiteRenderer({
                 </details>
                 <details>
                   <summary>
-                    {t("可以保存或切换界面吗？", "Can I customize this interface?")}
+                    {t(
+                      "可以保存或切换界面吗？",
+                      "Can I customize this interface?",
+                    )}
                   </summary>
                   <p>
                     {t(
@@ -912,7 +1067,10 @@ export function SiteRenderer({
                 ? t("最近创作", "Recent work")
                 : modal === "login"
                   ? t("欢迎回来", "Welcome back")
-                  : t("为你的下一步，留出空间。", "Make room for your next step.")}
+                  : t(
+                      "为你的下一步，留出空间。",
+                      "Make room for your next step.",
+                    )}
             </h2>
             <p>
               {t(
@@ -951,11 +1109,14 @@ export function SiteRenderer({
             ) : modal === "login" ? (
               <a
                 className={styles.primary}
-                href={`/${locale === "zh" ? "zh/" : ""}login`}
+                href={localePath(locale, "/login")}
                 target="_blank"
                 rel="noreferrer"
               >
-                {t("打开真实登录页（需先配置服务）", "Open sign-in page (setup required)")}
+                {t(
+                  "打开真实登录页（需先配置服务）",
+                  "Open sign-in page (setup required)",
+                )}
                 <ArrowRight size={15} />
               </a>
             ) : (

@@ -1,7 +1,8 @@
+import { siteManifest } from "./site-manifest";
 export const i18n = {
-  defaultLocale: "en", // 改为英语作为默认语言
-  locales: ["en", "zh"],
-} as const;
+  defaultLocale: siteManifest.languages.default,
+  locales: siteManifest.languages.enabled,
+};
 
 export type Locale = (typeof i18n)["locales"][number];
 
@@ -20,7 +21,7 @@ export const localeConfig = {
 } as const;
 
 // Cookie 名称
-export const LOCALE_COOKIE_NAME = "NEXT_LOCALE";
+export const LOCALE_COOKIE_NAME = `${siteManifest.isolation.cookiePrefix}-locale`;
 
 // 向后兼容的 localeMap
 export const localeMap = {

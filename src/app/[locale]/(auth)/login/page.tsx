@@ -1,3 +1,6 @@
+import { SiteBrand } from "@/components/site-brand";
+import { localePath } from "@/config/site-manifest";
+import { siteManifest as siteBrand } from "@/config/site-manifest";
 import { Suspense } from "react";
 import { headers } from "next/headers";
 import { localTestRequestAllowed } from "@/lib/auth/local-test";
@@ -32,7 +35,7 @@ export default async function LoginPage({
   return (
     <div className="container flex h-screen w-screen flex-col items-center justify-center">
       <Link
-        href={`/${locale}`}
+        href={localePath(locale, `/`)}
         className={cn(
           buttonVariants({ variant: "ghost" }),
           "absolute left-4 top-4 md:left-8 md:top-8",
@@ -45,22 +48,18 @@ export default async function LoginPage({
       </Link>
       <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
         <div className="flex flex-col space-y-2 text-center">
-          <Image
-            src="/images/avatars/saasfly-logo.svg"
-            className="mx-auto"
-            width="64"
-            height="64"
-            alt="VideoFly Logo - AI Video Generation Platform"
-          />
+          <SiteBrand />
           <h1 className="text-2xl font-semibold tracking-tight">
             {t("welcome_back")}
           </h1>
-          <p className="text-sm text-muted-foreground">
-            {t("signin_title")}
-          </p>
+          <p className="text-sm text-muted-foreground">{t("signin_title")}</p>
         </div>
         <Suspense fallback={<div className="h-10" />}>
-          {localLogin ? <LocalAdminLogin locale={locale}/> : <UserAuthForm lang={locale} />}
+          {localLogin ? (
+            <LocalAdminLogin locale={locale} />
+          ) : (
+            <UserAuthForm lang={locale} />
+          )}
         </Suspense>
       </div>
     </div>

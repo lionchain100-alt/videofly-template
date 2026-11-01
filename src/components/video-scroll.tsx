@@ -1,4 +1,5 @@
 "use client";
+import { siteManifest as siteBrand } from "@/config/site-manifest";
 
 import Link from "next/link";
 import Image from "next/image";
@@ -6,7 +7,9 @@ import Image from "next/image";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import { ColourfulText } from "@/components/ui/colorful-text";
 
-export function VideoScroll({ dict } : { dict: Record<string, string> | undefined }) {
+export function VideoScroll({
+  dict,
+}: { dict: Record<string, string> | undefined }) {
   return (
     <div className="flex flex-col overflow-hidden">
       <ContainerScroll
@@ -24,7 +27,7 @@ export function VideoScroll({ dict } : { dict: Record<string, string> | undefine
       >
         <Image
           src={`https://cdnv2.ruguoapp.com/FoAVSRtT2zVc96oDjAWrd5TvXXQ4v3.png`}
-          alt="VideoFly AI video generation platform preview"
+          alt={`${siteBrand.ui.brand.name} AI video generation platform preview`}
           height={720}
           width={1400}
           className="mx-auto rounded-2xl object-cover h-full object-left-top"

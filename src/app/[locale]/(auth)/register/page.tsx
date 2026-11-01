@@ -1,3 +1,4 @@
+import { localePath } from "@/config/site-manifest";
 import { Suspense } from "react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
@@ -26,7 +27,7 @@ export default async function RegisterPage({
   return (
     <div className="container grid h-screen w-screen flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
       <Link
-        href={`/${locale}/login`}
+        href={localePath(locale, `/login`)}
         className={cn(
           buttonVariants({ variant: "ghost" }),
           "absolute right-4 top-4 md:right-8 md:top-8",
@@ -51,14 +52,14 @@ export default async function RegisterPage({
           <p className="px-8 text-center text-sm text-muted-foreground">
             {t("agree_prefix")}{" "}
             <Link
-              href={`/${locale}/terms`}
+              href={localePath(locale, `/terms`)}
               className="hover:text-brand underline underline-offset-4"
             >
               {t("terms_of_service")}
             </Link>{" "}
             {t("and")}{" "}
             <Link
-              href={`/${locale}/privacy`}
+              href={localePath(locale, `/privacy`)}
               className="hover:text-brand underline underline-offset-4"
             >
               {t("privacy_policy")}

@@ -1,7 +1,15 @@
 "use client";
 
+import { localePath } from "@/config/site-manifest";
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Check, Copy, Download, FileText, LoaderCircle } from "lucide-react";
+import {
+  ArrowRight,
+  Check,
+  Copy,
+  Download,
+  FileText,
+  LoaderCircle,
+} from "lucide-react";
 import type { SummaryTask, SummaryInput } from "./contract";
 import { useCreditsStore } from "@/stores/credits-store";
 import styles from "@/ui-presets/site.module.css";
@@ -30,7 +38,10 @@ export function SummaryWorkspace({
 }) {
   const en = locale === "en";
   const t = (zh: string, english: string) => (en ? english : zh);
-  const [config, setConfig] = useState<{ enabled: boolean; credits: number | null } | null>(null);
+  const [config, setConfig] = useState<{
+    enabled: boolean;
+    credits: number | null;
+  } | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [history, setHistory] = useState<SummaryTask[]>([]);
   const [task, setTask] = useState<SummaryTask | null>(null);
@@ -60,7 +71,10 @@ export function SummaryWorkspace({
             signal: controller.signal,
             cache: "no-store",
           }).then(readJson),
-          fetch("/api/v1/tasks", { signal: controller.signal, cache: "no-store" }),
+          fetch("/api/v1/tasks", {
+            signal: controller.signal,
+            cache: "no-store",
+          }),
         ]);
         if (controller.signal.aborted) return;
         setConfig(settings);
@@ -79,7 +93,8 @@ export function SummaryWorkspace({
             }
             try {
               const saved = JSON.parse(
-                sessionStorage.getItem(`summary-pending-${data.userId}`) || "null",
+                sessionStorage.getItem(`summary-pending-${data.userId}`) ||
+                  "null",
               );
               if (saved?.requestId && saved.input) {
                 setIntent(saved);
@@ -92,10 +107,16 @@ export function SummaryWorkspace({
               }
             } catch {}
           }
-        } else if (response.status !== 401) throw new Error("Task history unavailable");
+        } else if (response.status !== 401)
+          throw new Error("Task history unavailable");
       } catch {
         if (!controller.signal.aborted)
-          setConnection(t("服务连接失败，请刷新重试。", "Unable to connect. Refresh to retry."));
+          setConnection(
+            t(
+              "服务连接失败，请刷新重试。",
+              "Unable to connect. Refresh to retry.",
+            ),
+          );
       } finally {
         if (!controller.signal.aborted) setReady(true);
       }
@@ -127,7 +148,9 @@ export function SummaryWorkspace({
         if (stopped) return;
         setTask(updated);
         setConnection("");
-        setHistory((items) => [updated, ...items.filter((v) => v.id !== updated.id)].slice(0, 20));
+        setHistory((items) =>
+          [updated, ...items.filter((v) => v.id !== updated.id)].slice(0, 20),
+        );
         if (updated.status === "SUCCEEDED" || updated.status === "FAILED") {
           refreshCredits();
           return;
@@ -153,10 +176,13 @@ export function SummaryWorkspace({
   async function submit() {
     if (sending.current) return;
     if (!userId) {
-      window.location.assign(en ? "/login" : "/zh/login");
+      window.location.assign(localePath(locale, "/login"));
       return;
     }
-    if (!intent && (!config?.enabled || text.trim().length < 20 || text.length > 8000)) {
+    if (
+      !intent &&
+      (!config?.enabled || text.trim().length < 20 || text.length > 8000)
+    ) {
       setError(
         t(
           "请输入 20–8000 字原文，并确认模型已启用。",
@@ -204,16 +230,21 @@ export function SummaryWorkspace({
         }
         setError(
           body.error?.message ||
-            t("提交未确认，请重试同一请求。", "Submission unconfirmed. Retry the same request."),
+            t(
+              "提交未确认，请重试同一请求。",
+              "Submission unconfirmed. Retry the same request.",
+            ),
         );
         return;
       }
       // Resolve the receipt before clearing the persisted request, so a GET failure remains safely retryable.
-      const created = (await fetch(`/api/v1/tasks/${body.data.id}`, { cache: "no-store" }).then(
-        readJson,
-      )) as SummaryTask;
+      const created = (await fetch(`/api/v1/tasks/${body.data.id}`, {
+        cache: "no-store",
+      }).then(readJson)) as SummaryTask;
       setTask(created);
-      setHistory((items) => [created, ...items.filter((v) => v.id !== created.id)].slice(0, 20));
+      setHistory((items) =>
+        [created, ...items.filter((v) => v.id !== created.id)].slice(0, 20),
+      );
       sessionStorage.removeItem(`summary-pending-${userId}`);
       setIntent(null);
       refreshCredits();
@@ -234,12 +265,16 @@ export function SummaryWorkspace({
       await navigator.clipboard.writeText(task?.result || "");
       setError(t("结果已复制。", "Result copied."));
     } catch {
-      setError(t("请选中结果后手动复制。", "Select the result and copy manually."));
+      setError(
+        t("请选中结果后手动复制。", "Select the result and copy manually."),
+      );
     }
   }
   function download() {
     if (!task?.result) return;
-    const url = URL.createObjectURL(new Blob([task.result], { type: "text/plain;charset=utf-8" }));
+    const url = URL.createObjectURL(
+      new Blob([task.result], { type: "text/plain;charset=utf-8" }),
+    );
     const a = document.createElement("a");
     a.href = url;
     a.download = `summary-${task.id}.txt`;
@@ -314,9 +349,13 @@ export function SummaryWorkspace({
             type="button"
             className={styles.primary}
             onClick={submit}
-            disabled={!ready || pending || (!intent && !!userId && !config?.enabled)}
+            disabled={
+              !ready || pending || (!intent && !!userId && !config?.enabled)
+            }
           >
-            {pending ? <LoaderCircle size={16} className={styles.spin} /> : null}
+            {pending ? (
+              <LoaderCircle size={16} className={styles.spin} />
+            ) : null}
             {intent
               ? t("重试同一提交", "Retry same request")
               : !userId
@@ -367,7 +406,12 @@ export function SummaryWorkspace({
               </button>
             ))
           ) : (
-            <p>{t("登录后查看最近 20 条真实任务。", "Sign in to view your last 20 tasks.")}</p>
+            <p>
+              {t(
+                "登录后查看最近 20 条真实任务。",
+                "Sign in to view your last 20 tasks.",
+              )}
+            </p>
           )}
         </div>
       </div>
@@ -385,7 +429,11 @@ export function SummaryWorkspace({
               </span>
               {task.result && (
                 <div>
-                  <button type="button" aria-label={t("复制摘要", "Copy summary")} onClick={copy}>
+                  <button
+                    type="button"
+                    aria-label={t("复制摘要", "Copy summary")}
+                    onClick={copy}
+                  >
                     <Copy size={16} />
                   </button>
                   <button
@@ -417,9 +465,15 @@ export function SummaryWorkspace({
             )}
             <p className={styles.resultNote}>
               {task.creditStatus === "HOLDING"
-                ? t(`冻结 ${task.credits} 积分`, `Holding ${task.credits} credits`)
+                ? t(
+                    `冻结 ${task.credits} 积分`,
+                    `Holding ${task.credits} credits`,
+                  )
                 : task.creditStatus === "SETTLED"
-                  ? t(`已结算 ${task.credits} 积分`, `Settled ${task.credits} credits`)
+                  ? t(
+                      `已结算 ${task.credits} 积分`,
+                      `Settled ${task.credits} credits`,
+                    )
                   : task.creditStatus === "RELEASED"
                     ? t(
                         "积分已释放至原积分包，保留原有效期。",
@@ -427,7 +481,9 @@ export function SummaryWorkspace({
                       )
                     : ""}
             </p>
-            {task.errorCode && <p className={extra.identifier}>{task.errorCode}</p>}
+            {task.errorCode && (
+              <p className={extra.identifier}>{task.errorCode}</p>
+            )}
           </div>
         ) : (
           <div className={styles.empty}>

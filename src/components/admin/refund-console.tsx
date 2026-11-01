@@ -1,4 +1,7 @@
 "use client";
+import { siteManifest } from "@/config/site-manifest";
+import { localePath } from "@/config/site-manifest";
+
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { refundCreditTarget } from "@/payment/refund-policy";
@@ -74,7 +77,7 @@ export function RefundConsole({
   const [loss, setLoss] = useState(false);
   const [externalIds, setExternalIds] = useState<Record<string, string>>({});
   const storage = `refund-intent-${orderId}`;
-  const root = locale === "en" ? "" : `/${locale}`;
+  const root = locale === siteManifest.languages.default ? "" : `/${locale}`;
   const refresh = useCallback(async () => {
     const r = await fetch(`/api/v1/admin/refunds/${orderId}`, {
       cache: "no-store",

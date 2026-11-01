@@ -1,4 +1,6 @@
 "use client";
+import { siteManifest } from "@/config/site-manifest";
+import { localePath } from "@/config/site-manifest";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -64,11 +66,18 @@ export function AdminSidebar({ locale }: AdminSidebarProps) {
       <div className="flex h-full flex-col">
         {/* Brand */}
         <div className="flex h-16 items-center border-b px-4 md:px-6">
-          <Link href={`/${locale}/admin`} className="flex items-center gap-2">
+          <Link
+            href={localePath(locale, `/admin`)}
+            className="flex items-center gap-2"
+          >
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-              <span className="text-sm font-bold text-primary-foreground">A</span>
+              <span className="text-sm font-bold text-primary-foreground">
+                {siteManifest.ui.brand.mark}
+              </span>
             </div>
-            <span className="hidden text-lg font-semibold md:inline">Admin</span>
+            <span className="hidden text-lg font-semibold md:inline">
+              {siteManifest.ui.brand.name}
+            </span>
           </Link>
         </div>
 
@@ -77,8 +86,14 @@ export function AdminSidebar({ locale }: AdminSidebarProps) {
           {navItems.map((item) => {
             // 规范化路径进行比较（移除尾部斜杠）
             const normalizedPathname = pathname.replace(/\/$/, "");
-            const normalizedHref = `/${locale}${item.href}`.replace(/\/$/, "");
-            const isActive = normalizedPathname === normalizedHref || (item.href !== "/admin" && normalizedPathname.startsWith(`${normalizedHref}/`));
+            const normalizedHref = localePath(locale, `${item.href}`).replace(
+              /\/$/,
+              "",
+            );
+            const isActive =
+              normalizedPathname === normalizedHref ||
+              (item.href !== "/admin" &&
+                normalizedPathname.startsWith(`${normalizedHref}/`));
             const Icon = item.icon;
 
             return (
@@ -86,7 +101,7 @@ export function AdminSidebar({ locale }: AdminSidebarProps) {
                 key={item.href}
                 aria-label={item.title}
                 title={item.title}
-                href={`/${locale}${item.href}`}
+                href={localePath(locale, `${item.href}`)}
                 className={cn(
                   "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                   isActive
@@ -106,7 +121,7 @@ export function AdminSidebar({ locale }: AdminSidebarProps) {
           <Link
             aria-label="返回网站"
             title="返回网站"
-            href={locale === "en" ? "/" : `/${locale}`}
+            href={locale === "en" ? "/" : localePath(locale, `/`)}
             className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4" />

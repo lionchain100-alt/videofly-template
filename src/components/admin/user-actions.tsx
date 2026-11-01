@@ -1,4 +1,6 @@
 "use client";
+import { siteManifest } from "@/config/site-manifest";
+import { localePath } from "@/config/site-manifest";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -23,7 +25,10 @@ interface Intent {
   disabled?: boolean;
   reason?: string;
 }
-export function UserActions({ user, locale }: { user: Target; locale: string }) {
+export function UserActions({
+  user,
+  locale,
+}: { user: Target; locale: string }) {
   const router = useRouter();
   const dialog = useRef<HTMLDialogElement>(null);
   const storageKey = `laconic-admin-pending-${user.id}`;
@@ -102,7 +107,11 @@ export function UserActions({ user, locale }: { user: Target; locale: string }) 
       requestId: crypto.randomUUID(),
       userId: user.id,
       ...(kind === "grant"
-        ? { credits: Number(credits), expiryDays: Number(days), remark: reason.trim() }
+        ? {
+            credits: Number(credits),
+            expiryDays: Number(days),
+            remark: reason.trim(),
+          }
         : { disabled: !user.disabled, reason: reason.trim() }),
     });
     setStage("confirm");
@@ -120,7 +129,9 @@ export function UserActions({ user, locale }: { user: Target; locale: string }) 
     try {
       const { kind: operationKind, ...payload } = intent;
       const response = await fetch(
-        operationKind === "grant" ? "/api/v1/admin/credits/add" : "/api/v1/admin/users/status",
+        operationKind === "grant"
+          ? "/api/v1/admin/credits/add"
+          : "/api/v1/admin/users/status",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -151,7 +162,9 @@ export function UserActions({ user, locale }: { user: Target; locale: string }) 
       void useCreditsStore.getState().fetchBalance();
     } catch {
       setUncertain(true);
-      setError("网络中断，结果尚未确认。请重试同一操作，或按请求编号查看记录；不要另建一笔。");
+      setError(
+        "网络中断，结果尚未确认。请重试同一操作，或按请求编号查看记录；不要另建一笔。",
+      );
     } finally {
       setBusy(false);
     }
@@ -162,7 +175,7 @@ export function UserActions({ user, locale }: { user: Target; locale: string }) 
       : (intent?.disabled ?? !user.disabled)
         ? "停用账号"
         : "恢复账号";
-  const adminRoot = `${locale === "en" ? "" : `/${locale}`}/admin`;
+  const adminRoot = `${locale === siteManifest.languages.default ? "" : `/${locale}`}/admin`;
   return (
     <>
       <div className={styles.rowActions}>
@@ -175,7 +188,11 @@ export function UserActions({ user, locale }: { user: Target; locale: string }) 
           发积分
         </button>
         {!user.isAdmin && (
-          <button type="button" className={styles.textButton} onClick={() => show("status")}>
+          <button
+            type="button"
+            className={styles.textButton}
+            onClick={() => show("status")}
+          >
             {user.disabled ? "恢复" : "停用"}
           </button>
         )}
@@ -258,7 +275,11 @@ export function UserActions({ user, locale }: { user: Target; locale: string }) 
                   </p>
                 )}
                 <div className={styles.dialogFooter}>
-                  <button type="button" className={styles.smallButton} onClick={close}>
+                  <button
+                    type="button"
+                    className={styles.smallButton}
+                    onClick={close}
+                  >
                     取消
                   </button>
                   <button type="submit" className={styles.primary}>
@@ -283,7 +304,11 @@ export function UserActions({ user, locale }: { user: Target; locale: string }) 
                     ) : (
                       <>
                         <dt>账号状态</dt>
-                        <dd>{intent.disabled ? "停用并撤销现有会话" : "恢复登录和使用"}</dd>
+                        <dd>
+                          {intent.disabled
+                            ? "停用并撤销现有会话"
+                            : "恢复登录和使用"}
+                        </dd>
                       </>
                     )}
                     <dt>原因</dt>
@@ -292,7 +317,9 @@ export function UserActions({ user, locale }: { user: Target; locale: string }) 
                 </div>
                 <p className={styles.muted}>
                   操作将写入审计记录。
-                  {kind === "grant" ? "同一请求编号只到账一次。" : "管理员账号不允许在此入口停用。"}
+                  {kind === "grant"
+                    ? "同一请求编号只到账一次。"
+                    : "管理员账号不允许在此入口停用。"}
                 </p>
                 <code className={styles.identifier}>{intent.requestId}</code>
                 {error && (
@@ -311,7 +338,12 @@ export function UserActions({ user, locale }: { user: Target; locale: string }) 
                       返回修改
                     </button>
                   )}
-                  <button type="button" className={styles.primary} disabled={busy} onClick={send}>
+                  <button
+                    type="button"
+                    className={styles.primary}
+                    disabled={busy}
+                    onClick={send}
+                  >
                     {busy
                       ? "正在提交…"
                       : uncertain
@@ -324,15 +356,25 @@ export function UserActions({ user, locale }: { user: Target; locale: string }) 
               </>
             ) : (
               <div className={styles.success} aria-live="polite">
-                <strong>{result?.replayed ? "该操作已处理，未重复执行" : "操作已完成"}</strong>
-                {kind === "grant" && <p>到账后可用余额：{result?.balanceAfter} 积分</p>}
+                <strong>
+                  {result?.replayed ? "该操作已处理，未重复执行" : "操作已完成"}
+                </strong>
+                {kind === "grant" && (
+                  <p>到账后可用余额：{result?.balanceAfter} 积分</p>
+                )}
                 <p className={styles.muted}>页面数据已刷新，历史记录可追溯。</p>
                 <code className={styles.identifier}>{result?.requestId}</code>
                 <div className={styles.dialogFooter}>
                   {kind === "grant" && (
-                    <a href={`${adminRoot}/credits?q=${result?.requestId}`}>查看本次流水 →</a>
+                    <a href={`${adminRoot}/credits?q=${result?.requestId}`}>
+                      查看本次流水 →
+                    </a>
                   )}
-                  <button type="button" className={styles.primary} onClick={close}>
+                  <button
+                    type="button"
+                    className={styles.primary}
+                    onClick={close}
+                  >
                     完成
                   </button>
                 </div>

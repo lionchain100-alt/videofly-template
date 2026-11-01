@@ -1,4 +1,7 @@
 "use client";
+import { siteManifest } from "@/config/site-manifest";
+import { localePath } from "@/config/site-manifest";
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useCreditsStore } from "@/stores/credits-store";
@@ -53,7 +56,7 @@ export function PurchaseWorkspace({ locale }: { locale: string }) {
   const [intent, setIntent] = useState<Intent | null>(null);
   const [selected, setSelected] = useState("");
   const mutex = useRef(false);
-  const root = locale === "en" ? "" : `/${locale}`;
+  const root = locale === siteManifest.languages.default ? "" : `/${locale}`;
   const sync = useCallback(async () => {
     const res = await fetch("/api/v1/payments/orders", { cache: "no-store" });
     if (res.status === 401) {

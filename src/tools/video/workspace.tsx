@@ -1,4 +1,6 @@
 "use client";
+import { localePath } from "@/config/site-manifest";
+
 import { useEffect, useRef, useState } from "react";
 import { LoaderCircle, Video, Download } from "lucide-react";
 import { useCreditsStore } from "@/stores/credits-store";
@@ -38,7 +40,9 @@ export function VideoWorkspace({
   const [message, setMessage] = useState("");
   const sending = useRef(false);
   const active =
-    task && !["SUCCEEDED", "FAILED"].includes(task.status) && task.stage !== "RECONCILING";
+    task &&
+    !["SUCCEEDED", "FAILED"].includes(task.status) &&
+    task.stage !== "RECONCILING";
   const root = "/api/v1/tools/video";
   function credits() {
     useCreditsStore.getState().invalidate();
@@ -55,8 +59,13 @@ export function VideoWorkspace({
     void (async () => {
       try {
         const [settings, response] = await Promise.all([
-          fetch(root, { cache: "no-store", signal: controller.signal }).then(json),
-          fetch(`${root}/tasks`, { cache: "no-store", signal: controller.signal }),
+          fetch(root, { cache: "no-store", signal: controller.signal }).then(
+            json,
+          ),
+          fetch(`${root}/tasks`, {
+            cache: "no-store",
+            signal: controller.signal,
+          }),
         ]);
         if (stopped) return;
         setConfig(settings);
@@ -87,7 +96,12 @@ export function VideoWorkspace({
         } else if (response.status !== 401) throw Error();
       } catch {
         if (!stopped)
-          setMessage(t("连接暂不可用，请刷新。", "Connection unavailable. Refresh to retry."));
+          setMessage(
+            t(
+              "连接暂不可用，请刷新。",
+              "Connection unavailable. Refresh to retry.",
+            ),
+          );
       } finally {
         if (!stopped) setReady(true);
       }
@@ -111,14 +125,24 @@ export function VideoWorkspace({
         });
         if (r.status === 401) {
           if (!stopped)
-            setMessage(t("会话已失效，请重新登录查看。", "Session expired. Sign in again."));
+            setMessage(
+              t(
+                "会话已失效，请重新登录查看。",
+                "Session expired. Sign in again.",
+              ),
+            );
           return;
         }
         const updated = (await json(r)) as LiveVideoTask;
         if (stopped) return;
         setTask(updated);
-        setHistory((items) => [updated, ...items.filter((v) => v.id !== id)].slice(0, 20));
-        if (["SUCCEEDED", "FAILED"].includes(updated.status) || updated.stage === "RECONCILING") {
+        setHistory((items) =>
+          [updated, ...items.filter((v) => v.id !== id)].slice(0, 20),
+        );
+        if (
+          ["SUCCEEDED", "FAILED"].includes(updated.status) ||
+          updated.stage === "RECONCILING"
+        ) {
           credits();
           return;
         }
@@ -143,10 +167,13 @@ export function VideoWorkspace({
   async function submit() {
     if (sending.current) return;
     if (!userId) {
-      window.location.assign(locale === "zh" ? "/zh/login" : "/login");
+      window.location.assign(localePath(locale, "/login"));
       return;
     }
-    if (!intent && (!config?.enabled || prompt.trim().length < 10 || prompt.length > 1500)) {
+    if (
+      !intent &&
+      (!config?.enabled || prompt.trim().length < 10 || prompt.length > 1500)
+    ) {
       setMessage(
         t(
           "请输入 10–1500 字提示词，并确认视频已启用。",
@@ -159,12 +186,23 @@ export function VideoWorkspace({
       intent ||
       ({
         requestId: crypto.randomUUID(),
-        input: { prompt: prompt.trim(), aspectRatio: aspect === "9:16" ? "9:16" : "16:9" },
+        input: {
+          prompt: prompt.trim(),
+          aspectRatio: aspect === "9:16" ? "9:16" : "16:9",
+        },
       } satisfies Intent);
     try {
-      sessionStorage.setItem(`video-pending-${userId}`, JSON.stringify(payload));
+      sessionStorage.setItem(
+        `video-pending-${userId}`,
+        JSON.stringify(payload),
+      );
     } catch {
-      setMessage(t("请允许会话存储后提交。", "Enable session storage before submitting."));
+      setMessage(
+        t(
+          "请允许会话存储后提交。",
+          "Enable session storage before submitting.",
+        ),
+      );
       return;
     }
     sending.current = true;
@@ -183,14 +221,18 @@ export function VideoWorkspace({
           sessionStorage.removeItem(`video-pending-${userId}`);
           setIntent(null);
         }
-        setMessage(body.error?.message || t("提交未确认。", "Submission unconfirmed."));
+        setMessage(
+          body.error?.message || t("提交未确认。", "Submission unconfirmed."),
+        );
         return;
       }
-      const created = (await fetch(`${root}/tasks/${body.data.id}`, { cache: "no-store" }).then(
-        json,
-      )) as LiveVideoTask;
+      const created = (await fetch(`${root}/tasks/${body.data.id}`, {
+        cache: "no-store",
+      }).then(json)) as LiveVideoTask;
       setTask(created);
-      setHistory((items) => [created, ...items.filter((v) => v.id !== created.id)].slice(0, 20));
+      setHistory((items) =>
+        [created, ...items.filter((v) => v.id !== created.id)].slice(0, 20),
+      );
       sessionStorage.removeItem(`video-pending-${userId}`);
       setIntent(null);
       credits();
@@ -210,7 +252,8 @@ export function VideoWorkspace({
     if (v.stage === "RECONCILING")
       return t("待核实 · 积分保留冻结", "Needs review · credits remain held");
     if (v.status === "SUCCEEDED") return t("视频已完成", "Video ready");
-    if (v.status === "FAILED") return t("失败 · 积分已释放", "Failed · credits released");
+    if (v.status === "FAILED")
+      return t("失败 · 积分已释放", "Failed · credits released");
     return (
       {
         QUEUED: t("排队中", "Queued"),
@@ -278,7 +321,9 @@ export function VideoWorkspace({
           <button
             type="button"
             className={s.primary}
-            disabled={!ready || busy || (!intent && !!userId && !config?.enabled)}
+            disabled={
+              !ready || busy || (!intent && !!userId && !config?.enabled)
+            }
             onClick={submit}
           >
             {busy && <LoaderCircle className={s.spin} size={15} />}{" "}
@@ -327,7 +372,10 @@ export function VideoWorkspace({
             ))
           ) : (
             <p>
-              {t("登录后查看最近 20 条视频任务。", "Sign in to view your last 20 video tasks.")}
+              {t(
+                "登录后查看最近 20 条视频任务。",
+                "Sign in to view your last 20 video tasks.",
+              )}
             </p>
           )}
         </div>
@@ -337,7 +385,8 @@ export function VideoWorkspace({
           <div className={s.resultContent}>
             <div className={s.resultHeading}>
               <span>
-                {active && <LoaderCircle className={s.spin} size={15} />} {label(task)}
+                {active && <LoaderCircle className={s.spin} size={15} />}{" "}
+                {label(task)}
               </span>
               {task.videoUrl && (
                 <a
@@ -376,15 +425,23 @@ export function VideoWorkspace({
             )}
             <p className={s.resultNote}>
               {task.creditStatus === "SETTLED"
-                ? t(`已结算 ${task.credits} 积分`, `Settled ${task.credits} credits`)
+                ? t(
+                    `已结算 ${task.credits} 积分`,
+                    `Settled ${task.credits} credits`,
+                  )
                 : task.creditStatus === "RELEASED"
                   ? t(
                       "积分已退回原积分包，保留原有效期。",
                       "Credits returned to original packages with original expiry.",
                     )
-                  : t(`冻结 ${task.credits} 积分`, `Holding ${task.credits} credits`)}
+                  : t(
+                      `冻结 ${task.credits} 积分`,
+                      `Holding ${task.credits} credits`,
+                    )}
             </p>
-            {task.errorCode && <p className={extra.identifier}>{task.errorCode}</p>}
+            {task.errorCode && (
+              <p className={extra.identifier}>{task.errorCode}</p>
+            )}
           </div>
         ) : (
           <div className={s.empty}>

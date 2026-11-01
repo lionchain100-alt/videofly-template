@@ -1,4 +1,9 @@
 "use client";
+import { SiteBrand } from "@/components/site-brand";
+
+import { localePath, siteManifest } from "@/config/site-manifest";
+
+import { siteManifest as siteBrand } from "@/config/site-manifest";
 
 import { useState, useEffect, useTransition } from "react";
 import { Menu, Globe, Sun, Moon, Monitor } from "lucide-react";
@@ -63,7 +68,7 @@ export function LandingHeader({ user }: { user?: User | null }) {
 
   const handleSignOut = async () => {
     await authClient.signOut();
-    router.push(`/${locale}`);
+    router.push(localePath(locale));
     router.refresh();
   };
 
@@ -76,28 +81,10 @@ export function LandingHeader({ user }: { user?: User | null }) {
   // Language switcher function
   const switchLocale = (newLocale: string) => {
     startTransition(() => {
-      let newPath = pathname;
-
-      // Clean up the path by removing existing locale prefix
-      if (newPath.startsWith("/zh") || newPath.startsWith("/en")) {
-        newPath = newPath.replace(/^\/(zh|en)/, "");
-      }
-
-      // Ensure root path handling
-      if (newPath === "") newPath = "/";
-
-      // Construct new path with target locale
-      if (newLocale === "zh") {
-        if (newPath === "/") {
-          newPath = "/zh";
-        } else if (!newPath.startsWith("/zh")) {
-          newPath = `/zh${newPath}`;
-        }
-      } else {
-        // For 'en' (default), ensure no prefix
-        // newPath is already cleaned
-      }
-
+      const newPath = localePath(
+        newLocale,
+        pathname.replace(/^\/(zh|en)(?=\/|$)/, "") || "/",
+      );
       router.push(newPath);
       router.refresh(); // Force server components to re-render with new locale
     });
@@ -109,7 +96,7 @@ export function LandingHeader({ user }: { user?: User | null }) {
         "sticky top-0 z-50 transition-all duration-300",
         scrolled
           ? "bg-background/40 backdrop-blur-xl backdrop-saturate-150 border-b border-white/10 dark:border-white/5 shadow-[0_1px_6px_0_rgba(0,0,0,0.04)]"
-          : "bg-transparent"
+          : "bg-transparent",
       )}
     >
       <div className="container mx-auto px-4">
@@ -120,14 +107,13 @@ export function LandingHeader({ user }: { user?: User | null }) {
             href="/"
             className="flex items-center gap-2 text-xl font-semibold"
           >
-            <Image src="/logo.svg" alt="VideoFly" width={28} height={28} className="rounded-md" />
-            VideoFly
+            <SiteBrand />
+
+            {siteBrand.ui.brand.name}
           </LocaleLink>
 
           {/* Center Menu - NavigationMenu for better hover */}
-          <NavigationMenu
-            className="[--radix-navigation-menu-viewport-width:400px]"
-          >
+          <NavigationMenu className="[--radix-navigation-menu-viewport-width:400px]">
             <NavigationMenuList>
               {/* Models Dropdown (Hidden for audit) */}
               {/* <NavigationMenuItem>
@@ -155,7 +141,9 @@ export function LandingHeader({ user }: { user?: User | null }) {
 
               {/* Tools Dropdown */}
               <NavigationMenuItem>
-                <NavigationMenuTrigger>{t('Header.tools')}</NavigationMenuTrigger>
+                <NavigationMenuTrigger>
+                  {t("Header.tools")}
+                </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <ul className="w-48 p-2">
                     {headerTools.map((tool) => {
@@ -184,10 +172,10 @@ export function LandingHeader({ user }: { user?: User | null }) {
                   <LocaleLink
                     href="/buy-credits"
                     className={cn(
-                      "group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none"
+                      "group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none",
                     )}
                   >
-                    {t('Header.pricing')}
+                    {t("Header.pricing")}
                   </LocaleLink>
                 </NavigationMenuLink>
               </NavigationMenuItem>
@@ -218,7 +206,9 @@ export function LandingHeader({ user }: { user?: User | null }) {
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
                   <Globe className="h-4 w-4" />
-                  <span className="hidden sm:inline">{locale.toUpperCase()}</span>
+                  <span className="hidden sm:inline">
+                    {locale.toUpperCase()}
+                  </span>
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
@@ -226,12 +216,14 @@ export function LandingHeader({ user }: { user?: User | null }) {
                 className="min-w-[120px] border-border/50 bg-background/95 backdrop-blur-sm shadow-xl"
               >
                 <DropdownMenuItem
+                  hidden={!siteManifest.languages.enabled.includes("en")}
                   onClick={() => switchLocale("en")}
                   className="cursor-pointer hover:bg-accent"
                 >
                   {locale === "zh" ? "English" : "英文"}
                 </DropdownMenuItem>
                 <DropdownMenuItem
+                  hidden={!siteManifest.languages.enabled.includes("zh")}
                   onClick={() => switchLocale("zh")}
                   className="cursor-pointer hover:bg-accent"
                 >
@@ -255,15 +247,24 @@ export function LandingHeader({ user }: { user?: User | null }) {
                 align="end"
                 className="min-w-[120px] border-border/50 bg-background/95 backdrop-blur-sm shadow-xl"
               >
-                <DropdownMenuItem onClick={() => setTheme("light")} className="cursor-pointer hover:bg-accent">
+                <DropdownMenuItem
+                  onClick={() => setTheme("light")}
+                  className="cursor-pointer hover:bg-accent"
+                >
                   <Sun className="mr-2 h-4 w-4" />
                   Light
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("dark")} className="cursor-pointer hover:bg-accent">
+                <DropdownMenuItem
+                  onClick={() => setTheme("dark")}
+                  className="cursor-pointer hover:bg-accent"
+                >
                   <Moon className="mr-2 h-4 w-4" />
                   Dark
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("system")} className="cursor-pointer hover:bg-accent">
+                <DropdownMenuItem
+                  onClick={() => setTheme("system")}
+                  className="cursor-pointer hover:bg-accent"
+                >
                   <Monitor className="mr-2 h-4 w-4" />
                   System
                 </DropdownMenuItem>
@@ -285,7 +286,8 @@ export function LandingHeader({ user }: { user?: User | null }) {
                   <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">
                     <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center ring-2 ring-background/20">
                       <span className="text-sm font-medium">
-                        {user.name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase()}
+                        {user.name?.[0]?.toUpperCase() ||
+                          user.email?.[0]?.toUpperCase()}
                       </span>
                     </div>
                   </button>
@@ -294,27 +296,42 @@ export function LandingHeader({ user }: { user?: User | null }) {
                   align="end"
                   className="w-48 border-border/50 bg-background/95 backdrop-blur-sm shadow-xl"
                 >
-                  <DropdownMenuItem asChild className="cursor-pointer hover:bg-accent">
-                    <LocaleLink href="/my-creations">{t('Header.myCreations')}</LocaleLink>
+                  <DropdownMenuItem
+                    asChild
+                    className="cursor-pointer hover:bg-accent"
+                  >
+                    <LocaleLink href="/my-creations">
+                      {t("Header.myCreations")}
+                    </LocaleLink>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="cursor-pointer hover:bg-accent">
-                    <LocaleLink href="/credits">{t('Header.credits')}</LocaleLink>
+                  <DropdownMenuItem
+                    asChild
+                    className="cursor-pointer hover:bg-accent"
+                  >
+                    <LocaleLink href="/credits">
+                      {t("Header.credits")}
+                    </LocaleLink>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="cursor-pointer hover:bg-accent">
-                    <LocaleLink href="/settings">{t('Header.settings')}</LocaleLink>
+                  <DropdownMenuItem
+                    asChild
+                    className="cursor-pointer hover:bg-accent"
+                  >
+                    <LocaleLink href="/settings">
+                      {t("Header.settings")}
+                    </LocaleLink>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator className="bg-border/50" />
                   <DropdownMenuItem
                     className="text-destructive cursor-pointer hover:bg-destructive/10"
                     onClick={handleSignOut}
                   >
-                    {t('Common.logout')}
+                    {t("Common.logout")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               <Button variant="default" size="sm" onClick={signInModal.onOpen}>
-                {t('Common.login')}
+                {t("Common.login")}
               </Button>
             )}
           </div>
@@ -327,8 +344,9 @@ export function LandingHeader({ user }: { user?: User | null }) {
             href="/"
             className="flex items-center gap-2 text-lg font-semibold"
           >
-            <Image src="/logo.svg" alt="VideoFly" width={28} height={28} className="rounded-md" />
-            VideoFly
+            <SiteBrand />
+
+            {siteBrand.ui.brand.name}
           </LocaleLink>
 
           {/* Mobile Menu */}
@@ -353,12 +371,10 @@ export function LandingHeader({ user }: { user?: User | null }) {
               <SheetContent className="overflow-y-auto">
                 <SheetHeader>
                   <SheetTitle>
-                    <LocaleLink
-                      href="/"
-                      className="flex items-center gap-2"
-                    >
-                      <Image src="/logo.svg" alt="VideoFly" width={28} height={28} className="rounded-md" />
-            VideoFly
+                    <LocaleLink href="/" className="flex items-center gap-2">
+                      <SiteBrand />
+
+                      {siteBrand.ui.brand.name}
                     </LocaleLink>
                   </SheetTitle>
                 </SheetHeader>
@@ -389,7 +405,7 @@ export function LandingHeader({ user }: { user?: User | null }) {
                     {/* Tools */}
                     <AccordionItem value="tools" className="border-b-0">
                       <AccordionTrigger className="py-0 font-semibold hover:no-underline">
-                        {t('Header.tools')}
+                        {t("Header.tools")}
                       </AccordionTrigger>
                       <AccordionContent className="mt-2">
                         {headerTools.map((tool) => {
@@ -414,7 +430,7 @@ export function LandingHeader({ user }: { user?: User | null }) {
                     href="/buy-credits"
                     className="font-semibold p-2 hover:bg-accent rounded-md transition-colors"
                   >
-                    {t('Header.pricing')}
+                    {t("Header.pricing")}
                   </LocaleLink>
 
                   {/* Docs (Hidden for audit) */}
@@ -432,6 +448,7 @@ export function LandingHeader({ user }: { user?: User | null }) {
                   <div className="flex items-center gap-3 p-2">
                     <Globe className="h-4 w-4" />
                     <button
+                      hidden={!siteManifest.languages.enabled.includes("en")}
                       onClick={() => switchLocale("en")}
                       className="text-sm hover:text-foreground transition-colors"
                     >
@@ -439,6 +456,7 @@ export function LandingHeader({ user }: { user?: User | null }) {
                     </button>
                     <span className="text-muted-foreground">/</span>
                     <button
+                      hidden={!siteManifest.languages.enabled.includes("zh")}
                       onClick={() => switchLocale("zh")}
                       className="text-sm hover:text-foreground transition-colors"
                     >
@@ -458,10 +476,14 @@ export function LandingHeader({ user }: { user?: User | null }) {
                             "text-sm px-2 py-1 rounded-md transition-colors",
                             theme === mode
                               ? "bg-accent text-accent-foreground font-medium"
-                              : "hover:text-foreground text-muted-foreground"
+                              : "hover:text-foreground text-muted-foreground",
                           )}
                         >
-                          {mode === "light" ? "Light" : mode === "dark" ? "Dark" : "System"}
+                          {mode === "light"
+                            ? "Light"
+                            : mode === "dark"
+                              ? "Dark"
+                              : "System"}
                         </button>
                       ))}
                     </div>
@@ -476,30 +498,30 @@ export function LandingHeader({ user }: { user?: User | null }) {
                         href="/my-creations"
                         className="p-2 hover:bg-accent rounded-md transition-colors"
                       >
-                        {t('Header.myCreations')}
+                        {t("Header.myCreations")}
                       </LocaleLink>
                       <LocaleLink
                         href="/credits"
                         className="p-2 hover:bg-accent rounded-md transition-colors"
                       >
-                        {t('Header.credits')}
+                        {t("Header.credits")}
                       </LocaleLink>
                       <LocaleLink
                         href="/settings"
                         className="p-2 hover:bg-accent rounded-md transition-colors"
                       >
-                        {t('Header.settings')}
+                        {t("Header.settings")}
                       </LocaleLink>
                       <button
                         onClick={handleSignOut}
                         className="p-2 text-left text-destructive hover:bg-destructive/10 rounded-md transition-colors"
                       >
-                        {t('Common.logout')}
+                        {t("Common.logout")}
                       </button>
                     </div>
                   ) : (
                     <Button variant="outline" onClick={signInModal.onOpen}>
-                      {t('Common.login')}
+                      {t("Common.login")}
                     </Button>
                   )}
                 </div>

@@ -38,9 +38,5 @@
     }
   },
   "defaultTool": "text",
-  "sections": [
-    "examples",
-    "features",
-    "faq"
-  ]
+  "sections": ["examples", "features", "faq"]
 }

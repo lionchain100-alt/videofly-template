@@ -30,7 +30,11 @@
     "test:admin-dashboard": "node --import tsx scripts/test-admin-dashboard.ts",
     "worker:payments": "node --import tsx scripts/payment-worker.ts",
     "test:retained": "node scripts/test-retained-capabilities.mjs",
-    "audit:security": "corepack pnpm audit --audit-level=moderate"
+    "audit:security": "corepack pnpm audit --audit-level=moderate",
+    "site:check": "node --import tsx scripts/check-site.ts",
+    "site:create": "node scripts/create-local-site.mjs",
+    "site:configure": "node --import tsx scripts/configure-site.ts",
+    "test:site-isolation": "node scripts/test-site-isolation.mjs"
   },
   "dependencies": {
     "@creem_io/better-auth": "2.0.4",
