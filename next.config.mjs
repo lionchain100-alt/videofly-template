@@ -22,8 +22,8 @@ const config = {
       { protocol: "https", hostname: "www.setupyourpay.com" },
     ],
   },
-  /** We already do linting and typechecking as separate tasks in CI */
-  typescript: { ignoreBuildErrors: true },
+  // Dependency compatibility must pass type checking before a build can ship.
+  typescript: { ignoreBuildErrors: false },
   // Ordinary Node output avoids Windows symlink privileges for local production QA.
   // The deployment default remains standalone.
   output: process.env.NEXT_LOCAL_BUILD === "true" ? undefined : "standalone",

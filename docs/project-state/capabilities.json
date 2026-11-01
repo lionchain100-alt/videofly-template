@@ -1,0 +1,201 @@
+{
+  "schemaVersion": 1,
+  "capabilities": [
+    {
+      "id": "CAP-001",
+      "name": "Login and authorization",
+      "lifecycle": "qa-passed",
+      "availability": "enabled",
+      "protection": "release-critical",
+      "contractVersion": "1.0.0",
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "/zh/login"
+      ],
+      "ownerModules": [
+        "src/lib/auth/auth.ts"
+      ],
+      "dependencies": [],
+      "testIds": [
+        "REGRESSION-CAP-001"
+      ],
+      "fixtures": [
+        "scripts/test-admin-operations.mjs"
+      ],
+      "ownerGate": "Local retained-flow regression; production activation remains separate",
+      "changeImpact": "internal",
+      "changeApproval": null,
+      "deploymentApproval": null
+    },
+    {
+      "id": "CAP-002",
+      "name": "Three UI presets and local Studio",
+      "lifecycle": "qa-passed",
+      "availability": "enabled",
+      "protection": "release-critical",
+      "contractVersion": "1.0.0",
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "/zh/ui-studio"
+      ],
+      "ownerModules": [
+        "src/ui-presets/site-renderer.tsx"
+      ],
+      "dependencies": [],
+      "testIds": [
+        "REGRESSION-CAP-002"
+      ],
+      "fixtures": [
+        "src/ui-presets/manifest.json"
+      ],
+      "ownerGate": "Local retained-flow regression; production activation remains separate",
+      "changeImpact": "internal",
+      "changeApproval": null,
+      "deploymentApproval": null
+    },
+    {
+      "id": "CAP-003",
+      "name": "DeepSeek summary task",
+      "lifecycle": "qa-passed",
+      "availability": "enabled",
+      "protection": "release-critical",
+      "contractVersion": "1.0.0",
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "/api/v1/tools/text-summary"
+      ],
+      "ownerModules": [
+        "src/services/tasks.ts"
+      ],
+      "dependencies": [],
+      "testIds": [
+        "REGRESSION-CAP-003"
+      ],
+      "fixtures": [
+        "scripts/test-text-tasks.ts"
+      ],
+      "ownerGate": "Local retained-flow regression; production activation remains separate",
+      "changeImpact": "internal",
+      "changeApproval": null,
+      "deploymentApproval": null
+    },
+    {
+      "id": "CAP-004",
+      "name": "Kie video task",
+      "lifecycle": "qa-passed",
+      "availability": "enabled",
+      "protection": "release-critical",
+      "contractVersion": "1.0.0",
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "/api/v1/tools/video"
+      ],
+      "ownerModules": [
+        "src/services/video-jobs.ts"
+      ],
+      "dependencies": [],
+      "testIds": [
+        "REGRESSION-CAP-004"
+      ],
+      "fixtures": [
+        "scripts/test-video-jobs.mjs"
+      ],
+      "ownerGate": "Local retained-flow regression; production activation remains separate",
+      "changeImpact": "internal",
+      "changeApproval": null,
+      "deploymentApproval": null
+    },
+    {
+      "id": "CAP-005",
+      "name": "Credits and operations",
+      "lifecycle": "qa-passed",
+      "availability": "enabled",
+      "protection": "release-critical",
+      "contractVersion": "1.0.0",
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "/zh/admin"
+      ],
+      "ownerModules": [
+        "src/services/admin-operations.ts"
+      ],
+      "dependencies": [],
+      "testIds": [
+        "REGRESSION-CAP-005"
+      ],
+      "fixtures": [
+        "scripts/test-admin-dashboard.ts"
+      ],
+      "ownerGate": "Local retained-flow regression; production activation remains separate",
+      "changeImpact": "internal",
+      "changeApproval": null,
+      "deploymentApproval": null
+    },
+    {
+      "id": "CAP-006",
+      "name": "PayPal and Waffo purchase",
+      "lifecycle": "qa-passed",
+      "availability": "enabled",
+      "protection": "release-critical",
+      "contractVersion": "1.0.0",
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "/zh/buy-credits"
+      ],
+      "ownerModules": [
+        "src/services/orders.ts"
+      ],
+      "dependencies": [],
+      "testIds": [
+        "REGRESSION-CAP-006"
+      ],
+      "fixtures": [
+        "scripts/test-payment-orders.ts"
+      ],
+      "ownerGate": "Local retained-flow regression; production activation remains separate",
+      "changeImpact": "internal",
+      "changeApproval": null,
+      "deploymentApproval": null
+    },
+    {
+      "id": "CAP-007",
+      "name": "Test refunds and source recovery",
+      "lifecycle": "qa-passed",
+      "availability": "enabled",
+      "protection": "release-critical",
+      "contractVersion": "1.0.0",
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "/api/v1/admin/refunds"
+      ],
+      "ownerModules": [
+        "src/services/refunds.ts"
+      ],
+      "dependencies": [],
+      "testIds": [
+        "REGRESSION-CAP-007"
+      ],
+      "fixtures": [
+        "scripts/test-refunds.ts"
+      ],
+      "ownerGate": "Local retained-flow regression; production activation remains separate",
+      "changeImpact": "internal",
+      "changeApproval": null,
+      "deploymentApproval": null
+    }
+  ]
+}
