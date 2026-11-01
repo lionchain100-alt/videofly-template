@@ -9,7 +9,7 @@ const schema = z
     refundId: z.string().uuid(),
     externalId: z
       .string()
-      .regex(/^[A-Z0-9]{5,100}$/)
+      .regex(/^[A-Za-z0-9_]{5,100}$/)
       .optional(),
   })
   .strict();

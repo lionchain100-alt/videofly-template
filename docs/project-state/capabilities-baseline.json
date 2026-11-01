@@ -8,12 +8,22 @@
       "availability": "enabled",
       "protection": "release-critical",
       "contractVersion": "1.0.0",
-      "spec": ["docs/project-state/contract.md"],
-      "surfaces": ["/zh/login"],
-      "ownerModules": ["src/lib/auth/auth.ts"],
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "/zh/login"
+      ],
+      "ownerModules": [
+        "src/lib/auth/auth.ts"
+      ],
       "dependencies": [],
-      "testIds": ["REGRESSION-CAP-001"],
-      "fixtures": ["scripts/test-admin-operations.mjs"],
+      "testIds": [
+        "REGRESSION-CAP-001"
+      ],
+      "fixtures": [
+        "scripts/test-admin-operations.mjs"
+      ],
       "ownerGate": "Local retained-flow regression; production activation remains separate",
       "changeImpact": "compatible",
       "changeApproval": null,
@@ -26,11 +36,19 @@
       "availability": "enabled",
       "protection": "release-critical",
       "contractVersion": "1.0.0",
-      "spec": ["docs/project-state/contract.md"],
-      "surfaces": ["/zh/ui-studio"],
-      "ownerModules": ["src/ui-presets/site-renderer.tsx"],
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "/zh/ui-studio"
+      ],
+      "ownerModules": [
+        "src/ui-presets/site-renderer.tsx"
+      ],
       "dependencies": [],
-      "testIds": ["REGRESSION-CAP-002"],
+      "testIds": [
+        "REGRESSION-CAP-002"
+      ],
       "fixtures": [
         "src/ui-presets/manifest.json",
         "scripts/test-site-browser.mjs"
@@ -47,12 +65,22 @@
       "availability": "enabled",
       "protection": "release-critical",
       "contractVersion": "1.0.0",
-      "spec": ["docs/project-state/contract.md"],
-      "surfaces": ["/api/v1/tools/text-summary"],
-      "ownerModules": ["src/services/tasks.ts"],
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "/api/v1/tools/text-summary"
+      ],
+      "ownerModules": [
+        "src/services/tasks.ts"
+      ],
       "dependencies": [],
-      "testIds": ["REGRESSION-CAP-003"],
-      "fixtures": ["scripts/test-text-tasks.ts"],
+      "testIds": [
+        "REGRESSION-CAP-003"
+      ],
+      "fixtures": [
+        "scripts/test-text-tasks.ts"
+      ],
       "ownerGate": "Local retained-flow regression; production activation remains separate",
       "changeImpact": "compatible",
       "changeApproval": null,
@@ -65,12 +93,22 @@
       "availability": "enabled",
       "protection": "release-critical",
       "contractVersion": "1.0.0",
-      "spec": ["docs/project-state/contract.md"],
-      "surfaces": ["/api/v1/tools/video"],
-      "ownerModules": ["src/services/video-jobs.ts"],
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "/api/v1/tools/video"
+      ],
+      "ownerModules": [
+        "src/services/video-jobs.ts"
+      ],
       "dependencies": [],
-      "testIds": ["REGRESSION-CAP-004"],
-      "fixtures": ["scripts/test-video-jobs.mjs"],
+      "testIds": [
+        "REGRESSION-CAP-004"
+      ],
+      "fixtures": [
+        "scripts/test-video-jobs.mjs"
+      ],
       "ownerGate": "Local retained-flow regression; production activation remains separate",
       "changeImpact": "compatible",
       "changeApproval": null,
@@ -83,12 +121,22 @@
       "availability": "enabled",
       "protection": "release-critical",
       "contractVersion": "1.0.0",
-      "spec": ["docs/project-state/contract.md"],
-      "surfaces": ["/zh/admin"],
-      "ownerModules": ["src/services/admin-operations.ts"],
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "/zh/admin"
+      ],
+      "ownerModules": [
+        "src/services/admin-operations.ts"
+      ],
       "dependencies": [],
-      "testIds": ["REGRESSION-CAP-005"],
-      "fixtures": ["scripts/test-admin-dashboard.ts"],
+      "testIds": [
+        "REGRESSION-CAP-005"
+      ],
+      "fixtures": [
+        "scripts/test-admin-dashboard.ts"
+      ],
       "ownerGate": "Local retained-flow regression; production activation remains separate",
       "changeImpact": "compatible",
       "changeApproval": null,
@@ -101,12 +149,23 @@
       "availability": "enabled",
       "protection": "release-critical",
       "contractVersion": "1.0.0",
-      "spec": ["docs/project-state/contract.md"],
-      "surfaces": ["/zh/buy-credits"],
-      "ownerModules": ["src/services/orders.ts"],
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "/zh/buy-credits"
+      ],
+      "ownerModules": [
+        "src/services/orders.ts"
+      ],
       "dependencies": [],
-      "testIds": ["REGRESSION-CAP-006"],
-      "fixtures": ["scripts/test-payment-orders.ts"],
+      "testIds": [
+        "REGRESSION-CAP-006"
+      ],
+      "fixtures": [
+        "scripts/test-payment-orders.ts",
+        "scripts/test-billing-unification.ts"
+      ],
       "ownerGate": "Local retained-flow regression; production activation remains separate",
       "changeImpact": "compatible",
       "changeApproval": null,
@@ -119,12 +178,22 @@
       "availability": "enabled",
       "protection": "release-critical",
       "contractVersion": "1.0.0",
-      "spec": ["docs/project-state/contract.md"],
-      "surfaces": ["/api/v1/admin/refunds"],
-      "ownerModules": ["src/services/refunds.ts"],
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "/api/v1/admin/refunds"
+      ],
+      "ownerModules": [
+        "src/services/refunds.ts"
+      ],
       "dependencies": [],
-      "testIds": ["REGRESSION-CAP-007"],
-      "fixtures": ["scripts/test-refunds.ts"],
+      "testIds": [
+        "REGRESSION-CAP-007"
+      ],
+      "fixtures": [
+        "scripts/test-refunds.ts"
+      ],
       "ownerGate": "Local retained-flow regression; production activation remains separate",
       "changeImpact": "compatible",
       "changeApproval": null,
@@ -137,15 +206,25 @@
       "availability": "enabled",
       "protection": "release-critical",
       "contractVersion": "1.0.0",
-      "spec": ["docs/project-state/contract.md"],
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
       "surfaces": [
         "src/config/site.json",
         "/api/v1/tools/text-summary",
         "/api/v1/tools/video"
       ],
-      "ownerModules": ["src/config/site-manifest.ts"],
-      "dependencies": ["CAP-002", "CAP-003", "CAP-004"],
-      "testIds": ["REGRESSION-CAP-008"],
+      "ownerModules": [
+        "src/config/site-manifest.ts"
+      ],
+      "dependencies": [
+        "CAP-002",
+        "CAP-003",
+        "CAP-004"
+      ],
+      "testIds": [
+        "REGRESSION-CAP-008"
+      ],
       "fixtures": [
         "scripts/test-site-service-policy.ts",
         "scripts/test-site-browser.mjs",
@@ -163,13 +242,69 @@
       "availability": "enabled",
       "protection": "release-critical",
       "contractVersion": "1.0.0",
-      "spec": ["docs/project-state/contract.md"],
-      "surfaces": ["http://localhost:3002/", "http://localhost:3002/admin"],
-      "ownerModules": ["scripts/create-local-site.mjs"],
-      "dependencies": ["CAP-001", "CAP-005", "CAP-008"],
-      "testIds": ["REGRESSION-CAP-009"],
-      "fixtures": ["scripts/test-site-isolation.mjs"],
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "http://localhost:3002/",
+        "http://localhost:3002/admin"
+      ],
+      "ownerModules": [
+        "scripts/create-local-site.mjs"
+      ],
+      "dependencies": [
+        "CAP-001",
+        "CAP-005",
+        "CAP-008"
+      ],
+      "testIds": [
+        "REGRESSION-CAP-009"
+      ],
+      "fixtures": [
+        "scripts/test-site-isolation.mjs"
+      ],
       "ownerGate": "Owner requested AUD-003 local configuration and independent second-site rehearsal; production activation remains separate",
+      "changeImpact": "additive",
+      "changeApproval": null,
+      "deploymentApproval": null
+    },
+    {
+      "id": "CAP-010",
+      "name": "Local unified four-channel fulfillment and recurring subscription ledger",
+      "lifecycle": "qa-passed",
+      "availability": "enabled",
+      "protection": "release-critical",
+      "contractVersion": "1.0.0",
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "/zh/buy-credits",
+        "/zh/pricing",
+        "/api/v1/subscriptions",
+        "/api/webhooks/stripe",
+        "/api/webhooks/creem",
+        "/api/auth/creem/webhook"
+      ],
+      "ownerModules": [
+        "src/services/subscriptions.ts",
+        "src/services/orders.ts"
+      ],
+      "dependencies": [
+        "CAP-001",
+        "CAP-005",
+        "CAP-006",
+        "CAP-007"
+      ],
+      "testIds": [
+        "REGRESSION-CAP-010"
+      ],
+      "fixtures": [
+        "scripts/test-billing-unification.ts",
+        "scripts/test-billing-browser.mjs",
+        "scripts/test-billing-production.mjs"
+      ],
+      "ownerGate": "Owner chose local implementation/regression only; Stripe and Creem remain disabled pending separately requested HTTPS/account-backed acceptance. No live activation.",
       "changeImpact": "additive",
       "changeApproval": null,
       "deploymentApproval": null

@@ -1,0 +1,21 @@
+{
+  "at": "2026-11-01T23:39:27.895Z",
+  "passed": [
+    "stripe: administrator authorization, UUID immutability, 8 concurrent requests/worker calls, signed duplicate/different-event callbacks and terminal ordering reclaim once",
+    "stripe: lost submission response retains source hold; query-only reconciliation succeeds without a second cash request",
+    "stripe: asynchronous pending completion and explicit cash failure release/settle the source hold once",
+    "stripe: frozen/consumed blocks before HTTP; external cash refund reclaims only source, gates new tasks, failed-task release pays debt; audited waiver is idempotent",
+    "stripe: transaction failure rolls back cash projection/package/ledger; saved verified event recovers exactly once",
+    "creem: administrator authorization, UUID immutability, 8 concurrent requests/worker calls, signed duplicate/different-event callbacks and terminal ordering reclaim once",
+    "creem: lost submission response retains source hold; query-only reconciliation succeeds without a second cash request",
+    "creem: asynchronous pending completion and explicit cash failure release/settle the source hold once",
+    "creem: frozen/consumed blocks before HTTP; external cash refund reclaims only source, gates new tasks, failed-task release pays debt; audited waiver is idempotent",
+    "creem: transaction failure rolls back cash projection/package/ledger; saved verified event recovers exactly once",
+    "Stripe: cumulative partial rounding/full refund and subscription invoice-to-PaymentIntent refund association",
+    "Creem: legacy order ID resolves one transaction; partial request rejected; callback arriving before POST response binds same full-refund identity",
+    "Guards: changed account, tax-inclusive/ambiguous Creem transaction, wrong currency/account/amount and forged signatures never reclaim or send another refund"
+  ],
+  "realProviderCalls": 0,
+  "fixtureDataCleaned": true,
+  "realAcceptance": "Deferred by Owner until HTTPS deployment"
+}

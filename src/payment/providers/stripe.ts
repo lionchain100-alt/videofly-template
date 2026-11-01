@@ -25,7 +25,7 @@ export function stripeConfig() {
     throw new ApiError("Stripe 尚未启用或配置不完整", 503);
   return { key, accountId: accountId!, environment };
 }
-async function account() {
+export async function account() {
   const c = stripeConfig();
   if ((await getStripe().rawRequest("GET", "/v1/account")).id !== c.accountId)
     throw new ApiError("Stripe 收款账户与配置不一致", 409);
@@ -253,6 +253,16 @@ export async function verifyStripe(
         new Date(event.created * 1000).toISOString(),
         invoice,
       );
+  } else if (
+    [
+      "refund.created",
+      "refund.updated",
+      "refund.failed",
+      "charge.refund.updated",
+    ].includes(event.type)
+  ) {
+    const { queryStripeRefund } = await import("./stripe-refunds");
+    result.refund = await queryStripeRefund(object.id);
   } else if (event.type.startsWith("customer.subscription."))
     result.subscription = await stripeSubscription(
       object.id,

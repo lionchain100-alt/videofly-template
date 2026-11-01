@@ -241,6 +241,9 @@ export async function verifyCreem(
       result.internalId = result.fact?.internalId;
       result.externalId = object.id;
     }
+  } else if (event.eventType === "refund.created") {
+    const { verifyCreemRefund } = await import("./creem-refunds");
+    result.refund = await verifyCreemRefund(object);
   } else if (event.eventType.startsWith("subscription.")) {
     const paid = event.eventType === "subscription.paid";
     const transaction = paid

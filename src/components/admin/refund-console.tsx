@@ -215,12 +215,12 @@ export function RefundConsole({
             <h2 className="text-lg font-semibold">发起测试退款</h2>
             <p className="text-sm text-muted-foreground">
               未消费且未冻结才自动退款。提交先预留来源积分；只有现金退款成功才结算回收。部分退款按累计金额向上取整。Waffo
-              当前接口一笔收款只支持一笔成功退款。
+              当前接口一笔收款只支持一笔成功退款。Creem 仅支持整笔无税收款退款。
             </p>
-            {!["paypal", "waffo"].includes(o!.provider) && (
+            {o!.provider === "creem" && (
               <p className="text-amber-700">
-                该通道目前尚未接入后台现金退款，自动退款和积分回收均不执行。PayPal、Waffo
-                的测试退款保持可用。
+                Creem
+                金额必须等于原收款全额；含税、部分退款或交易关联不清时转人工核对，不调用退款接口。
               </p>
             )}
             {blocked && (
@@ -261,6 +261,8 @@ export function RefundConsole({
                   busy ||
                   !amountCents ||
                   amountCents > o!.amount - o!.refundedAmount ||
+                  (o!.provider === "creem" &&
+                    (amountCents !== o!.amount || o!.refundedAmount > 0)) ||
                   reason.trim().length < 6
                 }
                 onClick={() =>
@@ -359,20 +361,21 @@ export function RefundConsole({
                   {r.lastError && <p>{r.lastError}</p>}
                   {["REVIEW", "PENDING", "SUBMITTING"].includes(r.status) && (
                     <div className="flex flex-wrap gap-3">
-                      {o!.provider === "paypal" && !r.externalId && (
-                        <input
-                          aria-label="待核实 PayPal 退款 ID"
-                          className="rounded border bg-background p-2"
-                          placeholder="平台退款 ID（不是原收款号）"
-                          value={externalIds[r.id] || ""}
-                          onChange={(e) =>
-                            setExternalIds({
-                              ...externalIds,
-                              [r.id]: e.target.value,
-                            })
-                          }
-                        />
-                      )}
+                      {["paypal", "stripe"].includes(o!.provider) &&
+                        !r.externalId && (
+                          <input
+                            aria-label="待核实平台退款 ID"
+                            className="rounded border bg-background p-2"
+                            placeholder="平台退款 ID（不是原收款号）"
+                            value={externalIds[r.id] || ""}
+                            onChange={(e) =>
+                              setExternalIds({
+                                ...externalIds,
+                                [r.id]: e.target.value,
+                              })
+                            }
+                          />
+                        )}
                       <button
                         type="button"
                         className={styles.secondary}

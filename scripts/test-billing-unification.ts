@@ -360,16 +360,19 @@ async function main() {
       );
       assert.deepEqual(await counts(), before);
       const { createRefund } = await import("../src/services/refunds");
+      const flag = provider === "stripe" ? "STRIPE_ENABLED" : "CREEM_ENABLED";
+      process.env[flag] = "false";
       await assert.rejects(
         () =>
           createRefund(ids[0], {
             requestId: randomUUID(),
             orderId: order.id,
             amount: 500,
-            reason: "未接入通道的退款隔离测试",
+            reason: "退款请求需阻止配置环境变更",
           }),
-        (e) => (e as { status?: number }).status === 501,
+        (e) => (e as { status?: number }).status === 503,
       );
+      process.env[flag] = "true";
       assert.deepEqual(await counts(), before);
       pass(
         `${provider}: replayed create/lost response use one checkout; unpaid grants nothing; 8 signed notification replays fulfill once; mismatched amount rejected`,

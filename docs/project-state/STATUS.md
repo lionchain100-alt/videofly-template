@@ -1,34 +1,34 @@
 # Project Status
 
 Last updated: 2026-11-02
-Current stage: AUD-004 local QA passed; real Stripe/Creem acceptance deferred by Owner
+Current stage: RFN-001 local four-channel refund QA passed; real Stripe/Creem tests deferred by Owner
 Active task: IDLE-000
 Canonical specification: `docs/project-state/contract.md`
 Current registry: None required
 Capability registry: `docs/project-state/capabilities.json`
-Source recovery point: local tag `aud-004-local-20261102`; baseline `aud-004-before-20261101`; parent recovery index `.recovery/aud-004-current-after.json`. Source archives exclude credentials, database and generated assets.
+Source recovery point: local tag `refunds-local-20261102`; before tag `refunds-before-20261102` at AUD-004. Parent recovery index `.recovery/refunds-current-after.json`; archives exclude credentials, database and generated assets. Previous AUD-002/003/004 recovery indexes remain intact.
 
 ## Critical Resume State
 
 ### Active objective
-No active implementation. IDLE-000 is the scheduling marker. The Owner explicitly chose local implementation/regression now and real Creem testing after HTTPS deployment. This task does not claim production readiness or account-backed Stripe/Creem acceptance.
+No active implementation. RFN-001 local integration/regression is complete. Owner explicitly deferred real Stripe/Creem refunds and public callback acceptance until HTTPS deployment. This is not production activation or account-backed acceptance.
 
 ### Verified completed
-- Four providers use the common purchase/order/receipt/package/ledger boundary. Stripe/Creem webhook adapters verify signed raw payloads and resolve paid receipts; return URLs cannot issue credits. New channels remain disabled in the local environment and UI.
-- Scoped subscription projection and paid-period ledger handle first payment, renewal, concurrent/different-event replay, overlap/association validation, stale state, expiry and rollback/recovery. Old Stripe Customer association and Creem first-period grant adoption pass isolated regression.
-- Period-end cancellation/resume change state only. Ended plans have no paid access and cannot be silently resumed. Historical receipts retain the original paid-period expiry. New-provider auto refunds are rejected before credit reservation; PayPal/Waffo refund behavior remains preserved.
-- Seven retained suites, ten billing test groups, browser/API auth and submission contract, desktop/mobile, production isolation, typecheck/build, frozen install and second-site isolation passed. No new real-provider payment/model/refund calls.
-- Main retains 2 users, 5 tasks, 3 orders, 3 refunds and zero real/new subscription records; fixture users/cycles/orders are removed. Main Web and three Workers restored. Aurora Notes remains its independent AUD-003 source/database/key/file instance at 3002; no automatic migration or SDK change.
-- Stripe SDK/API pin: 23.1.0 / 2026-10-28.endive. Audit: 0 critical/high/moderate, 1 unchanged low deepmerge advisory under the prior applicability boundary.
-- Results: `docs/project-state/aud-004-results.json` and detailed records. Usage/configuration: parent `AUD-004-BILLING-GUIDE.md`.
+- Existing login/Studio, DeepSeek summary, Kie video, atomic credits/admin, common purchases and subscription renewal/cancel/resume remain protected. All eight retained suites passed against this candidate; no new real payment/model/refund calls.
+- Stripe/Creem use the existing refund command, admin/CSRF checks, immutable UUID, per-user/order locks, original source hold/reclaim/release and audited waiver. Migration 0010 expands only the refund provider constraint. Existing PayPal/Waffo provider adapters and accepted records remain preserved.
+- Stripe partial/full refunds resolve the original PaymentIntent or one invoice payment. Signed refunds use authenticated API queries. Creem uses its full-transaction refund endpoint; query and signed callback share a transaction-level identity. Signed ref_ ID is retained when available. Explicit failed attempts cannot capture a later refund attempt's hold.
+- Consumed/expired/frozen sources block backend cash calls. External refunds reclaim only their original source, record shortfall, gate new tasks and allow existing tasks to settle. Failed-task release repays original-source debt atomically; consumed loss waiver remains audited and idempotent. Unknown cash outcomes keep reservations and only query; duplicate/concurrent events cannot debit twice. Refunds do not cancel subscriptions.
+- 13 refund groups, three browser/API groups, billing UI/contract, production isolation, typecheck/build and six independent-site isolation groups passed. Main keeps 2 users, 5 tasks, 3 orders and 3 refunds; no fixture users or new-channel orders/refunds/subscriptions remain.
+- Main Web + three Workers restored at 3000. Aurora Notes was not running at verification entry; restarted using its existing independent AUD-003 source/configuration and eight migrations. Its database, keys and files remain separate; no upgrade was applied.
+- Evidence: `docs/project-state/refunds-results.json` and its linked detail records. Usage/configuration and current boundaries: parent `FOUR-CHANNEL-REFUND-GUIDE.md`.
 
 ### Pending or needs review
-- BILL-001: Stripe test account; completed Creem store with a product HTTPS URL; real test product/price IDs, API keys and webhook secrets; signed public callbacks and two account-backed billing periods. Deferred by Owner, not silently passed.
-- No Creem store/product/key was created or extracted. Only its unsubmitted initial form was prepared; no temporary public site was published.
-- New-provider refund/reversal, complex billing/price migrations and the later V1.2 operational/production gates remain unverified.
+- BILL-001 remains deferred: Stripe test account; completed Creem store with HTTPS product URL, products/API/webhook credentials; real payment and refund receipts/public notifications, recurring paid periods and provider-side retry/async behavior. Stripe/Creem flags remain false. No new Creem store/product/key was created.
+- Added automated refunds cover standard USD cash matching the stored order. Creem partial, tax-inclusive/multiple-payment/ambiguous cash cases require manual reconciliation. Complex billing, disputes and production refund activation remain separate scopes.
+- Source recovery is not a database or secret backup. The second site is intentionally not synchronized to these new billing/refund modules.
 
 ### Blockers
-None for local completion. External account/product gates wait for the Owner to resume after deployment.
+None for completed local work. External account/product gates wait for the Owner to resume after deployment.
 
 ### Exact next action
-Use http://localhost:3000/zh/buy-credits to inspect the unified interface; keep Stripe/Creem disabled. At the Owner's next request, use the root guide to configure test accounts and run account-backed acceptance before enabling them for users.
+Inspect http://localhost:3000/zh/admin/orders using the existing local administrator and parent FOUR-CHANNEL-REFUND-GUIDE.md. Keep Stripe/Creem disabled until separately requested HTTPS/account-backed acceptance; use the documented isolated tests to reproduce local financial behavior without real provider calls.

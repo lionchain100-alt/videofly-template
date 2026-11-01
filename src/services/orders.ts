@@ -413,6 +413,13 @@ export async function receivePaymentEvent(event: VerifiedEvent) {
   )
     throw new ApiError("回调订单账户不一致", 409);
   const [saved] = await db.select().from(paymentEvents).where(scope);
+  if (
+    event.refund &&
+    event.fingerprint &&
+    saved.normalizedEvent &&
+    (saved.normalizedEvent as VerifiedEvent).fingerprint !== event.fingerprint
+  )
+    throw new ApiError("同一退款事件编号的内容不可更改", 409);
   if (saved.status === "PROCESSED") return;
   if (event.refund) {
     const { receiveRefundFact } = await import("./refunds");

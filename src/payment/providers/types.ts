@@ -65,6 +65,7 @@ export type RefundFact = {
   accountId: string;
   paymentId: string;
   externalId: string;
+  providerRefundId?: string;
   reference?: string;
   amount: number;
   currency: string;
@@ -72,6 +73,7 @@ export type RefundFact = {
 };
 export type RefundRequest = {
   id: string;
+  orderId: string;
   provider: PaymentProvider;
   environment: string;
   accountId: string;

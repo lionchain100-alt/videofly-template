@@ -177,7 +177,7 @@
       "lifecycle": "qa-passed",
       "availability": "enabled",
       "protection": "release-critical",
-      "contractVersion": "1.0.0",
+      "contractVersion": "1.1.0",
       "spec": [
         "docs/project-state/contract.md"
       ],
@@ -185,17 +185,22 @@
         "/api/v1/admin/refunds"
       ],
       "ownerModules": [
-        "src/services/refunds.ts"
+        "src/services/refunds.ts",
+        "src/payment/providers/stripe-refunds.ts",
+        "src/payment/providers/creem-refunds.ts"
       ],
       "dependencies": [],
       "testIds": [
-        "REGRESSION-CAP-007"
+        "REGRESSION-CAP-007",
+        "REGRESSION-CAP-007-FOUR"
       ],
       "fixtures": [
-        "scripts/test-refunds.ts"
+        "scripts/test-refunds.ts",
+        "scripts/test-four-channel-refunds.ts",
+        "scripts/test-refund-browser.mjs"
       ],
-      "ownerGate": "Local retained-flow regression; production activation remains separate",
-      "changeImpact": "compatible",
+      "ownerGate": "Owner requested RFN-001 local Stripe/Creem refunds; account-backed/public callback and production acceptance remain deferred. Existing PayPal/Waffo retained.",
+      "changeImpact": "additive",
       "changeApproval": null,
       "deploymentApproval": null
     },

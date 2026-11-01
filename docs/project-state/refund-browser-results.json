@@ -1,0 +1,10 @@
+{
+  "at": "2026-11-01T23:39:27.709Z",
+  "passed": [
+    "Real HTTP anonymous/member/admin/CSRF/invalid amount and Stripe refund-ID format boundaries",
+    "Rendered Stripe refund confirmation and Creem full-only amount control; disabled real configuration returns 503 with zero credit hold/order mutation",
+    "Query-only recovery button, completed refund/credit display after reload, desktop/mobile layout and no page exceptions"
+  ],
+  "realProviderCalls": 0,
+  "providerFlagsRemainDisabled": true
+}

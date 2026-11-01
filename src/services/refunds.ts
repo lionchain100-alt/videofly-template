@@ -27,14 +27,22 @@ import { refundCreditTarget } from "@/payment/refund-policy";
 import {
   createPaypalRefund,
   queryPaypalRefundId,
-  paypalConfig,
 } from "@/payment/providers/paypal";
 import {
   createWaffoRefund,
   queryWaffoRefunds,
-  waffoConfig,
 } from "@/payment/providers/waffo";
 import type { RefundFact, RefundRequest } from "@/payment/providers/types";
+import { paymentConfig } from "@/payment/providers/registry";
+import {
+  createStripeRefund,
+  queryStripeRefund,
+  findStripeRefund,
+} from "@/payment/providers/stripe-refunds";
+import {
+  createCreemRefund,
+  queryCreemRefund,
+} from "@/payment/providers/creem-refunds";
 type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
 type Order = typeof paymentOrders.$inferSelect;
 type Package = typeof creditPackages.$inferSelect;
@@ -177,15 +185,25 @@ export async function createRefund(
       .where(eq(paymentOrders.id, input.orderId))
       .for("update");
     if (order.status !== "PAID") throw new ApiError("仅已支付订单可退款", 409);
-    if (!["paypal", "waffo"].includes(order.provider))
-      throw new ApiError(
-        "本版后台自动退款目前支持 PayPal、Waffo；此通道退款请先核对供应商账单，不能自动回收积分",
-        501,
-      );
+    if (!["paypal", "waffo", "stripe", "creem"].includes(order.provider))
+      throw new ApiError("未知退款通道", 400);
+    if (["stripe", "creem"].includes(order.provider)) {
+      const config = paymentConfig(order.provider as RefundRequest["provider"]);
+      if (
+        config.environment !== order.environment ||
+        config.accountId !== order.accountId
+      )
+        throw new ApiError("退款账户或环境已改变", 409);
+    }
     if (!["sandbox", "test"].includes(order.environment))
       throw new ApiError("本版后台只启用测试环境退款", 403);
     if (input.amount > order.amount - order.refundedAmount)
       throw new ApiError("超过订单剩余可退金额", 409);
+    if (
+      order.provider === "creem" &&
+      (order.refundedAmount !== 0 || input.amount !== order.amount)
+    )
+      throw new ApiError("Creem 当前仅支持整笔退款，不支持后台部分退款", 409);
     const current = await tx
       .select({ id: paymentRefunds.id })
       .from(paymentRefunds)
@@ -397,6 +415,23 @@ export async function receiveRefundFact(fact: RefundFact) {
         .where(eq(paymentRefunds.id, fact.reference))
         .for("update");
     }
+    if (!r && fact.provider === "creem") {
+      // Creem emits no merchant refund reference; one full refund per receipt.
+      const candidates = await tx
+        .select()
+        .from(paymentRefunds)
+        .where(
+          and(
+            eq(paymentRefunds.orderId, order.id),
+            inArray(paymentRefunds.status, pending),
+            eq(paymentRefunds.amount, fact.amount),
+          ),
+        )
+        .for("update");
+      if (candidates.length > 1)
+        throw new ApiError("Creem 退款请求关联不唯一", 409);
+      r = candidates[0];
+    }
     if (
       r &&
       (r.orderId !== order.id ||
@@ -429,8 +464,16 @@ export async function receiveRefundFact(fact: RefundFact) {
           reason: "支付平台发起的外部退款，依据验签通知核对",
           status: "PENDING",
           externalId: fact.externalId,
+          ticketId:
+            fact.provider === "creem" ? fact.providerRefundId : undefined,
         })
         .returning();
+    }
+    if (fact.provider === "creem" && fact.providerRefundId && !r.ticketId) {
+      await tx
+        .update(paymentRefunds)
+        .set({ ticketId: fact.providerRefundId })
+        .where(eq(paymentRefunds.id, r.id));
     }
     if (
       r.status === "SUCCEEDED" ||
@@ -553,7 +596,7 @@ export async function processRefund(id?: string) {
   });
   if (!r) return false;
   try {
-    const config = r.provider === "paypal" ? paypalConfig() : waffoConfig();
+    const config = paymentConfig(r.provider as RefundRequest["provider"]);
     if (
       config.environment !== r.environment ||
       config.accountId !== r.accountId
@@ -578,7 +621,7 @@ export async function processRefund(id?: string) {
             ),
           );
         await receiveRefundFact(fact);
-      } else {
+      } else if (r.provider === "waffo") {
         const ticketId = await createWaffoRefund(req);
         await db
           .update(paymentRefunds)
@@ -590,6 +633,23 @@ export async function processRefund(id?: string) {
               eq(paymentRefunds.status, "SUBMITTING"),
             ),
           );
+      } else {
+        const fact =
+          r.provider === "stripe"
+            ? await createStripeRefund(req)
+            : await createCreemRefund(req);
+        if (fact) await receiveRefundFact(fact);
+        else
+          await db
+            .update(paymentRefunds)
+            .set({ status: "PENDING", updatedAt: new Date() })
+            .where(
+              and(
+                eq(paymentRefunds.id, r.id),
+                eq(paymentRefunds.leaseToken, token),
+                eq(paymentRefunds.status, "SUBMITTING"),
+              ),
+            );
       }
     } else if (r.provider === "paypal" && r.externalId) {
       await receiveRefundFact(await queryPaypalRefundId(r.externalId));
@@ -598,6 +658,24 @@ export async function processRefund(id?: string) {
       for (const fact of facts) await receiveRefundFact(fact);
       if (!facts.length && r.status === "SUBMITTING")
         throw new ApiError("退款提交结果未知，禁止重复申请", 409);
+    } else if (r.provider === "stripe") {
+      const fact = r.externalId
+        ? await queryStripeRefund(r.externalId)
+        : await findStripeRefund(req);
+      if (!fact)
+        throw new ApiError(
+          "尚未找到原 Stripe 退款，只能核实，禁止重新申请",
+          409,
+        );
+      await receiveRefundFact(fact);
+    } else if (r.provider === "creem") {
+      const fact = await queryCreemRefund(req);
+      if (fact) await receiveRefundFact(fact);
+      else if (r.status === "SUBMITTING")
+        throw new ApiError(
+          "Creem 提交结果未知，只查询原交易，禁止重新申请",
+          409,
+        );
     } else
       throw new ApiError(
         "退款回执未取得，等待通知或人工核实，禁止重复申请",
@@ -665,6 +743,28 @@ export async function recheckRefund(
     .where(eq(paymentOrders.id, r.orderId));
   await db.transaction((tx) => adminLock(tx, actorId, order.userId));
   if (r.status === "SUCCEEDED" || r.status === "BLOCKED") return;
+  const config = paymentConfig(r.provider as RefundRequest["provider"]);
+  if (config.accountId !== r.accountId || config.environment !== r.environment)
+    throw new ApiError("退款账户或环境已改变", 409);
+  if (["stripe", "creem"].includes(r.provider)) {
+    const req = { ...r, provider: r.provider as RefundRequest["provider"] };
+    const fact =
+      r.provider === "stripe"
+        ? externalId || r.externalId
+          ? await queryStripeRefund(externalId || r.externalId!)
+          : await findStripeRefund(req)
+        : await queryCreemRefund(req);
+    if (!fact) throw new ApiError("尚未确认退款结果，仅查询，未重新申请", 409);
+    if (
+      fact.paymentId !== r.paymentId ||
+      fact.amount !== r.amount ||
+      fact.currency !== r.currency ||
+      (r.provider === "stripe" && fact.reference !== r.id)
+    )
+      throw new ApiError("退款回执与原请求不一致", 409);
+    await receiveRefundFact(fact);
+    return;
+  }
   if (r.provider === "paypal") {
     const ref = externalId || r.externalId;
     if (!ref)
