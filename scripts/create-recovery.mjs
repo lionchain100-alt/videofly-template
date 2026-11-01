@@ -11,7 +11,7 @@ if(!/^AUD-002-(before|after)-[0-9T-]+$/.test(name||''))throw Error('Provide a fi
 const target=path.join(workspace,'.recovery',name);
 try{await stat(target);throw Error('Recovery destination already exists');}catch(e){if(e.code!=='ENOENT')throw e;}
 const env=parse(await readFile(path.join(repo,'.env.local'),'utf8'));
-const secrets=Object.entries(env).filter(([k,v])=>/KEY|SECRET|PASSWORD|TOKEN|DATABASE_URL/.test(k)&&v.length>=8&&!/^(false|true)$/.test(v));
+const secrets=Object.entries(env).filter(([k,v])=>/(API_KEY|PRIVATE_KEY|SECRET|PASSWORD|ACCESS_KEY|ACCESS_TOKEN|TOKEN|DATABASE_URL)$/.test(k)&&v.length>=8&&!/^(false|true)$/.test(v));
 const files=[...new Set(execFileSync('git',['ls-files','-z','--cached','--others','--exclude-standard'],{cwd:repo}).toString('utf8').split('\0').filter(Boolean))];
 const manifest={createdAt:new Date().toISOString(),gitHead:execFileSync('git',['rev-parse','HEAD'],{cwd:repo}).toString().trim(),environmentExcluded:true,databaseExcluded:true,files:[]};
 async function copy(source,relative,redact){
