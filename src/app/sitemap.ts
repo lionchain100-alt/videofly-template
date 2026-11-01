@@ -1,17 +1,16 @@
 import { MetadataRoute } from "next";
 import { i18n } from "@/config/i18n-config";
-import { execSync } from "child_process";
-import { readdir, stat } from "fs/promises";
-import { join } from "path";
+import { execFileSync } from "node:child_process";
+import { readdir } from "node:fs/promises";
+import { join } from "node:path";
 
 // Allow sitemap to be revalidated every hour (3600 seconds)
 export const revalidate = 3600;
 
 const getLastModified = (filePath: string): Date => {
   try {
-    // 转义文件路径中的特殊字符，避免 shell 解析错误
-    const escapedPath = filePath.replace(/'/g, "'\\''");
-    const timestamp = execSync(`git log -1 --format=%cI '${escapedPath}'`)
+    // Argument arrays work on Windows and avoid shell interpretation of file paths.
+    const timestamp = execFileSync("git", ["log", "-1", "--format=%cI", "--", filePath], { stdio: ["ignore", "pipe", "pipe"] })
       .toString()
       .trim();
     if (timestamp) {
@@ -44,7 +43,8 @@ async function scanPages(
         entry.name.startsWith('_') ||  // Next.js 私有目录
         entry.name.startsWith('.') ||  // 隐藏文件
         entry.name === 'node_modules' ||
-        entry.name === 'api'           // 跳过 API 路由
+        entry.name === 'api' ||
+        entry.name === '(ui)'          // Local editor/preview must never enter public sitemaps
       ) {
         continue;
       }
@@ -55,7 +55,7 @@ async function scanPages(
         pages.push(...subPages);
       } else if (entry.name === 'page.tsx') {
         // 计算路由路径
-        const relativePath = fullPath.replace(baseDir, '');
+        const relativePath = fullPath.replace(baseDir, '').replace(/\\/g, '/');
         const routePath = relativePath
           .replace(/\/page\.tsx$/, '')           // 移除 /page.tsx
           .replace(/\[.*?\]/g, '')                // 移除动态路由参数

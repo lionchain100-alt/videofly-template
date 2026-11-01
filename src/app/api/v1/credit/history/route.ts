@@ -13,7 +13,9 @@ const transTypeMapping: Record<CreditTransType, string> = {
   VIDEO_CONSUME: "video_generate",
   REFUND: "video_refund",
   EXPIRED: "expired",
+  TASK_HOLD: "task_hold", TASK_SETTLE: "task_settle", TASK_RELEASE: "task_release",
   SYSTEM_ADJUST: "admin_adjust",
+  REFUND_HOLD:"refund_hold",REFUND_RECLAIM:"refund_reclaim",REFUND_RELEASE:"refund_release",
 };
 
 export async function GET(request: NextRequest) {
@@ -38,6 +40,7 @@ export async function GET(request: NextRequest) {
       balanceAfter: record.balanceAfter,
       transType: transTypeMapping[record.transType] ?? record.transType.toLowerCase(),
       videoUuid: record.videoUuid,
+      taskId: record.taskId,
       remark: record.remark,
       createdAt: record.createdAt,
     }));

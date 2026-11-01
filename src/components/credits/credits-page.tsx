@@ -54,7 +54,7 @@ export function CreditsPage({ locale }: CreditsPageProps) {
   }, [hasMore, historyLoading, fetchNextPage]);
 
   const handleBuyCredits = () => {
-    router.push(`/${locale}/pricing`);
+    router.push(`/${locale}/buy-credits`);
   };
 
   // 处理支付成功回调

@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { headers } from "next/headers";
 
 import { getCurrentUser } from "@/lib/auth";
 
@@ -11,6 +12,7 @@ export default async function MarketingLayout({
 }: {
   children: React.ReactNode;
 }) {
+  if ((await headers()).get("x-ui-home") === "true") return <>{children}</>;
   const user = await getCurrentUser();
 
   return (

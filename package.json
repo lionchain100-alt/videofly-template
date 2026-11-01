@@ -20,7 +20,15 @@
     "script:add-credits": "dotenv -e .env.local -- tsx scripts/add-credits.ts",
     "script:check-credits": "dotenv -e .env.local -- tsx scripts/check-user-credits.ts",
     "script:reset-credits": "dotenv -e .env.local -- tsx scripts/reset-user-credits.ts",
-    "script:test-proxy": "node scripts/test-proxy.mjs"
+    "script:test-proxy": "node scripts/test-proxy.mjs",
+    "worker:text": "node --import tsx scripts/task-worker.ts",
+    "test:text-tasks": "node --import tsx scripts/test-text-tasks.ts",
+    "worker:video": "node --import tsx scripts/video-worker.ts",
+    "test:video-jobs": "node --import tsx scripts/test-video-jobs.mjs",
+    "test:payments": "node --import tsx scripts/test-payment-orders.ts",
+    "test:refunds": "node --import tsx scripts/test-refunds.ts",
+    "test:admin-dashboard": "node --import tsx scripts/test-admin-dashboard.ts",
+    "worker:payments": "node --import tsx scripts/payment-worker.ts"
   },
   "dependencies": {
     "@creem_io/better-auth": "^0.0.12",
@@ -131,6 +139,7 @@
     "dotenv": "^17.2.3",
     "dotenv-cli": "^11.0.0",
     "drizzle-kit": "^0.31.8",
+    "embedded-postgres": "17.11.0-beta.19",
     "esbuild": "0.20.2",
     "postcss": "^8",
     "react-email": "^5.2.5",

@@ -18,7 +18,7 @@ export function LandingFooter() {
         { title: "Image to Video", href: "/image-to-video" },
         { title: "Text to Video", href: "/text-to-video" },
         { title: "Reference to Video", href: "/reference-to-video" },
-        { title: "Pricing", href: "/pricing" },
+        { title: "Pricing", href: "/buy-credits" },
       ],
     },
     // {

@@ -16,11 +16,8 @@ export async function getCurrentUser(): Promise<User | null> {
     return null;
   }
   const { headers } = await import("next/headers");
-  const { auth } = await import("./auth");
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  return (session?.user as User) ?? null;
+  const { getActiveSessionUser } = await import("./active-user");
+  return getActiveSessionUser(await headers());
 }
 
 /**
@@ -33,10 +30,13 @@ export async function getServerSession() {
   }
   const { headers } = await import("next/headers");
   const { auth } = await import("./auth");
+  const { getActiveSessionUser } = await import("./active-user");
+  const user = await getActiveSessionUser(await headers());
+  if (!user) return null;
   const session = await auth.api.getSession({
     headers: await headers(),
   });
-  return session;
+  return session ? { ...session, user } : null;
 }
 
 /**

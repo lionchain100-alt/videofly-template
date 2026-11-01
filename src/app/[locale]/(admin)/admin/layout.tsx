@@ -35,8 +35,8 @@ export default async function AdminLayout({
         <AdminSidebar locale={locale} />
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto">
-          <div className="p-6">{children}</div>
+        <main className="min-w-0 flex-1 overflow-y-auto">
+          <div className="p-4 md:p-6">{children}</div>
         </main>
       </div>
     </div>

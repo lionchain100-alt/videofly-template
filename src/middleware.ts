@@ -56,10 +56,13 @@ export default function middleware(request: NextRequest) {
     }
   }
 
+  request.headers.set("x-ui-home", /^\/(?:en\/?|zh\/?)?$/.test(pathname) ? "true" : "false");
   const response = intlMiddleware(request);
 
   // Add security headers
-  response.headers.set("X-Frame-Options", "DENY");
+  const localPreview = process.env.NODE_ENV === "development" && process.env.UI_STUDIO_ENABLED === "true" && /^\/(?:en\/|zh\/)?ui-preview$/.test(pathname);
+  response.headers.set("X-Frame-Options", localPreview ? "SAMEORIGIN" : "DENY");
+  if (localPreview) response.headers.set("Content-Security-Policy", "frame-ancestors 'self'");
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   response.headers.set(

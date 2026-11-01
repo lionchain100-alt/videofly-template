@@ -1,4 +1,7 @@
 import { Suspense } from "react";
+import { headers } from "next/headers";
+import { localTestRequestAllowed } from "@/lib/auth/local-test";
+import { LocalAdminLogin } from "@/components/local-admin-login";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -24,6 +27,7 @@ export default async function LoginPage({
   }>;
 }) {
   const { locale } = await params;
+  const localLogin = localTestRequestAllowed(await headers());
   const t = await getTranslations("Login");
   return (
     <div className="container flex h-screen w-screen flex-col items-center justify-center">
@@ -56,7 +60,7 @@ export default async function LoginPage({
           </p>
         </div>
         <Suspense fallback={<div className="h-10" />}>
-          <UserAuthForm lang={locale} />
+          {localLogin ? <LocalAdminLogin locale={locale}/> : <UserAuthForm lang={locale} />}
         </Suspense>
       </div>
     </div>

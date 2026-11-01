@@ -182,7 +182,7 @@ export function LandingHeader({ user }: { user?: User | null }) {
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
                   <LocaleLink
-                    href="/pricing"
+                    href="/buy-credits"
                     className={cn(
                       "group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none"
                     )}
@@ -411,7 +411,7 @@ export function LandingHeader({ user }: { user?: User | null }) {
 
                   {/* Pricing */}
                   <LocaleLink
-                    href="/pricing"
+                    href="/buy-credits"
                     className="font-semibold p-2 hover:bg-accent rounded-md transition-colors"
                   >
                     {t('Header.pricing')}

@@ -1,5 +1,5 @@
 import { betterAuth } from "better-auth";
-import { createAuthMiddleware } from "better-auth/api";
+import { APIError, createAuthMiddleware } from "better-auth/api";
 import { creem } from "@creem_io/better-auth";
 import { magicLink } from "better-auth/plugins";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
@@ -18,6 +18,9 @@ import { creditPackages, db, users } from "@/db";
 import * as schema from "@/db/schema";
 import { env } from "./env.mjs";
 import { eq } from "drizzle-orm";
+import { localTestAuthEnabled } from "./local-test";
+
+const localTestAuth = localTestAuthEnabled();
 
 const toLogString = (value: unknown) => {
   if (value === null || value === undefined) return String(value);
@@ -71,7 +74,7 @@ type AuthPlugin =
 const plugins: AuthPlugin[] = [
   // Avoid Next.js dev DataCloneError from cookies() in some environments.
   ...(process.env.NODE_ENV === "development" ? [] : [nextCookies()]),
-  magicLink({
+  ...(localTestAuth ? [] : [magicLink({
     sendMagicLink: async ({ email, url }) => {
       // Dynamic import to avoid Edge Runtime issues in middleware
       const { MagicLinkEmail } = await import(
@@ -113,7 +116,7 @@ const plugins: AuthPlugin[] = [
       }
     },
     expiresIn: 300, // 5 minutes
-  }),
+  })]),
 ];
 
 if (env.CREEM_API_KEY) {
@@ -267,6 +270,11 @@ export const auth = betterAuth({
   basePath: "/api/auth",
   secret: env.BETTER_AUTH_SECRET,
   logger: debugLogger,
+  emailAndPassword: {
+    enabled: localTestAuth,
+    disableSignUp: true,
+    requireEmailVerification: true,
+  },
 
   // Drizzle adapter with schema for Better Auth
   database: drizzleAdapter(db, {
@@ -281,6 +289,17 @@ export const auth = betterAuth({
 
   // Plugins
   plugins,
+  databaseHooks: {
+    session: {
+      create: {
+        before: async (session) => {
+          const [user] = await db.select({ disabled: users.disabled }).from(users).where(eq(users.id, session.userId)).limit(1);
+          if (!user || user.disabled) throw new APIError("FORBIDDEN", { message: "该账户已停用，请联系管理员" });
+          return { data: session };
+        },
+      },
+    },
+  },
 
   // Hooks - 自动赠送新用户积分（仅在注册时触发）
   hooks: {
@@ -303,7 +322,7 @@ export const auth = betterAuth({
   },
 
   // Google OAuth
-  socialProviders: {
+  socialProviders: localTestAuth ? {} : {
     google: {
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
@@ -326,7 +345,7 @@ export const auth = betterAuth({
   // Session configuration
   session: {
     cookieCache: {
-      enabled: true,
+      enabled: !localTestAuth,
       maxAge: 5 * 60, // 5 minutes
     },
   },

@@ -12,7 +12,6 @@ import { cn } from "@/components/ui";
 import { Toaster } from "@/components/ui/sonner";
 import { QueryProvider } from "@/components/query-provider";
 
-import { TailwindIndicator } from "@/components/tailwind-indicator";
 import { ThemeProvider } from "@/components/theme-provider";
 import { PlausibleAnalytics } from "@/components/plausible-provider";
 import { i18n } from "@/config/i18n-config";
@@ -135,7 +134,6 @@ export default async function RootLayout({
               <Analytics />
               <SpeedInsights />
               <Toaster richColors position="top-right" />
-              <TailwindIndicator />
             </QueryProvider>
           </NextIntlClientProvider>
         </ThemeProvider>

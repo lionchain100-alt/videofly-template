@@ -10,6 +10,7 @@ if (!process.env.SKIP_ENV_VALIDATION) {
 
 /** @type {import("next").NextConfig} */
 const config = {
+  devIndicators: false,
   reactStrictMode: true,
   pageExtensions: ["ts", "tsx"],
   images: {
@@ -23,7 +24,9 @@ const config = {
   },
   /** We already do linting and typechecking as separate tasks in CI */
   typescript: { ignoreBuildErrors: true },
-  output: "standalone",
+  // Ordinary Node output avoids Windows symlink privileges for local production QA.
+  // The deployment default remains standalone.
+  output: process.env.NEXT_LOCAL_BUILD === "true" ? undefined : "standalone",
 };
 
 // Compose plugins
