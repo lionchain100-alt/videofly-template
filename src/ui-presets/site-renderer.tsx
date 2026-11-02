@@ -30,8 +30,14 @@ import {
   type UIConfig,
 } from "./config";
 import styles from "./site.module.css";
-import { SummaryWorkspace } from "@/tools/text-summary/workspace";
-import { VideoWorkspace } from "@/tools/video/workspace";
+import dynamic from "next/dynamic";
+import { usePathname } from "next/navigation";
+const SummaryWorkspace = dynamic(() =>
+  import("@/tools/text-summary/workspace").then((m) => m.SummaryWorkspace),
+);
+const VideoWorkspace = dynamic(() =>
+  import("@/tools/video/workspace").then((m) => m.VideoWorkspace),
+);
 import { siteManifest, localePath } from "@/config/site-manifest";
 import { AccountButton } from "@/tools/text-summary/account-button";
 
@@ -41,6 +47,7 @@ export interface SiteProps {
   scenario?: DemoState;
   preview?: boolean;
   studioLink?: boolean;
+  initialOpen?: boolean;
 }
 type ToolId = "text" | "video";
 const sampleText =
@@ -54,6 +61,7 @@ export function SiteRenderer({
   scenario = "empty",
   preview = false,
   studioLink = false,
+  initialOpen = false,
 }: SiteProps) {
   const c = config;
   const en = locale === "en";
@@ -68,10 +76,10 @@ export function SiteRenderer({
   const [tool, setTool] = useState<ToolId>(firstTool);
   const [inputs, setInputs] = useState({ text: "", video: "" });
   const [state, setState] = useState<DemoState>(scenario);
-  const [portalOpen, setPortalOpen] = useState(false);
+  const [portalOpen, setPortalOpen] = useState(initialOpen);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("all");
-  const [modal, setModal] = useState<"login" | "pricing" | "history" | null>(
+  const [modal, updateModal] = useState<"login" | "pricing" | "history" | null>(
     null,
   );
   const [mobileNav, setMobileNav] = useState(false);
@@ -84,8 +92,37 @@ export function SiteRenderer({
   const [aspect, setAspect] = useState("16:9");
   const [dark, setDark] = useState(c.theme.mode === "dark");
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const modalOpener = useRef<HTMLElement | null>(null);
+  function setModal(next: "login" | "pricing" | "history" | null) {
+    if (next)
+      modalOpener.current = document.activeElement as HTMLElement | null;
+    updateModal(next);
+  }
+  const menuRef = useRef<HTMLButtonElement>(null);
+  const pathname = usePathname();
+  const languagePath = (language: string) =>
+    localePath(language, pathname.replace(/^\/(en|zh)(?=\/|$)/, "") || "/");
   useEffect(() => {
-    if (modal) dialogRef.current?.showModal();
+    const escape = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && mobileNav) {
+        setMobileNav(false);
+        menuRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", escape);
+    return () => document.removeEventListener("keydown", escape);
+  }, [mobileNav]);
+  useEffect(() => {
+    if (modal) {
+      const previous =
+        modalOpener.current || (document.activeElement as HTMLElement | null);
+      dialogRef.current?.showModal();
+      return () => {
+        requestAnimationFrame(() => {
+          if (previous?.isConnected&&previous.getClientRects().length) previous.focus();else menuRef.current?.focus();
+        });
+      };
+    }
   }, [modal]);
   useEffect(() => {
     setTool(firstTool);
@@ -154,6 +191,7 @@ export function SiteRenderer({
     }, 850);
   }
   function openLogin() {
+    modalOpener.current = document.activeElement as HTMLElement | null;
     if (preview) setModal("login");
     else window.location.assign(localePath(locale, "/login"));
   }
@@ -588,7 +626,7 @@ export function SiteRenderer({
             siteManifest.languages.enabled.map((language) => (
               <a
                 key={language}
-                href={localePath(language)}
+                href={languagePath(language)}
                 aria-current={language === locale ? "page" : undefined}
               >
                 {language === "zh" ? "中文" : "English"}
@@ -641,6 +679,9 @@ export function SiteRenderer({
           <button
             type="button"
             className={styles.mobileMenu}
+            ref={menuRef}
+            aria-expanded={mobileNav}
+            aria-controls="site-mobile-navigation"
             aria-label={t("打开导航", "Open navigation")}
             onClick={() => setMobileNav((v) => !v)}
           >
@@ -649,7 +690,16 @@ export function SiteRenderer({
         </div>
       </header>
       {mobileNav && c.presetId !== "studio" && (
-        <nav className={styles.mobileNav}>
+        <nav id="site-mobile-navigation" className={styles.mobileNav}>
+          {siteManifest.languages.enabled.map((language) => (
+            <a
+              key={language}
+              href={languagePath(language)}
+              aria-current={language === locale ? "page" : undefined}
+            >
+              {language === "zh" ? "中文" : "English"}
+            </a>
+          ))}
           <button
             type="button"
             onClick={() => {
@@ -682,8 +732,20 @@ export function SiteRenderer({
       <div className={styles.body}>
         {c.presetId === "studio" && (
           <aside
+            id="site-mobile-navigation"
             className={`${styles.sidebar} ${mobileNav ? styles.navOpen : ""}`}
           >
+            <div className={styles.mobileLanguages}>
+              {siteManifest.languages.enabled.map((language) => (
+                <a
+                  key={language}
+                  href={languagePath(language)}
+                  aria-current={language === locale ? "page" : undefined}
+                >
+                  {language === "zh" ? "中文" : "English"}
+                </a>
+              ))}
+            </div>
             <div className={styles.sidebarTop}>
               <span>{t("你的工作空间", "YOUR WORKSPACE")}</span>
               <button
@@ -1040,6 +1102,25 @@ export function SiteRenderer({
       {modal && (
         <dialog
           ref={dialogRef}
+          onKeyDown={(e) => {
+            if (e.key !== "Tab") return;
+            const nodes = [
+              ...e.currentTarget.querySelectorAll<HTMLElement>(
+                'button:not(:disabled),a[href],input:not(:disabled),select:not(:disabled),textarea:not(:disabled),[tabindex="0"]',
+              ),
+            ].filter((n) => n.getClientRects().length > 0);
+            const first = nodes[0],
+              last = nodes.at(-1);
+            if (
+              first &&
+              last &&
+              ((e.shiftKey && document.activeElement === first) ||
+                (!e.shiftKey && document.activeElement === last))
+            ) {
+              e.preventDefault();
+              (e.shiftKey ? last : first).focus();
+            }
+          }}
           className={styles.modalBackdrop}
           onCancel={() => setModal(null)}
           onClick={(e) => {

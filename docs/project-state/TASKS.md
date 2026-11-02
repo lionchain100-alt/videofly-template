@@ -12,10 +12,12 @@ Last reconciled: 2026-11-02
 Milestone: Local V1.2 core with four-channel billing/refunds; current full audit records remaining implementation and deferred real-provider gates.
 Active task: IDLE-000
 
-Definition of Ready: AUD-006 local/R2 QA recorded; Owner requested AUD-007 and explicitly approved local 5/minute,50/day,USD10/day,USD100/month defaults.
-Definition of Done: versioned capability/model/price policy, atomic user/site limits and cost reservations, historical snapshot/quote compatibility, audited terminal cost review, ten retained suites, storage/restore/browser/production/isolation gates, clean data and source recovery.
+Definition of Ready: AUD-007 QA recorded; Owner authorized AUD-008 local UI/SEO/production-auth configuration checks without new paid/provider acceptance.
+Definition of Done: both tools across three layouts with one task/hold/settlement, 12 theme/language and 36 viewport cases, keyboard/dialog/preview/offline checks, route/SEO/auth/Owner guards, retained/storage/isolation/build gates and source recovery.
 
 ## Backlog
+
+- [x] AUD-008 UI business continuity across presets, 12 theme/language combinations at 390/768/1440, keyboard/focus, SEO/legacy routes and production authentication configuration. Depends on: AUD-007. Acceptance: browser/DB single-task/hold/settlement evidence, accessibility/responsiveness matrix, SEO/disabled-route/auth configuration checks, retained suites/storage/isolation/build and source recovery. Actual OAuth/mail delivery remains HTTPS/account-backed. Evidence: aud-008-results.json and parent AUD-008-UI-SEO-AUTH-GUIDE.md.
 
 - [x] AUD-007 Model capability configuration, immutable price/execution snapshots, per-user limits, atomic site cost reservations and audited cost review. Depends on: AUD-006. Acceptance: concurrent limits/budgets, historical compatibility, uncertain outcomes, admin permissions/audit, retained suites/storage/isolation/production checks and source recovery. Local defaults authorized: 5/minute, 50/day, USD10/day and USD100/month. Evidence: aud-007-results.json and parent AUD-007-MODEL-BUDGET-GUIDE.md.
 
@@ -37,7 +39,7 @@ Definition of Done: versioned capability/model/price policy, atomic user/site li
 
 - [ ] BILL-001 Verify Stripe/Creem actual test-account checkout/refunds, two paid periods, public signed callbacks, duplicate delivery and state changes. Depends on: Owner resumes after HTTPS deployment and supplies provider accounts/products/keys. Acceptance: real test receipts and reconciliation; no fixture substitution. Production-money acceptance is separately governed by R05/AUD-009.
 
-Suggested next implementation: AUD-008 UI/SEO/production-auth combination checks, followed by AUD-009 deployment/CI. These remain proposed and have not started. AUD-007 local model and estimated-cost governance is complete. Actual provider receipt/bulk-statement reconciliation remains deferred under BILL-001 and deployment gates.
+Suggested next implementation: AUD-009 clean initialization/CI/fixed deployment and pre-release gates. It remains proposed and unstarted. AUD-008 local scope is complete; actual authentication callbacks and provider gates still need deployment-backed acceptance. Actual provider receipt/bulk-statement reconciliation remains deferred under BILL-001 and deployment gates.
 
 ## Blocked / decision-needed register
 

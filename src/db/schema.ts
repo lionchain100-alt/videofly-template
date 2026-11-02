@@ -1007,3 +1007,14 @@ export const aiGovernanceIncidents = pgTable(
     incidentUnique: unique().on(t.siteId, t.userId, t.requestId, t.code),
   }),
 );
+export const ownerInitializations = pgTable("owner_initializations", {
+  siteId: text("site_id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
+  email: text("email").notNull(),
+  reason: text("reason").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});

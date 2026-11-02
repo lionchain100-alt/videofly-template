@@ -15,6 +15,7 @@ import { QueryProvider } from "@/components/query-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { PlausibleAnalytics } from "@/components/plausible-provider";
 import { i18n } from "@/config/i18n-config";
+import{siteManifest}from"@/config/site-manifest";
 import { siteConfig } from "@/config/site";
 
 const fontSans = FontSans({
@@ -39,11 +40,8 @@ export const metadata = {
   },
   description: siteConfig.description,
   keywords: [
-    "AI video generator",
-    "text to video",
-    "image to video",
-    "AI video",
-    "video generation",
+    ...(siteManifest.tools["video-generation"]?["AI video generator","text to video","video generation"]:[]),
+    ...(siteManifest.tools["text-summary"]?["text summary","AI summary"]:[]),
     "AI tools",
   ],
   authors: [

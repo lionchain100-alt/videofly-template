@@ -439,6 +439,55 @@
       "changeImpact": "additive",
       "changeApproval": null,
       "deploymentApproval": null
+    },
+    {
+      "id": "CAP-014",
+      "name": "Cross-preset tool continuity, responsive keyboard UI, truthful SEO and production auth configuration",
+      "lifecycle": "qa-passed",
+      "availability": "enabled",
+      "protection": "release-critical",
+      "contractVersion": "1.0.0",
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "/",
+        "/text-summary",
+        "/text-to-video",
+        "/ui-studio",
+        "/api/v1/auth/config",
+        "/login"
+      ],
+      "ownerModules": [
+        "src/ui-presets/site-renderer.tsx",
+        "src/lib/auth/production-config.ts",
+        "src/services/owner-initialization.ts",
+        "src/app/sitemap.ts"
+      ],
+      "dependencies": [
+        "CAP-001",
+        "CAP-002",
+        "CAP-003",
+        "CAP-004",
+        "CAP-005",
+        "CAP-008",
+        "CAP-012",
+        "CAP-013"
+      ],
+      "testIds": [
+        "REGRESSION-CAP-014"
+      ],
+      "fixtures": [
+        "scripts/test-ui-acceptance.mjs",
+        "scripts/test-preview-accessibility.mjs",
+        "scripts/test-preview-offline.mjs",
+        "scripts/test-presentation-policy.ts",
+        "scripts/test-seo-routes.mjs"
+      ],
+      "ownerGate": "Owner requested AUD-008 local UI/theme/language/mobile/keyboard/SEO/legacy/auth checks with existing business preservation. Actual Google callbacks, email delivery, additional browser/device coverage and production deployment remain separate gates.",
+      "changeImpact": "additive",
+      "changeApproval": null,
+      "deploymentApproval": null
     }
   ]
 }

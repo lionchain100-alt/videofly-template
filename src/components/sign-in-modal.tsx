@@ -1,7 +1,8 @@
 "use client";
 import { localePath } from "@/config/site-manifest";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { safeLoginReturn } from "@/lib/auth/production-config";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 
@@ -26,18 +27,33 @@ export const SignInModalContent = ({ lang }: SignInModalContentProps) => {
   const [signInClicked, setSignInClicked] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
+  const [providers, setProviders] = useState({
+    google: false,
+    email: false,
+    local: false,
+  });
+  useEffect(() => {
+    const c = new AbortController();
+    void fetch("/api/v1/auth/config", { signal: c.signal, cache: "no-store" })
+      .then((r) => r.json())
+      .then(setProviders)
+      .catch(() => {});
+    return () => c.abort();
+  }, []);
 
-  const callbackURL =
-    searchParams?.get("from") ??
-    localePath(lang, `${siteConfig.routes.defaultLoginRedirect}`);
+  const callbackURL = safeLoginReturn(
+    searchParams?.get("from") || null,
+    localePath(lang),
+  );
 
   const handleSocialLogin = async (provider: "google") => {
     setSignInClicked(provider);
     try {
-      await authClient.signIn.social({
+      const response = await authClient.signIn.social({
         provider,
         callbackURL,
       });
+      if (response.error) throw Error("Login unavailable");
     } catch (error) {
       console.error(`${provider} signIn error:`, error);
       setSignInClicked(null);
@@ -60,10 +76,11 @@ export const SignInModalContent = ({ lang }: SignInModalContentProps) => {
     setSignInClicked("email");
 
     try {
-      await authClient.signIn.magicLink({
+      const response = await authClient.signIn.magicLink({
         email: email.toLowerCase(),
         callbackURL,
       });
+      if (response.error) throw Error("Login unavailable");
 
       toast.success("Check your email", {
         description:
@@ -94,8 +111,20 @@ export const SignInModalContent = ({ lang }: SignInModalContentProps) => {
 
       {/* Body */}
       <div className="flex flex-col space-y-4 bg-secondary/50 px-4 py-8">
+        {providers.local && (
+          <a href={localePath(lang, "/login")} className="underline">
+            {lang === "zh" ? "打开本地测试登录" : "Open local test sign-in"}
+          </a>
+        )}
+        {!providers.local && !providers.google && !providers.email && (
+          <p role="status">
+            {lang === "zh"
+              ? "登录服务尚未配置，请联系站点管理员。"
+              : "Sign-in is not configured. Please contact the site administrator."}
+          </p>
+        )}
         {/* Google Login - Priority */}
-        {siteConfig.auth.enableGoogleLogin && (
+        {providers.google && (
           <Button
             variant="default"
             className="w-full"
@@ -112,9 +141,9 @@ export const SignInModalContent = ({ lang }: SignInModalContentProps) => {
         )}
 
         {/* Magic Link Email Login */}
-        {siteConfig.auth.enableMagicLinkLogin && (
+        {providers.email && (
           <>
-            {siteConfig.auth.enableGoogleLogin && (
+            {providers.google && (
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                   <span className="w-full border-t" />
@@ -153,9 +182,7 @@ export const SignInModalContent = ({ lang }: SignInModalContentProps) => {
               </div>
               <Button
                 type="submit"
-                variant={
-                  siteConfig.auth.enableGoogleLogin ? "outline" : "default"
-                }
+                variant={providers.google ? "outline" : "default"}
                 className="w-full"
                 disabled={isLoading}
               >

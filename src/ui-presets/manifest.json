@@ -2,17 +2,102 @@
   "libraryVersion": "1.0.0",
   "configSchemaVersion": 1,
   "presets": [
-    { "id": "minimal", "version": "1.0.0", "name": "简洁单工具", "pages": ["home", "tool"], "layout": "centered tool-first input and result", "specificControls": [] },
-    { "id": "studio", "version": "1.0.0", "name": "创作工作台", "pages": ["home", "tool", "session-history-dialog"], "layout": "sidebar with split input and results", "specificControls": ["sidebarWidth"] },
-    { "id": "portal", "version": "1.0.0", "name": "多工具门户", "pages": ["directory", "search", "tool"], "layout": "search, categories, tool cards and tool detail", "specificControls": ["columns"] }
+    {
+      "id": "minimal",
+      "version": "1.0.0",
+      "name": "简洁单工具",
+      "pages": [
+        "home",
+        "tool"
+      ],
+      "layout": "centered tool-first input and result",
+      "specificControls": []
+    },
+    {
+      "id": "studio",
+      "version": "1.0.0",
+      "name": "创作工作台",
+      "pages": [
+        "home",
+        "tool",
+        "session-history-dialog"
+      ],
+      "layout": "sidebar with split input and results",
+      "specificControls": [
+        "sidebarWidth"
+      ]
+    },
+    {
+      "id": "portal",
+      "version": "1.0.0",
+      "name": "多工具门户",
+      "pages": [
+        "directory",
+        "search",
+        "tool"
+      ],
+      "layout": "search, categories, tool cards and tool detail",
+      "specificControls": [
+        "columns"
+      ]
+    }
   ],
-  "sharedControls": ["brand", "accent", "background", "mode", "font", "fontSize", "radius", "shadow", "density", "contentMaxWidth", "arrangement", "defaultTool", "sections", "bilingualContent"],
-  "tools": ["text-summary-interface-demo", "video-storyboard-interface-demo"],
-  "states": ["empty", "loading", "success", "error", "credits", "signed-out"],
+  "sharedControls": [
+    "brand",
+    "accent",
+    "background",
+    "mode",
+    "font",
+    "fontSize",
+    "radius",
+    "shadow",
+    "density",
+    "contentMaxWidth",
+    "arrangement",
+    "defaultTool",
+    "sections",
+    "bilingualContent"
+  ],
+  "tools": [
+    "text-summary",
+    "video-generation"
+  ],
+  "states": [
+    "empty",
+    "loading",
+    "success",
+    "error",
+    "credits",
+    "signed-out"
+  ],
   "sources": [
-    { "url": "https://github.com/zifeixu85/videofly-template", "revision": "16c26ea13a6ac1be34efebd077759cf973082a23", "license": "MIT", "use": "Existing Next.js/React project and theme infrastructure; upstream pages remain available in Git history and non-home routes." },
-    { "url": "https://ui.shadcn.com/docs/theming", "use": "Reference for semantic CSS token conventions; no third-party block source was downloaded for these three layouts." },
-    { "url": "https://lucide.dev/license", "use": "Existing lucide-react dependency for icons; its package license remains in node_modules." },
-    { "use": "Original React/CSS layout implementation for this project, guided by the locally saved ui-studio-concept.png. No purchased template or copied commercial page is included." }
-  ]
+    {
+      "url": "https://github.com/zifeixu85/videofly-template",
+      "revision": "16c26ea13a6ac1be34efebd077759cf973082a23",
+      "license": "MIT",
+      "use": "Existing Next.js/React project and theme infrastructure; upstream pages remain available in Git history and non-home routes."
+    },
+    {
+      "url": "https://ui.shadcn.com/docs/theming",
+      "use": "Reference for semantic CSS token conventions; no third-party block source was downloaded for these three layouts."
+    },
+    {
+      "url": "https://lucide.dev/license",
+      "use": "Existing lucide-react dependency for icons; its package license remains in node_modules."
+    },
+    {
+      "use": "Original React/CSS layout implementation for this project, guided by the locally saved ui-studio-concept.png. No purchased template or copied commercial page is included."
+    }
+  ],
+  "business": {
+    "shared": [
+      "accounts",
+      "durable-tasks",
+      "credit-holds",
+      "payment-orders"
+    ],
+    "textSummary": "DeepSeek executor; actual API tasks outside previews",
+    "videoGeneration": "Kie Wan2.7 durable jobs;5s/1080p;16:9 retained-real;9:16 live-pending",
+    "preview": "Explicit simulation; no paid submission"
+  }
 }

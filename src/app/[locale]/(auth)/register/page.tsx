@@ -6,6 +6,7 @@ import { getTranslations } from "next-intl/server";
 import { cn } from "@/components/ui";
 import { buttonVariants } from "@/components/ui/button";
 
+import {productionAuthConfig}from"@/lib/auth/production-config";
 import { UserAuthForm } from "@/components/user-auth-form";
 import type { Locale } from "@/config/i18n-config";
 
@@ -47,7 +48,7 @@ export default async function RegisterPage({
             </p>
           </div>
           <Suspense fallback={<div className="h-10" />}>
-            <UserAuthForm lang={locale} disabled={true} />
+            <UserAuthForm lang={locale} providers={productionAuthConfig()} />
           </Suspense>
           <p className="px-8 text-center text-sm text-muted-foreground">
             {t("agree_prefix")}{" "}

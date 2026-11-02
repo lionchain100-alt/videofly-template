@@ -1,0 +1,17 @@
+{
+  "at": "2026-11-02T03:31:14.121Z",
+  "checks": [
+    "SigV4 verified; upload readback; retry reuses matching object; mismatched overwrite refused",
+    "private Range; bucket scope and namespace denied",
+    "failed object PUT refuses success",
+    "private image persisted/readback; MIME mismatch refused",
+    "disabled tool does not require its Worker; re-enabling requires a fresh instance",
+    "heartbeat fresh/stale/stalled/stopped; storage failure never ready",
+    "maintenance dry-run preserves files; apply deletes only stale temporary file and retains registered video",
+    "encrypted database + legacy local/video S3/private upload restored into independent database; full table fingerprints and file hashes verified; main/existing targets refused",
+    "wrong encryption key, altered manifest and corrupt ciphertext rejected before restore"
+  ],
+  "backup": ".local\\backups\\1793590273216-6b0a5dfb",
+  "restoreDatabase": "laconic_local_restore_qa_1793590273457",
+  "realProviderCalls": 0
+}

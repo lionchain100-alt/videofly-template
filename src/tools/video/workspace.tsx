@@ -84,7 +84,14 @@ export function VideoWorkspace({
             const draft = JSON.parse(
               sessionStorage.getItem(`video-pending-${data.userId}`) || "null",
             );
-            if (draft?.requestId && draft.input) {
+            if (
+              draft?.requestId &&
+              data.tasks.some(
+                (task: LiveVideoTask) => task.requestId === draft.requestId,
+              )
+            )
+              sessionStorage.removeItem(`video-pending-${data.userId}`);
+            else if (draft?.requestId && draft.input) {
               setIntent(draft);
               setMessage(
                 t(
@@ -92,6 +99,17 @@ export function VideoWorkspace({
                   "Previous submission is unconfirmed. Retry the same request.",
                 ),
               );
+            }
+            const saved = JSON.parse(
+              sessionStorage.getItem(`video-draft-${data.userId}`) || "null",
+            );
+            if (
+              typeof saved?.prompt === "string" &&
+              saved.prompt.length <= 1500
+            ) {
+              setPrompt(saved.prompt);
+              if (["16:9", "9:16"].includes(saved.aspect))
+                setAspect(saved.aspect);
             }
           } catch {}
         } else if (response.status !== 401) throw Error();
@@ -112,6 +130,15 @@ export function VideoWorkspace({
       controller.abort();
     };
   }, []);
+  useEffect(() => {
+    if (ready && userId)
+      try {
+        sessionStorage.setItem(
+          `video-draft-${userId}`,
+          JSON.stringify({ prompt, aspect }),
+        );
+      } catch {}
+  }, [ready, userId, prompt, aspect]);
   useEffect(() => {
     if (!task || !active) return;
     const id = task.id;

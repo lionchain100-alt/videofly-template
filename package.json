@@ -51,7 +51,13 @@
     "test:runtime-browser": "node scripts/test-runtime-browser.mjs",
     "ai:initialize": "node --import tsx scripts/initialize-ai-policy.ts",
     "test:ai-governance": "node --import tsx scripts/test-ai-governance.ts",
-    "test:ai-browser": "node --import tsx scripts/test-ai-governance-browser.mjs"
+    "test:ai-browser": "node --import tsx scripts/test-ai-governance-browser.mjs",
+    "test:ui-acceptance": "node --import tsx scripts/test-ui-acceptance.mjs",
+    "test:ui-accessibility": "node --import tsx scripts/test-preview-accessibility.mjs",
+    "test:presentation-policy": "node --import tsx scripts/test-presentation-policy.ts",
+    "test:seo-routes": "node scripts/test-seo-routes.mjs",
+    "owner:initialize": "node --import tsx scripts/initialize-owner.ts",
+    "test:ui-offline": "node scripts/test-preview-offline.mjs"
   },
   "dependencies": {
     "@creem_io/better-auth": "2.0.4",

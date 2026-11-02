@@ -12,8 +12,10 @@ import { env } from "./env.mjs";
 import { eq } from "drizzle-orm";
 import { localTestAuthEnabled } from "./local-test";
 import { siteManifest } from "@/config/site-manifest";
+import { productionAuthConfig } from "./production-config";
 
 const localTestAuth = localTestAuthEnabled();
+const productionAuth = productionAuthConfig();
 
 const toLogString = (value: unknown) => {
   if (value === null || value === undefined) return String(value);
@@ -70,7 +72,7 @@ type AuthPlugin = ReturnType<typeof nextCookies> | ReturnType<typeof magicLink>;
 const plugins: AuthPlugin[] = [
   // Avoid Next.js dev DataCloneError from cookies() in some environments.
   ...(process.env.NODE_ENV === "development" ? [] : [nextCookies()]),
-  ...(localTestAuth
+  ...(localTestAuth || !productionAuth.email
     ? []
     : [
         magicLink({
@@ -95,8 +97,8 @@ const plugins: AuthPlugin[] = [
               : "Activate your account";
 
             try {
-              await resend.emails.send({
-                from: env.RESEND_FROM,
+              const sent = await resend.emails.send({
+                from: env.RESEND_FROM!,
                 to: email,
                 subject: authSubject,
                 react: MagicLinkEmail({
@@ -109,9 +111,12 @@ const plugins: AuthPlugin[] = [
                   "X-Entity-Ref-ID": new Date().getTime() + "",
                 },
               });
+              if (sent.error) throw Error("Email provider rejected delivery");
             } catch (error) {
-              console.error("Failed to send magic link email:", error);
-              throw error;
+              console.error(
+                "Magic link delivery failed; sensitive diagnostics suppressed",
+              );
+              throw Error("Unable to deliver sign-in email");
             }
           },
           expiresIn: 300, // 5 minutes
@@ -186,15 +191,16 @@ export const auth = betterAuth({
   },
 
   // Google OAuth
-  socialProviders: localTestAuth
-    ? {}
-    : {
-        google: {
-          clientId: env.GOOGLE_CLIENT_ID,
-          clientSecret: env.GOOGLE_CLIENT_SECRET,
-          prompt: "select_account", // Always show account picker
+  socialProviders:
+    localTestAuth || !productionAuth.google
+      ? {}
+      : {
+          google: {
+            clientId: env.GOOGLE_CLIENT_ID!,
+            clientSecret: env.GOOGLE_CLIENT_SECRET!,
+            prompt: "select_account", // Always show account picker
+          },
         },
-      },
 
   // Custom user fields
   user: {

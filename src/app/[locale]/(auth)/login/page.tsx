@@ -15,6 +15,7 @@ import { buttonVariants } from "@/components/ui/button";
 import * as Icons from "@/components/ui/icons";
 
 import { UserAuthForm } from "@/components/user-auth-form";
+import{productionAuthConfig}from'@/lib/auth/production-config';
 import type { Locale } from "@/config/i18n-config";
 
 export const metadata: Metadata = {
@@ -58,7 +59,7 @@ export default async function LoginPage({
           {localLogin ? (
             <LocalAdminLogin locale={locale} />
           ) : (
-            <UserAuthForm lang={locale} />
+            <UserAuthForm lang={locale} providers={productionAuthConfig()} />
           )}
         </Suspense>
       </div>

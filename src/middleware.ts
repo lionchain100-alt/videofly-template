@@ -76,9 +76,30 @@ export default function middleware(request: NextRequest) {
 
   request.headers.set(
     "x-ui-home",
-    /^\/(?:en\/?|zh\/?)?$/.test(pathname) ? "true" : "false",
+    /^\/(?:(?:en|zh)\/?)?$|^\/(?:en\/|zh\/)?(?:text-summary|text-to-video)\/?$/.test(
+      pathname,
+    )
+      ? "true"
+      : "false",
   );
+  const cleanPath = pathname.replace(/^\/(en|zh)(?=\/|$)/, "") || "/";
+  const legacy = [
+    "/image-to-video",
+    "/reference-to-video",
+    "/sora-2",
+    "/veo-3-1",
+    "/wan-2-6",
+    "/seedance-1-5",
+  ].includes(cleanPath);
+  request.headers.set("x-legacy-tool", legacy ? "true" : "false");
   const response = intlMiddleware(request);
+  if (
+    legacy ||
+    /^\/(?:en\/|zh\/)?(?:admin|login|register|my-creations|credits|settings|buy-credits|ui-studio|ui-preview)(?:\/|$)/.test(
+      pathname,
+    )
+  )
+    response.headers.set("X-Robots-Tag", "noindex, nofollow");
 
   // Add security headers
   const localPreview =

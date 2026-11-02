@@ -98,7 +98,14 @@ export function SummaryWorkspace({
                 sessionStorage.getItem(`summary-pending-${data.userId}`) ||
                   "null",
               );
-              if (saved?.requestId && saved.input) {
+              if (
+                saved?.requestId &&
+                data.tasks.some(
+                  (task: SummaryTask) => task.requestId === saved.requestId,
+                )
+              )
+                sessionStorage.removeItem(`summary-pending-${data.userId}`);
+              else if (saved?.requestId && saved.input) {
                 setIntent(saved);
                 setError(
                   t(
@@ -106,6 +113,18 @@ export function SummaryWorkspace({
                     "Previous submission is unconfirmed. Retry the same request.",
                   ),
                 );
+              }
+              const draft = JSON.parse(
+                sessionStorage.getItem(`summary-draft-${data.userId}`) ||
+                  "null",
+              );
+              if (
+                typeof draft?.text === "string" &&
+                draft.text.length <= 8000
+              ) {
+                setText(draft.text);
+                if (["short", "long"].includes(draft.length))
+                  setLength(draft.length);
               }
             } catch {}
           }
@@ -126,6 +145,15 @@ export function SummaryWorkspace({
     return () => controller.abort();
     // Initialize once per mount; draft input edits must not refetch task history.
   }, []);
+  useEffect(() => {
+    if (ready && userId)
+      try {
+        sessionStorage.setItem(
+          `summary-draft-${userId}`,
+          JSON.stringify({ text, length }),
+        );
+      } catch {}
+  }, [ready, userId, text, length]);
   useEffect(() => {
     if (!task || !active) return;
     let stopped = false;
