@@ -543,7 +543,9 @@ export const paymentOperations = pgTable("payment_operations", {
   id: text("id").primaryKey(),
   requestId: text("request_id").notNull().unique(),
   requestHash: text("request_hash").notNull(),
-  actorUserId: text("actor_user_id").notNull().references(() => users.id),
+  actorUserId: text("actor_user_id")
+    .notNull()
+    .references(() => users.id),
   action: text("action").notNull(),
   reason: text("reason").notNull(),
   target: jsonb("target").notNull(),
@@ -553,10 +555,14 @@ export const paymentOperations = pgTable("payment_operations", {
   message: text("message"),
   attempts: integer("attempts").notNull().default(0),
   leaseToken: text("lease_token"),
-  leaseUntil: timestamp("lease_until", {withTimezone:true}),
-  createdAt: timestamp("created_at", {withTimezone:true}).notNull().defaultNow(),
-  updatedAt: timestamp("updated_at", {withTimezone:true}).notNull().defaultNow(),
-  finishedAt: timestamp("finished_at", {withTimezone:true}),
+  leaseUntil: timestamp("lease_until", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  finishedAt: timestamp("finished_at", { withTimezone: true }),
 });
 export const paymentRefunds = pgTable(
   "payment_refunds",
@@ -742,6 +748,8 @@ export const taskAssets = pgTable(
     mime: text("mime").notNull(),
     byteLength: integer("byte_length").notNull(),
     sha256: text("sha256").notNull(),
+    storageBackend: text("storage_backend").notNull().default("local"),
+    storageScope: text("storage_scope"),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -775,6 +783,45 @@ export const videoReviews = pgTable(
   }),
 );
 
+export const workerHeartbeats = pgTable(
+  "worker_heartbeats",
+  {
+    siteId: text("site_id").notNull(),
+    kind: text("kind").notNull(),
+    instanceId: text("instance_id").notNull(),
+    startedAt: timestamp("started_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    heartbeatAt: timestamp("heartbeat_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    progressAt: timestamp("progress_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    status: text("status").notNull(),
+    lastError: text("last_error"),
+  },
+  (t) => ({ identity: unique().on(t.siteId, t.kind, t.instanceId) }),
+);
+export const privateUploads = pgTable("private_uploads", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
+  storageBackend: text("storage_backend").notNull(),
+  storageScope: text("storage_scope"),
+  storageKey: text("storage_key").notNull().unique(),
+  mime: text("mime").notNull(),
+  byteLength: integer("byte_length").notNull(),
+  sha256: text("sha256").notNull(),
+  status: text("status").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
 export const adminTaskRows = pgView("admin_task_rows", {
   uuid: text("uuid").notNull(),
   userId: text("user_id").notNull(),

@@ -148,6 +148,8 @@ await writeFile(
 const secret = () => randomBytes(32).toString("hex"),
   dbPassword = secret();
 const env = {
+  ASSET_STORAGE_BACKEND:"local",
+  BACKUP_ENCRYPTION_KEY:secret(),
   NEXT_PUBLIC_APP_URL: site.origin,
   BETTER_AUTH_SECRET: secret(),
   DATABASE_URL: `postgresql://${databaseName}:${dbPassword}@127.0.0.1:${databasePort}/${databaseName}`,

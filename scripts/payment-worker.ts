@@ -9,6 +9,8 @@ async function main() {
     "../src/services/orders"
   );
   const { db } = await import("../src/db");
+  const { startHeartbeat } = await import("../src/services/runtime-health");
+  const heartbeat = await startHeartbeat("payments");
   const { processRefund } = await import("../src/services/refunds");
   const { processPaymentOperation } = await import(
     "../src/services/payment-operations"
@@ -25,6 +27,7 @@ async function main() {
   );
   try {
     while (!stopping) {
+      await heartbeat.progress();
       try {
         const recovered = await recoverPaymentEvent();
         const worked = await processOrder();
@@ -39,6 +42,7 @@ async function main() {
       if (process.argv.includes("--once")) break;
     }
   } finally {
+    await heartbeat.stop();
     await db.$client.end({ timeout: 5 });
   }
 }

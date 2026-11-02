@@ -1,9 +1,16 @@
 import { config } from "dotenv";
 import { fileURLToPath } from "node:url";
-config({ path: fileURLToPath(new URL("../.env.local", import.meta.url)), quiet: true });
+config({
+  path: fileURLToPath(new URL("../.env.local", import.meta.url)),
+  quiet: true,
+});
 async function main() {
-  const { claimVideoJob, processVideoJob } = await import("../src/services/video-jobs");
+  const { claimVideoJob, processVideoJob } = await import(
+    "../src/services/video-jobs"
+  );
   const { db } = await import("../src/db");
+  const { startHeartbeat } = await import("../src/services/runtime-health");
+  const heartbeat = await startHeartbeat("video");
   let stopping = false;
   process.on("SIGTERM", () => {
     stopping = true;
@@ -16,6 +23,7 @@ async function main() {
   );
   try {
     while (!stopping) {
+      await heartbeat.progress();
       try {
         const claim = await claimVideoJob();
         if (claim) {
@@ -24,11 +32,14 @@ async function main() {
         } else await new Promise((r) => setTimeout(r, 1000));
         if (process.argv.includes("--once")) break;
       } catch {
-        console.error("Video worker step interrupted; lease recovery will resume safely.");
+        console.error(
+          "Video worker step interrupted; lease recovery will resume safely.",
+        );
         await new Promise((r) => setTimeout(r, 3000));
       }
     }
   } finally {
+    await heartbeat.stop();
     await db.$client.end({ timeout: 5 });
   }
 }

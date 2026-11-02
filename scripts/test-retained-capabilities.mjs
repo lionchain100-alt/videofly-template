@@ -19,7 +19,7 @@ for (const name of suites) {
   execFileSync(process.execPath, ["--import", "tsx", `scripts/${name}`], {
     cwd,
     stdio: "inherit",
-    env: process.env,
+    env: {...process.env,ASSET_STORAGE_BACKEND:"local"},
   });
 }
 console.log(

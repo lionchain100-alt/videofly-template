@@ -1,53 +1,51 @@
-import { nanoid } from "nanoid";
-
 import { requireAuth } from "@/lib/api/auth";
 import { ApiError } from "@/lib/api/error";
-import { handleApiError, apiSuccess } from "@/lib/api/response";
-import { getStorage } from "@/lib/storage";
-
-const ALLOWED_IMAGE_TYPES = [
-  "image/jpeg",
-  "image/png",
-  "image/gif",
-  "image/webp",
-];
-
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-
+import { apiSuccess, handleApiError } from "@/lib/api/response";
+import { saveUpload } from "@/services/private-uploads";
 export async function POST(request: Request) {
   try {
     const user = await requireAuth(request);
-    const formData = await request.formData();
-    const file = formData.get("file");
-
-    if (!(file instanceof File)) {
-      throw new ApiError("Missing file", 400);
+    if (
+      request.headers.get("origin") !==
+        new URL(process.env.NEXT_PUBLIC_APP_URL || request.url).origin ||
+      ["cross-site", "same-site"].includes(
+        request.headers.get("sec-fetch-site") || "",
+      )
+    )
+      throw new ApiError("上传来源不受信任", 403);
+    if (!request.headers.get("content-type")?.startsWith("multipart/form-data"))
+      throw new ApiError("需要 multipart 上传", 415);
+    const chunks: Uint8Array[] = [];
+    let size = 0;
+    const reader = request.body?.getReader();
+    if (!reader) throw new ApiError("缺少图片", 400);
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      size += value.length;
+      if (size > 10485760 + 65536) {
+        await reader.cancel();
+        throw new ApiError("上传内容过大", 413);
+      }
+      chunks.push(value);
     }
-
-    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
-      throw new ApiError(
-        `Invalid content type. Allowed: ${ALLOWED_IMAGE_TYPES.join(", ")}`,
-        400
-      );
-    }
-
-    if (file.size > MAX_FILE_SIZE) {
-      throw new ApiError("File too large", 400);
-    }
-
-    const ext = file.name.split(".").pop() || "jpg";
-    const key = `uploads/${user.id}/${nanoid()}.${ext}`;
-
-    const storage = getStorage();
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const uploaded = await storage.uploadFile({
-      key,
-      body: buffer,
-      contentType: file.type,
+    const form = await new Request(request.url, {
+        method: "POST",
+        headers: { "Content-Type": request.headers.get("content-type")! },
+        body: Buffer.concat(chunks),
+      }).formData(),
+      file = form.get("file");
+    if (!(file instanceof File)) throw new ApiError("缺少图片", 400);
+    const saved = await saveUpload(user.id, file);
+    return apiSuccess({
+      ...saved,
+      publicUrl: new URL(
+        `/api/v1/uploads/${saved.id}`,
+        process.env.NEXT_PUBLIC_APP_URL || request.url,
+      ).href,
+      private: true,
     });
-
-    return apiSuccess({ publicUrl: uploaded.url, key });
-  } catch (error) {
-    return handleApiError(error);
+  } catch (e) {
+    return handleApiError(e);
   }
 }

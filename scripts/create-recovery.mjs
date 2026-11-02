@@ -7,9 +7,9 @@ import { parse } from "dotenv";
 const repo = fileURLToPath(new URL("../", import.meta.url));
 const workspace = path.dirname(repo.replace(/[\\/]$/, ""));
 const name = process.argv[2];
-if (!/^(AUD-00[2345]|RFN-001)-(before|after)-[0-9T-]+$/.test(name || ""))
+if (!/^(AUD-00[23456]|RFN-001)-(before|after)-[0-9T-]+$/.test(name || ""))
   throw Error(
-    "Provide a fixed AUD-002/AUD-003/AUD-004/AUD-005/RFN-001 before/after timestamp name",
+    "Provide a fixed AUD-002/AUD-003/AUD-004/AUD-005/AUD-006/RFN-001 before/after timestamp name",
   );
 const target = path.join(workspace, ".recovery", name);
 try {
@@ -21,7 +21,7 @@ try {
 const env = parse(await readFile(path.join(repo, ".env.local"), "utf8"));
 const secrets = Object.entries(env).filter(
   ([k, v]) =>
-    /(API_KEY|PRIVATE_KEY|SECRET|PASSWORD|ACCESS_KEY|ACCESS_TOKEN|TOKEN|DATABASE_URL)$/.test(
+    /(API_KEY|PRIVATE_KEY|SECRET|PASSWORD|ACCESS_KEY|ACCESS_TOKEN|TOKEN|DATABASE_URL|ENCRYPTION_KEY|SECRET_ACCESS_KEY|ACCESS_KEY_ID)$/.test(
       k,
     ) &&
     v.length >= 8 &&

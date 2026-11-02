@@ -4,12 +4,21 @@ import { request as httpsRequest } from "node:https";
 import { request as httpRequest } from "node:http";
 import { mkdir, open, rename, stat } from "node:fs/promises";
 import { createReadStream } from "node:fs";
+import {Readable} from 'node:stream';
 import { createHash, randomUUID } from "node:crypto";
 import { join } from "node:path";
 import type { IncomingMessage } from "node:http";
 import { siteManifest } from "@/config/site-manifest";
+import {
+  assetBackend,
+  putPrivateFile,
+  privateS3Config,
+  privateS3,
+  privateObject,
+} from "./private-storage";
 
 const directory = () =>
+  process.env.ASSET_LOCAL_DIRECTORY ||
   join(process.cwd(), siteManifest.isolation.localVideoDirectory);
 export function assetPath(taskId: string) {
   if (!/^[0-9a-f-]{36}$/.test(taskId)) throw Error("Invalid task id");
@@ -102,6 +111,15 @@ export async function safeVideoResponse(
   return response;
 }
 export async function storeVideo(taskId: string, sourceUrl: string) {
+  const local = await storeLocalVideo(taskId, sourceUrl);
+  if (assetBackend() === "s3")
+    return {
+      ...local,
+      ...(await putPrivateFile(taskId, assetPath(taskId), local.sha256)),
+    };
+  return { ...local, storageBackend: "local", storageScope: null };
+}
+async function storeLocalVideo(taskId: string, sourceUrl: string) {
   await mkdir(directory(), { recursive: true });
   const destination = assetPath(taskId);
   // A completed local file can be reused after a process restart without downloading again.
@@ -173,4 +191,53 @@ export async function storeVideo(taskId: string, sourceUrl: string) {
   } finally {
     clearTimeout(timer);
   }
+}
+export async function storedAssetSize(asset: {
+  taskId: string;
+  storageBackend?: string;
+  storageScope?: string | null;
+  storageKey: string;
+  byteLength: number;
+}) {
+  if ((asset.storageBackend || "local") === "local") {
+    if (asset.storageKey !== `${asset.taskId}.mp4`)
+      throw Error("Invalid local asset key");
+    return (await stat(assetPath(asset.taskId))).size;
+  }
+  if (
+    asset.storageBackend !== "s3" ||
+    asset.storageScope !== privateS3Config().scope
+  )
+    throw Error("Private bucket configuration differs from original asset");
+  if (
+    asset.storageKey !==
+    `${privateS3Config().prefix}/videos/${asset.taskId}.mp4`
+  )
+    throw Error("Asset namespace mismatch");
+  return (await privateS3()).getContentLength(asset.storageKey);
+}
+export async function storedAssetBody(
+  asset: {
+    taskId: string;
+    storageBackend?: string;
+    storageScope?: string | null;
+    storageKey: string;
+    byteLength: number;
+  },
+  start: number,
+  end: number,
+) {
+  if ((asset.storageBackend || "local") === "local")
+    return Readable.toWeb(
+      createReadStream(assetPath(asset.taskId), { start, end }),
+    ) as ReadableStream;
+  const response = await privateObject(asset.storageKey, start, end);
+  if (
+    response.status !== 206 &&
+    !(response.status === 200 && start === 0 && end === asset.byteLength - 1)
+  )
+    throw Error("Private storage did not honor requested range");
+  if (Number(response.headers.get("content-length")) !== end - start + 1)
+    throw Error("Private object length mismatch");
+  return response.body;
 }

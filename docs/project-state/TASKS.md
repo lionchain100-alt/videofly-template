@@ -12,10 +12,12 @@ Last reconciled: 2026-11-02
 Milestone: Local V1.2 core with four-channel billing/refunds; current full audit records remaining implementation and deferred real-provider gates.
 Active task: IDLE-000
 
-Definition of Ready: AUD-004/RFN-001 local QA and REV-001 review recorded; Owner authorized AUD-005 local operations and kept actual provider acceptance deferred until HTTPS deployment.
-Definition of Done: scoped exception console, trusted replay and receipt-backed compensation, permission/reason/immutable audit, crash/duplicate protection, nine retained suites, browser/production/isolation gates, clean data snapshot and source recovery.
+Definition of Ready: AUD-005 QA recorded; Owner authorized AUD-006 and independent private Cloudflare R2 test-bucket configuration.
+Definition of Done: private assets/uploads, encrypted offline database/file backup and isolated restore, Worker heartbeat/readiness, actual private R2 round trip, retained business/production/isolation/browser checks and source recovery.
 
 ## Backlog
+
+- [x] AUD-006 Private R2/S3 assets/uploads, encrypted database/file backup and isolated restore, worker heartbeats/readiness. Depends on: AUD-005. Acceptance: local S3 protocol/private API, database plus file restoration/tamper guards, current worker health, retained suites and build; real R2 independent private test bucket provisioned under Owner authorization and verified. Evidence: aud-006-results.json and parent AUD-006-STORAGE-RECOVERY-GUIDE.md.
 
 - [x] AUD-005 Payment exception queries, persisted verified-event replay, evidence-backed reconciliation and query-only refund recovery. Depends on: RFN-001. Acceptance: 12 operation groups, 3 browser/API groups, all nine retained suites, six isolation groups, typecheck/build/production guards, data snapshot and source recovery; aud-005-results.json and parent AUD-005-PAYMENT-OPERATIONS-GUIDE.md. Actual provider acceptance remains deferred.
 
@@ -33,7 +35,7 @@ Definition of Done: scoped exception console, trusted replay and receipt-backed 
 
 - [ ] BILL-001 Verify Stripe/Creem actual test-account checkout/refunds, two paid periods, public signed callbacks, duplicate delivery and state changes. Depends on: Owner resumes after HTTPS deployment and supplies provider accounts/products/keys. Acceptance: real test receipts and reconciliation; no fixture substitution. Production-money acceptance is separately governed by R05/AUD-009.
 
-Suggested next implementation: AUD-006 storage/recovery/runtime, followed by AUD-007/008/009. These remain proposed and have not started. Actual provider receipt/bulk-statement reconciliation remains deferred under BILL-001 and deployment gates.
+Suggested next implementation: AUD-007 model/budget governance, followed by AUD-008/009. These remain proposed and have not started. AUD-006 local scope and real private R2 test-bucket integration are complete. Actual provider receipt/bulk-statement reconciliation remains deferred under BILL-001 and deployment gates.
 
 ## Blocked / decision-needed register
 

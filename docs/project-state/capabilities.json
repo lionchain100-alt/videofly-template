@@ -350,6 +350,51 @@
       "changeImpact": "additive",
       "changeApproval": null,
       "deploymentApproval": null
+    },
+    {
+      "id": "CAP-012",
+      "name": "Private site-scoped object storage, encrypted local data recovery and Worker readiness",
+      "lifecycle": "qa-passed",
+      "availability": "enabled",
+      "protection": "release-critical",
+      "contractVersion": "1.0.0",
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "/api/v1/upload",
+        "/api/v1/uploads/[id]",
+        "/api/v1/tools/video/tasks/[id]/file",
+        "/api/ready",
+        "/zh/admin/runtime"
+      ],
+      "ownerModules": [
+        "src/services/private-storage.ts",
+        "src/services/private-uploads.ts",
+        "src/services/runtime-health.ts",
+        "scripts/backup-site.ts"
+      ],
+      "dependencies": [
+        "CAP-001",
+        "CAP-002",
+        "CAP-003",
+        "CAP-005",
+        "CAP-007",
+        "CAP-011"
+      ],
+      "testIds": [
+        "REGRESSION-CAP-012"
+      ],
+      "fixtures": [
+        "scripts/test-storage-runtime.ts",
+        "scripts/test-storage-api.ts",
+        "scripts/check-private-storage.ts",
+        "scripts/test-runtime-browser.mjs"
+      ],
+      "ownerGate": "Owner authorized AUD-006 local integration/regression and Cloudflare R2 provisioning. Independent private test bucket verified; production disaster recovery, alerting and actual payment acceptance remain later gates.",
+      "changeImpact": "additive",
+      "changeApproval": null,
+      "deploymentApproval": null
     }
   ]
 }

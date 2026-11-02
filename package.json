@@ -40,7 +40,15 @@
     "test:refunds-four": "node --import tsx scripts/test-four-channel-refunds.ts",
     "test:refunds-browser": "node --import tsx scripts/test-four-channel-refunds.ts --browser",
     "test:payment-ops": "node --import tsx scripts/test-payment-operations.ts",
-    "test:payment-ops-browser": "node --import tsx scripts/test-payment-operations.ts --browser"
+    "test:payment-ops-browser": "node --import tsx scripts/test-payment-operations.ts --browser",
+    "storage:check": "node --import tsx scripts/check-private-storage.ts",
+    "storage:maintenance": "node --import tsx scripts/storage-maintenance.ts",
+    "backup:create": "node --import tsx scripts/backup-site.ts create",
+    "backup:verify": "node --import tsx scripts/backup-site.ts verify",
+    "backup:restore": "node --import tsx scripts/backup-site.ts restore",
+    "test:storage-runtime": "node --import tsx scripts/test-storage-runtime.ts",
+    "test:storage-api": "node --import tsx scripts/test-storage-api.ts",
+    "test:runtime-browser": "node scripts/test-runtime-browser.mjs"
   },
   "dependencies": {
     "@creem_io/better-auth": "2.0.4",
