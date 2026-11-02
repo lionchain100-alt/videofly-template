@@ -42,6 +42,9 @@ async function main() {
     WAFFO_ENVIRONMENT: "test",
     WAFFO_MERCHANT_ID: "AUD005",
     WAFFO_STORE_ID: "AUD005",
+    WAFFO_PRODUCT_STANDARD: "PROD_AUD005_STANDARD",
+    PAYMENT_RETURN_BASE_URL: "https://payment-fixture.invalid",
+    WAFFO_RETURN_BASE_URL: "https://payment-fixture.invalid",
   });
   const { generateKeyPairSync } = await import("node:crypto");
   const keys = generateKeyPairSync("rsa", {
