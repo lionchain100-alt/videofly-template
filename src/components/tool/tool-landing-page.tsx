@@ -1,3 +1,6 @@
+"use client";
+import { localePath } from "@/config/site-manifest";
+
 /**
  * ToolLandingPage Component
  *
@@ -12,8 +15,6 @@
  *
  * SEO 友好，支持服务端渲染
  */
-
-"use client";
 
 import { Play, ArrowRight, Sparkles, Check, Users, Video } from "lucide-react";
 import Link from "next/link";
@@ -102,13 +103,16 @@ export function ToolLandingPage({
             </h1>
 
             {/* 描述 */}
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto" suppressHydrationWarning>
+            <p
+              className="text-lg text-muted-foreground max-w-2xl mx-auto"
+              suppressHydrationWarning
+            >
               {landing.hero.description}
             </p>
 
             {/* CTA */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-              <Link href={`/${locale}/login`}>
+              <Link href={localePath(locale, `/login`)}>
                 <ShimmerButton
                   shimmerColor="#ffffff"
                   shimmerSize="0.05em"
@@ -162,8 +166,12 @@ export function ToolLandingPage({
                       </div>
                     </div>
                     <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent">
-                      <p className="text-white text-sm font-medium">{example.title}</p>
-                      <p className="text-white/70 text-xs truncate">{example.prompt}</p>
+                      <p className="text-white text-sm font-medium">
+                        {example.title}
+                      </p>
+                      <p className="text-white/70 text-xs truncate">
+                        {example.prompt}
+                      </p>
                     </div>
                   </motion.div>
                 ))}
@@ -215,7 +223,9 @@ export function ToolLandingPage({
               transition={{ duration: 0.5, delay: 0.3 }}
               className="space-y-4"
             >
-              <h3 className="text-lg font-semibold text-center">Powered by Leading AI Models</h3>
+              <h3 className="text-lg font-semibold text-center">
+                Powered by Leading AI Models
+              </h3>
               <div className="flex flex-wrap justify-center gap-3">
                 {landing.supportedModels.map((model, index: number) => (
                   <motion.div
@@ -236,7 +246,9 @@ export function ToolLandingPage({
                       />
                       <div className="text-sm">
                         <div className="font-medium">{model.name}</div>
-                        <div className="text-xs text-muted-foreground">{model.provider}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {model.provider}
+                        </div>
                       </div>
                     </div>
                   </motion.div>
@@ -262,7 +274,9 @@ export function ToolLandingPage({
                     <Video className="h-5 w-5 text-blue-500" />
                     {landing.stats.videosGenerated}
                   </div>
-                  <div className="text-xs text-muted-foreground">Videos Generated</div>
+                  <div className="text-xs text-muted-foreground">
+                    Videos Generated
+                  </div>
                 </div>
               )}
               {landing.stats.usersCount && (
@@ -271,7 +285,9 @@ export function ToolLandingPage({
                     <Users className="h-5 w-5 text-purple-500" />
                     {landing.stats.usersCount}
                   </div>
-                  <div className="text-xs text-muted-foreground">Happy Users</div>
+                  <div className="text-xs text-muted-foreground">
+                    Happy Users
+                  </div>
                 </div>
               )}
               {landing.stats.avgRating && (
@@ -279,7 +295,9 @@ export function ToolLandingPage({
                   <div className="text-2xl font-bold text-yellow-500">
                     {landing.stats.avgRating} ★
                   </div>
-                  <div className="text-xs text-muted-foreground">Average Rating</div>
+                  <div className="text-xs text-muted-foreground">
+                    Average Rating
+                  </div>
                 </div>
               )}
             </motion.div>
@@ -298,7 +316,7 @@ export function ToolLandingPage({
             <p className="text-muted-foreground mb-4">
               Ready to create amazing videos? Sign up now and get started!
             </p>
-            <Link href={`/${locale}/login`}>
+            <Link href={localePath(locale, `/login`)}>
               <ShimmerButton
                 shimmerColor="#ffffff"
                 shimmerSize="0.05em"

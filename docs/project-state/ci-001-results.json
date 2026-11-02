@@ -1,0 +1,299 @@
+{
+  "verifiedAt": "2026-11-02T07:40:05.262Z",
+  "task": "CI-001",
+  "repository": "lionchain100-alt/videofly-template",
+  "branch": "ci/ci-001-20261102",
+  "firstAllGreenRun": {
+    "id": 41407071964,
+    "url": "https://github.com/lionchain100-alt/videofly-template/actions/runs/41407071964",
+    "commit": "d49248c98a5a83323a98ff5e912a2fbebf262f55",
+    "conclusion": "success"
+  },
+  "jobs": [
+    {
+      "name": "source",
+      "url": "https://github.com/lionchain100-alt/videofly-template/actions/runs/41407071964/job/125151416949",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run corepack enable",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run corepack pnpm install --frozen-lockfile",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run node scripts/prepare-ci.mjs --build-only",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run corepack pnpm lint",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run corepack pnpm lint:raw",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run corepack pnpm capability:check",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run corepack pnpm typecheck",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run corepack pnpm test:production-config",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run corepack pnpm test:email-render",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run corepack pnpm test:release-gates",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run corepack pnpm test:site-factory",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run corepack pnpm audit:security",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run corepack pnpm build",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run git diff --exit-code -- package.json pnpm-lock.yaml .node-version src/config/site.json",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "quality",
+      "url": "https://github.com/lionchain100-alt/videofly-template/actions/runs/41407071964/job/125151416994",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize containers",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run corepack enable",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run corepack pnpm install --frozen-lockfile",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run node scripts/prepare-ci.mjs",
+          "conclusion": "success"
+        },
+        {
+          "name": "Empty database migrations, policy and seed (twice)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run node scripts/test-ci.mjs",
+          "conclusion": "success"
+        },
+        {
+          "name": "Ensure frozen dependency inputs were not rewritten",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Stop containers",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "retainedSuites": [
+    "test-admin-dashboard.ts",
+    "test-text-tasks.ts",
+    "test-video-jobs.mjs",
+    "test-payment-orders.ts",
+    "test-refunds.ts",
+    "test-billing-unification.ts",
+    "test-four-channel-refunds.ts",
+    "test-payment-operations.ts",
+    "test-admin-operations.mjs",
+    "test-ai-governance.ts"
+  ],
+  "emptyDatabaseMigrations": 15,
+  "initializationPasses": 2,
+  "sourceChecks": [
+    "frozen install",
+    "lint and root lint",
+    "capability protection",
+    "typecheck",
+    "production config",
+    "14 email variants and intercepted SDK",
+    "release/factory guards",
+    "zero-vulnerability audit",
+    "Linux production standalone build",
+    "lock/manifest unchanged"
+  ],
+  "fixes": [
+    "Payment operations fixture now sets Waffo standard product and HTTPS return bases rather than inheriting local credentials",
+    "Disposable integration job uses dummy AI keys and loopback-only executors, without background supplier Workers",
+    "Postgres health check selects the postgres role/database explicitly"
+  ],
+  "history": [
+    {
+      "run": 41405816984,
+      "issue": "payment fixture missing Waffo standard product/HTTPS return configuration"
+    },
+    {
+      "run": 41406064680,
+      "issue": "AI budget suite requires configured dummy executors in the clean runner"
+    },
+    {
+      "run": 41407071964,
+      "issue": null
+    }
+  ],
+  "localRuntimeUnchanged": {
+    "testedAt": "2026-11-02T07:36:43.313Z",
+    "sites": [
+      {
+        "id": "laconic",
+        "origin": "http://localhost:3000",
+        "databasePort": 55432,
+        "databaseName": "laconic_local",
+        "counts": {
+          "users": 2,
+          "tasks": 5,
+          "assets": 1,
+          "orders": 3,
+          "refunds": 3,
+          "migrations": 15
+        },
+        "administratorCredits": {
+          "available": 190,
+          "frozen": 0,
+          "refund_reserved": 0
+        },
+        "readiness": {
+          "status": "ready",
+          "checks": {
+            "database": true,
+            "storage": true,
+            "workers": true
+          },
+          "checkedAt": "2026-11-02T07:36:42.534Z"
+        }
+      },
+      {
+        "id": "aurora-notes",
+        "origin": "http://localhost:3002",
+        "databasePort": 55433,
+        "databaseName": "aurora_notes_local",
+        "counts": {
+          "users": 2,
+          "tasks": 0,
+          "assets": 0,
+          "orders": 0,
+          "refunds": 0,
+          "migrations": 8
+        },
+        "administratorCredits": {
+          "available": 102,
+          "frozen": 0,
+          "refund_reserved": 0
+        }
+      },
+      {
+        "id": "cedar-tools",
+        "origin": "http://localhost:3003",
+        "databasePort": 55434,
+        "databaseName": "cedar_tools_local",
+        "counts": {
+          "users": 2,
+          "tasks": 0,
+          "assets": 0,
+          "orders": 0,
+          "refunds": 0,
+          "migrations": 15
+        },
+        "administratorCredits": {
+          "available": 102,
+          "frozen": 0,
+          "refund_reserved": 0
+        },
+        "readiness": {
+          "status": "ready",
+          "checks": {
+            "database": true,
+            "storage": true,
+            "workers": true
+          },
+          "checkedAt": "2026-11-02T07:36:43.309Z"
+        }
+      }
+    ]
+  },
+  "realPlatformCredentialsUploaded": false,
+  "realPlatformTransactions": 0,
+  "deployed": false,
+  "defaultBranchChanged": false,
+  "pending": [
+    "Actual HTTPS release and operations acceptance",
+    "Actual OAuth/email/Owner and per-channel payment/refund/subscription platform acceptance"
+  ],
+  "recoveryTag": "ci-001-hosted-20261102",
+  "recoveryIndex": "parent .recovery/ci-001-current-after.json"
+}

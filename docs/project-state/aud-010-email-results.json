@@ -1,0 +1,78 @@
+{
+  "testedAt": "2026-11-02T07:04:43.288Z",
+  "renderer": "2.2.0",
+  "cases": [
+    {
+      "locale": "en",
+      "template": "welcome",
+      "htmlAndText": true
+    },
+    {
+      "locale": "en",
+      "template": "reset",
+      "htmlAndText": true
+    },
+    {
+      "locale": "en",
+      "template": "magic",
+      "htmlAndText": true
+    },
+    {
+      "locale": "en",
+      "template": "legacy-welcome",
+      "htmlAndText": true
+    },
+    {
+      "locale": "en",
+      "template": "legacy-reset",
+      "htmlAndText": true
+    },
+    {
+      "locale": "en",
+      "template": "auth-login",
+      "htmlAndText": true
+    },
+    {
+      "locale": "en",
+      "template": "auth-register",
+      "htmlAndText": true
+    },
+    {
+      "locale": "zh",
+      "template": "welcome",
+      "htmlAndText": true
+    },
+    {
+      "locale": "zh",
+      "template": "reset",
+      "htmlAndText": true
+    },
+    {
+      "locale": "zh",
+      "template": "magic",
+      "htmlAndText": true
+    },
+    {
+      "locale": "zh",
+      "template": "legacy-welcome",
+      "htmlAndText": true
+    },
+    {
+      "locale": "zh",
+      "template": "legacy-reset",
+      "htmlAndText": true
+    },
+    {
+      "locale": "zh",
+      "template": "auth-login",
+      "htmlAndText": true
+    },
+    {
+      "locale": "zh",
+      "template": "auth-register",
+      "htmlAndText": true
+    }
+  ],
+  "sdkRequestsIntercepted": 1,
+  "realEmailsSent": 0
+}

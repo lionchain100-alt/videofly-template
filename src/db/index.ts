@@ -35,17 +35,29 @@ function createDb() {
     );
   }
   const sql = postgres(databaseUrl, {
-    max: 10,
+    max: process.env.NODE_ENV === "development" ? 5 : 10,
     ssl: parseSslConfig(databaseUrl),
+    idle_timeout: 20,
+    connect_timeout: 10,
+    connection: { TimeZone: "UTC" },
   });
   return drizzle(sql, { schema });
 }
 
 let _db: ReturnType<typeof createDb> | undefined;
+const shared = globalThis as typeof globalThis & {
+  __laconicDatabase?: { url: string; value: ReturnType<typeof createDb> };
+};
 export const db = new Proxy({} as ReturnType<typeof createDb>, {
   get(_target, prop, receiver) {
     if (!_db) {
-      _db = createDb();
+      if (shared.__laconicDatabase?.url === databaseUrl) {
+        _db = shared.__laconicDatabase.value;
+      } else {
+        if (shared.__laconicDatabase) void shared.__laconicDatabase.value.$client.end({ timeout: 2 }).catch(() => {});
+        _db = createDb();
+        shared.__laconicDatabase = { url: databaseUrl, value: _db };
+      }
     }
     return Reflect.get(_db, prop, receiver);
   },

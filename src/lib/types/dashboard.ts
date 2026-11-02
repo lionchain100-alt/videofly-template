@@ -70,7 +70,11 @@ export type CreditTransType =
   | "subscription"
   | "admin_adjust"
   | "video_generate"
-  | "video_refund";
+  | "video_refund"
+  | "task_hold"
+  | "task_settle"
+  | "task_release"
+  | "refund_hold" | "refund_reclaim" | "refund_release";
 
 export interface CreditTransaction {
   id: string;
@@ -79,6 +83,7 @@ export interface CreditTransaction {
   balanceAfter: number;
   transType: CreditTransType;
   videoUuid: string | null;
+  taskId?: string | null;
   remark: string | null;
   createdAt: Date;
 }

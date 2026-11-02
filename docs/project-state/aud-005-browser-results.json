@@ -1,0 +1,10 @@
+{
+  "at": "2026-11-02T01:04:42.128Z",
+  "passed": [
+    "Real HTTP auth/member/admin/CSRF/reason/UUID/unknown-object guards; raw facts and price overrides are rejected",
+    "Rendered search/reason/confirmation, server-committed lost response, same-UUID retry, reload recovery and immutable audited intent",
+    "Audited operator/reason/result display, all four tabs, desktop/mobile no overflow, no page exceptions and unchanged real-admin credits"
+  ],
+  "pageErrors": [],
+  "newRealProviderCalls": 0
+}

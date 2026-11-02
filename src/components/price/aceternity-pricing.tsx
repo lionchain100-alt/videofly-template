@@ -1,4 +1,5 @@
 "use client";
+import { siteManifest as siteBrand } from "@/config/site-manifest";
 
 import { useMemo, useState, useTransition } from "react";
 import Balancer from "react-wrap-balancer";
@@ -46,27 +47,27 @@ export function AceternityPricing({
   const allSubscriptionProducts = useMemo(
     () =>
       getLocalizedSubscriptionPackages(dictCredits).sort(
-        (a, b) => a.credits - b.credits
+        (a, b) => a.credits - b.credits,
       ),
-    [dictCredits]
+    [dictCredits],
   );
 
   const onetimeProducts = useMemo(
     () =>
       getLocalizedOnetimePackages(dictCredits).sort(
-        (a, b) => a.credits - b.credits
+        (a, b) => a.credits - b.credits,
       ),
-    [dictCredits]
+    [dictCredits],
   );
 
   const monthlyProducts = useMemo(
     () => allSubscriptionProducts.filter((p) => p.billingPeriod === "month"),
-    [allSubscriptionProducts]
+    [allSubscriptionProducts],
   );
 
   const yearlyProducts = useMemo(
     () => allSubscriptionProducts.filter((p) => p.billingPeriod === "year"),
-    [allSubscriptionProducts]
+    [allSubscriptionProducts],
   );
 
   const handleCheckout = (product: LocalizedPackage) => {
@@ -155,9 +156,7 @@ export function AceternityPricing({
             {dictPrice.slogan || "Choose Your Plan"}
           </h1>
           <p className="mx-auto mt-4 max-w-md text-center text-base text-muted-foreground">
-            <Balancer>
-              选择适合您的积分方案，灵活满足不同需求
-            </Balancer>
+            <Balancer>选择适合您的积分方案，灵活满足不同需求</Balancer>
           </p>
         </motion.div>
 
@@ -231,9 +230,9 @@ export function AceternityPricing({
               Email{" "}
               <a
                 className="font-medium text-primary hover:underline"
-                href="mailto:support@videofly.app"
+                href={`mailto:${siteBrand.contact.supportEmail}`}
               >
-                support@videofly.app
+                {siteBrand.contact.supportEmail}
               </a>{" "}
               {dictPrice.contact}
               <br />
@@ -259,14 +258,14 @@ interface TabButtonProps {
 
 function TabButton({ active, children, onClick, showBadge }: TabButtonProps) {
   return (
-    <button
+    <button type="button"
       onClick={onClick}
       className={cn(
         "relative rounded-md px-6 py-2.5 text-sm font-medium transition-all duration-200",
         "hover:bg-background",
         active
           ? "bg-background text-foreground shadow-sm"
-          : "text-muted-foreground"
+          : "text-muted-foreground",
       )}
     >
       {children}
@@ -321,7 +320,7 @@ function PricingCard({
           "relative rounded-xl bg-card p-6 transition-all duration-300",
           "hover:shadow-lg",
           isRecommended &&
-          "border-2 border-primary shadow-xl shadow-primary/20"
+            "border-2 border-primary shadow-xl shadow-primary/20",
         )}
       >
         {isRecommended && (
@@ -374,7 +373,7 @@ function PricingCard({
                 variant={isRecommended ? "default" : "outline"}
                 className={cn(
                   "w-full transition-all duration-200",
-                  "hover:scale-[1.02] active:scale-[0.98]"
+                  "hover:scale-[1.02] active:scale-[0.98]",
                 )}
                 disabled={isPending}
                 onClick={() => onCheckout(product)}
@@ -396,7 +395,7 @@ function PricingCard({
               variant={isRecommended ? "default" : "outline"}
               className={cn(
                 "w-full transition-all duration-200",
-                "hover:scale-[1.02] active:scale-[0.98]"
+                "hover:scale-[1.02] active:scale-[0.98]",
               )}
               onClick={signInModal.onOpen}
             >

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "roles": {
+    "agents": "AGENTS.md",
+    "tasks": "docs/project-state/TASKS.md",
+    "status": "docs/project-state/STATUS.md",
+    "ledger": "docs/project-state/project-ledger.md",
+    "specification": "docs/project-state/contract.md",
+    "state": null
+  }
+}

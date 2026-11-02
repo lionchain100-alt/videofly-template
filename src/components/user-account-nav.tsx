@@ -1,4 +1,5 @@
 "use client";
+import { localePath } from "@/config/site-manifest";
 
 import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
@@ -20,7 +21,7 @@ export function UserAccountNav({
 }: {
   user: Pick<User, "name" | "image" | "email">;
 }) {
-  const t = useTranslations('UserAccountNav');
+  const t = useTranslations("UserAccountNav");
   const locale = useLocale();
   const router = useRouter();
 
@@ -45,24 +46,24 @@ export function UserAccountNav({
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <LocaleLink href="/my-creations">{t('dashboard')}</LocaleLink>
+          <LocaleLink href="/my-creations">{t("dashboard")}</LocaleLink>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <LocaleLink href="/credits">{t('billing')}</LocaleLink>
+          <LocaleLink href="/credits">{t("billing")}</LocaleLink>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <LocaleLink href="/settings">{t('settings')}</LocaleLink>
+          <LocaleLink href="/settings">{t("settings")}</LocaleLink>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="cursor-pointer"
           onSelect={async () => {
             await authClient.signOut();
-            router.push(`/${locale}`);
+            router.push(localePath(locale, `/`));
             router.refresh();
           }}
         >
-          {t('sign_out')}
+          {t("sign_out")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

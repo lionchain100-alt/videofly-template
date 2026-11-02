@@ -1,0 +1,155 @@
+{
+  "scope": "Static production configuration only; no deployment or provider acceptance",
+  "passed": false,
+  "checks": [
+    {
+      "id": "origin.https",
+      "passed": false,
+      "action": "Use an owned fixed public HTTPS origin in site.json"
+    },
+    {
+      "id": "origin.match",
+      "passed": true,
+      "action": "NEXT_PUBLIC_APP_URL must equal site.origin"
+    },
+    {
+      "id": "runtime.production",
+      "passed": false,
+      "action": "Run with NODE_ENV=production"
+    },
+    {
+      "id": "runtime.env-validation",
+      "passed": true,
+      "action": "Remove SKIP_ENV_VALIDATION"
+    },
+    {
+      "id": "runtime.local-auth-off",
+      "passed": false,
+      "action": "Set LOCAL_TEST_AUTH_ENABLED=false explicitly"
+    },
+    {
+      "id": "runtime.studio-off",
+      "passed": false,
+      "action": "Set UI_STUDIO_ENABLED=false explicitly"
+    },
+    {
+      "id": "auth.secret",
+      "passed": true,
+      "action": "Generate an independent auth secret of at least 32 characters"
+    },
+    {
+      "id": "auth.method",
+      "passed": false,
+      "action": "Configure Google OAuth or verified-sender email sign-in"
+    },
+    {
+      "id": "auth.google",
+      "passed": true,
+      "action": "Enabled Google sign-in needs client ID and secret"
+    },
+    {
+      "id": "auth.email",
+      "passed": true,
+      "action": "Enabled email sign-in needs Resend key and bare sender email"
+    },
+    {
+      "id": "database.url",
+      "passed": true,
+      "action": "Configure a dedicated PostgreSQL database/user/password"
+    },
+    {
+      "id": "database.tls",
+      "passed": false,
+      "action": "Set DATABASE_SSL_MODE=require; verify managed database TLS separately"
+    },
+    {
+      "id": "storage.private",
+      "passed": true,
+      "action": "Configure private S3/R2 storage, public access disabled"
+    },
+    {
+      "id": "storage.endpoint",
+      "passed": true,
+      "action": "Configure HTTPS private S3/R2 endpoint without credentials/path"
+    },
+    {
+      "id": "storage.credentials",
+      "passed": true,
+      "action": "Configure bucket, region and bucket-scoped read/write keys"
+    },
+    {
+      "id": "backup.key",
+      "passed": true,
+      "action": "Generate a separate 32-byte hex backup key and retain it outside backups"
+    },
+    {
+      "id": "site.namespace",
+      "passed": true,
+      "action": "Keep unique site ID, cookie prefix and file namespace"
+    },
+    {
+      "id": "site.contact",
+      "passed": false,
+      "action": "Replace local support/privacy email addresses"
+    },
+    {
+      "id": "ai.text",
+      "passed": true,
+      "action": "Enabled summary tool requires configured text executor"
+    },
+    {
+      "id": "ai.text-https",
+      "passed": true,
+      "action": "Use a public HTTPS text API base URL"
+    },
+    {
+      "id": "ai.video",
+      "passed": true,
+      "action": "Enabled video tool requires configured Kie executor/model"
+    },
+    {
+      "id": "payment.paypal.keys",
+      "passed": true,
+      "action": "Configure all enabled PAYPAL credentials, verification and product mappings"
+    },
+    {
+      "id": "payment.paypal.mode",
+      "passed": false,
+      "action": "Use PAYPAL production mode only after separate platform acceptance"
+    },
+    {
+      "id": "payment.waffo.keys",
+      "passed": true,
+      "action": "Configure all enabled WAFFO credentials, verification and product mappings"
+    },
+    {
+      "id": "payment.waffo.mode",
+      "passed": false,
+      "action": "Use WAFFO production mode only after separate platform acceptance"
+    },
+    {
+      "id": "callback.WAFFO_RETURN_BASE_URL",
+      "passed": false,
+      "action": "WAFFO_RETURN_BASE_URL must belong to this site's fixed HTTPS origin"
+    },
+    {
+      "id": "callback.PAYPAL_WEBHOOK_URL",
+      "passed": false,
+      "action": "PAYPAL_WEBHOOK_URL must belong to this site's fixed HTTPS origin"
+    },
+    {
+      "id": "callback.WAFFO_WEBHOOK_URL",
+      "passed": false,
+      "action": "WAFFO_WEBHOOK_URL must belong to this site's fixed HTTPS origin"
+    }
+  ],
+  "deferred": [
+    "Owned HTTPS/DNS and real OAuth/email callbacks",
+    "Private bucket policy and live object probe",
+    "Database migrations, verified Owner and Worker readiness",
+    "Per-channel products, real signed callbacks, payments/refunds and reconciliation",
+    "Offsite backup restoration, rollback and operations acceptance"
+  ],
+  "testedAt": "2026-11-02T04:42:54.021Z",
+  "expectedLocalRejection": true
+}

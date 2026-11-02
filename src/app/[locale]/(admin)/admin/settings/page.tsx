@@ -1,3 +1,4 @@
+import { siteManifest as siteBrand } from "@/config/site-manifest";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Settings, FileText, ExternalLink } from "@/components/ui/icons";
@@ -7,9 +8,7 @@ export default function AdminSettingsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">系统设置</h1>
-        <p className="text-muted-foreground">
-          配置系统参数和积分规则
-        </p>
+        <p className="text-muted-foreground">配置系统参数和积分规则</p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
@@ -38,7 +37,11 @@ export default function AdminSettingsPage() {
               </div>
             </div>
             <Button asChild className="w-full">
-              <a href="https://docs.videofly.app" target="_blank" rel="noopener noreferrer">
+              <a
+                href={`${siteBrand.contact.docsUrl || siteBrand.origin}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <FileText className="h-4 w-4 mr-2" />
                 查看配置文档
                 <ExternalLink className="h-4 w-4 ml-2" />
@@ -72,7 +75,11 @@ export default function AdminSettingsPage() {
               </div>
             </div>
             <Button asChild variant="outline" className="w-full">
-              <a href="https://docs.videofly.app" target="_blank" rel="noopener noreferrer">
+              <a
+                href={`${siteBrand.contact.docsUrl || siteBrand.origin}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <FileText className="h-4 w-4 mr-2" />
                 查看快速开始
                 <ExternalLink className="h-4 w-4 ml-2" />

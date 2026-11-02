@@ -1,0 +1,9 @@
+{
+  "at": "2026-11-02T06:41:41.055Z",
+  "groups": [
+    "real local UI save with committed-but-lost response and same-ID retry creates one revision",
+    "terminal unknown-cost statement review updates absolute budget amount once with audit and no credit/payment changes",
+    "reload persists configuration and review; desktop/mobile private UI without page errors or horizontal overflow"
+  ],
+  "providerCalls": 0
+}

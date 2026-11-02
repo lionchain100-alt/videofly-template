@@ -1,3 +1,4 @@
+"use client";
 /**
  * ResultPanelWrapper Component
  *
@@ -8,8 +9,6 @@
  * - 展示已完成的视频结果
  * - 提供重新生成入口
  */
-
-"use client";
 
 import type { Video } from "@/db";
 import { ResultPanel } from "./result-panel";

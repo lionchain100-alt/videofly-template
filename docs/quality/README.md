@@ -1,0 +1,11 @@
+# Source quality gate
+
+`pnpm lint` scans `src` and `scripts` with pinned Biome 1.9.4. `pnpm lint:raw` additionally checks the repository root with the existing Git ignore rules, so runtime `.local` probes, credentials and generated files are not mistaken for maintained source. Both now pass with zero diagnostics. AUD-010 fixed all 265 historical diagnostics; their original source/list is preserved in `aud-010-before-20261102`, not waived in current checks. No Biome rule or configured exclusion was relaxed.
+
+The inherited `biome.json` excludes generated database/schema files, vendored UI/magicui/animate-ui and type declarations. It disables certain inherited rules explicitly. Build outputs, dependency trees, documentation and local runtime files are outside the source lint scope. Typecheck/build and retained service tests independently cover database/application code.
+
+`lint-baseline.json` now contains zero entries and zero diagnostics, plus the unchanged rule/configuration hash. The gate refuses to load a nonempty waiver list. Every diagnostic, parser/configuration error, incomplete report, tool failure or unreviewed policy hash change fails. AUD-010 does not disable rules, expand exclusions or add inline suppressions. This claim is scoped to the declared source checks, not lint-disabled vendored/generated files or ignored rules.
+
+CI additionally runs frozen installation, typecheck, dependency audit at low severity or above, migration/seed idempotency, retained integration/API suites, production-configuration fixtures, 14 email-rendering variants and production build. It requires no real platform credentials and performs no deployment. Hosted CI results must be obtained after remote submission.
+
+The scoped override `@react-email/components>@react-email/render=2.2.0` aligns the legacy component package with the renderer already used by Resend and the CLI. Its html-to-text10 chain removes renderer2.0.6/html-to-text9/deepmerge4.3.1 from the resolved graph. Every other package resolution remains unchanged; in particular existing Radix `next` resolutions were retained. Email tests exercise the actual component and runtime renderers, HTML/plain-text, EN/ZH messages, escaped user names and intact authentication/reset URLs, without sending email.

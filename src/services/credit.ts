@@ -116,7 +116,7 @@ export class CreditService {
         .select()
         .from(creditHolds)
         .where(eq(creditHolds.videoUuid, videoUuid))
-        .limit(1);
+        .limit(1).for("update");
 
       if (existingHold) {
         if (existingHold.status === "HOLDING") {
@@ -144,8 +144,8 @@ export class CreditService {
         .orderBy(
           sql`${creditPackages.expiredAt} is null`,
           asc(creditPackages.expiredAt),
-          asc(creditPackages.createdAt)
-        );
+          asc(creditPackages.id)
+        ).for("update");
 
       const availableCredits = packages.reduce(
         (sum, p) => sum + p.remainingCredits,
@@ -205,7 +205,7 @@ export class CreditService {
         .select()
         .from(creditHolds)
         .where(eq(creditHolds.videoUuid, videoUuid))
-        .limit(1);
+        .limit(1).for("update");
 
       if (!hold) {
         throw new Error(`Hold not found for video: ${videoUuid}`);
@@ -226,7 +226,7 @@ export class CreditService {
           .select()
           .from(creditPackages)
           .where(eq(creditPackages.id, packageId))
-          .limit(1);
+          .limit(1).for("update");
 
         if (pkg) {
           await trx
@@ -286,7 +286,7 @@ export class CreditService {
         .select()
         .from(creditHolds)
         .where(eq(creditHolds.videoUuid, videoUuid))
-        .limit(1);
+        .limit(1).for("update");
 
       if (!hold) {
         throw new Error(`Hold not found for video: ${videoUuid}`);
@@ -307,7 +307,7 @@ export class CreditService {
           .select()
           .from(creditPackages)
           .where(eq(creditPackages.id, packageId))
-          .limit(1);
+          .limit(1).for("update");
 
         if (pkg) {
           await trx

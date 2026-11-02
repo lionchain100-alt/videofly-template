@@ -1,0 +1,539 @@
+{
+  "schemaVersion": 1,
+  "capabilities": [
+    {
+      "id": "CAP-001",
+      "name": "Login and authorization",
+      "lifecycle": "qa-passed",
+      "availability": "enabled",
+      "protection": "release-critical",
+      "contractVersion": "1.0.0",
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "/zh/login"
+      ],
+      "ownerModules": [
+        "src/lib/auth/auth.ts"
+      ],
+      "dependencies": [],
+      "testIds": [
+        "REGRESSION-CAP-001"
+      ],
+      "fixtures": [
+        "scripts/test-admin-operations.mjs"
+      ],
+      "ownerGate": "Local retained-flow regression; production activation remains separate",
+      "changeImpact": "compatible",
+      "changeApproval": null,
+      "deploymentApproval": null
+    },
+    {
+      "id": "CAP-002",
+      "name": "Three UI presets and local Studio",
+      "lifecycle": "qa-passed",
+      "availability": "enabled",
+      "protection": "release-critical",
+      "contractVersion": "1.0.0",
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "/zh/ui-studio"
+      ],
+      "ownerModules": [
+        "src/ui-presets/site-renderer.tsx"
+      ],
+      "dependencies": [],
+      "testIds": [
+        "REGRESSION-CAP-002"
+      ],
+      "fixtures": [
+        "src/ui-presets/manifest.json",
+        "scripts/test-site-browser.mjs"
+      ],
+      "ownerGate": "Local retained-flow regression; production activation remains separate",
+      "changeImpact": "compatible",
+      "changeApproval": null,
+      "deploymentApproval": null
+    },
+    {
+      "id": "CAP-003",
+      "name": "DeepSeek summary task",
+      "lifecycle": "qa-passed",
+      "availability": "enabled",
+      "protection": "release-critical",
+      "contractVersion": "1.0.0",
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "/api/v1/tools/text-summary"
+      ],
+      "ownerModules": [
+        "src/services/tasks.ts"
+      ],
+      "dependencies": [],
+      "testIds": [
+        "REGRESSION-CAP-003"
+      ],
+      "fixtures": [
+        "scripts/test-text-tasks.ts"
+      ],
+      "ownerGate": "Local retained-flow regression; production activation remains separate",
+      "changeImpact": "compatible",
+      "changeApproval": null,
+      "deploymentApproval": null
+    },
+    {
+      "id": "CAP-004",
+      "name": "Kie video task",
+      "lifecycle": "qa-passed",
+      "availability": "enabled",
+      "protection": "release-critical",
+      "contractVersion": "1.0.0",
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "/api/v1/tools/video"
+      ],
+      "ownerModules": [
+        "src/services/video-jobs.ts"
+      ],
+      "dependencies": [],
+      "testIds": [
+        "REGRESSION-CAP-004"
+      ],
+      "fixtures": [
+        "scripts/test-video-jobs.mjs"
+      ],
+      "ownerGate": "Local retained-flow regression; production activation remains separate",
+      "changeImpact": "compatible",
+      "changeApproval": null,
+      "deploymentApproval": null
+    },
+    {
+      "id": "CAP-005",
+      "name": "Credits and operations",
+      "lifecycle": "qa-passed",
+      "availability": "enabled",
+      "protection": "release-critical",
+      "contractVersion": "1.0.0",
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "/zh/admin"
+      ],
+      "ownerModules": [
+        "src/services/admin-operations.ts"
+      ],
+      "dependencies": [],
+      "testIds": [
+        "REGRESSION-CAP-005"
+      ],
+      "fixtures": [
+        "scripts/test-admin-dashboard.ts"
+      ],
+      "ownerGate": "Local retained-flow regression; production activation remains separate",
+      "changeImpact": "compatible",
+      "changeApproval": null,
+      "deploymentApproval": null
+    },
+    {
+      "id": "CAP-006",
+      "name": "PayPal and Waffo purchase",
+      "lifecycle": "qa-passed",
+      "availability": "enabled",
+      "protection": "release-critical",
+      "contractVersion": "1.0.0",
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "/zh/buy-credits"
+      ],
+      "ownerModules": [
+        "src/services/orders.ts"
+      ],
+      "dependencies": [],
+      "testIds": [
+        "REGRESSION-CAP-006"
+      ],
+      "fixtures": [
+        "scripts/test-payment-orders.ts",
+        "scripts/test-billing-unification.ts"
+      ],
+      "ownerGate": "Local retained-flow regression; production activation remains separate",
+      "changeImpact": "compatible",
+      "changeApproval": null,
+      "deploymentApproval": null
+    },
+    {
+      "id": "CAP-007",
+      "name": "Test refunds and source recovery",
+      "lifecycle": "qa-passed",
+      "availability": "enabled",
+      "protection": "release-critical",
+      "contractVersion": "1.1.0",
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "/api/v1/admin/refunds"
+      ],
+      "ownerModules": [
+        "src/services/refunds.ts",
+        "src/payment/providers/stripe-refunds.ts",
+        "src/payment/providers/creem-refunds.ts"
+      ],
+      "dependencies": [],
+      "testIds": [
+        "REGRESSION-CAP-007",
+        "REGRESSION-CAP-007-FOUR"
+      ],
+      "fixtures": [
+        "scripts/test-refunds.ts",
+        "scripts/test-four-channel-refunds.ts",
+        "scripts/test-refund-browser.mjs"
+      ],
+      "ownerGate": "Owner requested RFN-001 local Stripe/Creem refunds; account-backed/public callback and production acceptance remain deferred. Existing PayPal/Waffo retained.",
+      "changeImpact": "compatible",
+      "changeApproval": null,
+      "deploymentApproval": null
+    },
+    {
+      "id": "CAP-008",
+      "name": "Canonical branding, languages and tool policy",
+      "lifecycle": "qa-passed",
+      "availability": "enabled",
+      "protection": "release-critical",
+      "contractVersion": "1.0.0",
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "src/config/site.json",
+        "/api/v1/tools/text-summary",
+        "/api/v1/tools/video"
+      ],
+      "ownerModules": [
+        "src/config/site-manifest.ts"
+      ],
+      "dependencies": [
+        "CAP-002",
+        "CAP-003",
+        "CAP-004"
+      ],
+      "testIds": [
+        "REGRESSION-CAP-008"
+      ],
+      "fixtures": [
+        "scripts/test-site-service-policy.ts",
+        "scripts/test-site-browser.mjs",
+        "scripts/test-site-production.mjs"
+      ],
+      "ownerGate": "Owner requested AUD-003 local configuration and independent second-site rehearsal; production activation remains separate",
+      "changeImpact": "additive",
+      "changeApproval": null,
+      "deploymentApproval": null
+    },
+    {
+      "id": "CAP-009",
+      "name": "Independent local site creation and isolation",
+      "lifecycle": "qa-passed",
+      "availability": "enabled",
+      "protection": "release-critical",
+      "contractVersion": "1.0.0",
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "http://localhost:3002/",
+        "http://localhost:3002/admin"
+      ],
+      "ownerModules": [
+        "scripts/create-local-site.mjs"
+      ],
+      "dependencies": [
+        "CAP-001",
+        "CAP-005",
+        "CAP-008"
+      ],
+      "testIds": [
+        "REGRESSION-CAP-009"
+      ],
+      "fixtures": [
+        "scripts/test-site-isolation.mjs"
+      ],
+      "ownerGate": "Owner requested AUD-003 local configuration and independent second-site rehearsal; production activation remains separate",
+      "changeImpact": "additive",
+      "changeApproval": null,
+      "deploymentApproval": null
+    },
+    {
+      "id": "CAP-010",
+      "name": "Local unified four-channel fulfillment and recurring subscription ledger",
+      "lifecycle": "qa-passed",
+      "availability": "enabled",
+      "protection": "release-critical",
+      "contractVersion": "1.0.0",
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "/zh/buy-credits",
+        "/zh/pricing",
+        "/api/v1/subscriptions",
+        "/api/webhooks/stripe",
+        "/api/webhooks/creem",
+        "/api/auth/creem/webhook"
+      ],
+      "ownerModules": [
+        "src/services/subscriptions.ts",
+        "src/services/orders.ts"
+      ],
+      "dependencies": [
+        "CAP-001",
+        "CAP-005",
+        "CAP-006",
+        "CAP-007"
+      ],
+      "testIds": [
+        "REGRESSION-CAP-010"
+      ],
+      "fixtures": [
+        "scripts/test-billing-unification.ts",
+        "scripts/test-billing-browser.mjs",
+        "scripts/test-billing-production.mjs"
+      ],
+      "ownerGate": "Owner chose local implementation/regression only; Stripe and Creem remain disabled pending separately requested HTTPS/account-backed acceptance. No live activation.",
+      "changeImpact": "compatible",
+      "changeApproval": null,
+      "deploymentApproval": null
+    },
+    {
+      "id": "CAP-011",
+      "name": "Audited payment exception console, trusted-event replay and receipt-backed compensation",
+      "lifecycle": "qa-passed",
+      "availability": "enabled",
+      "protection": "release-critical",
+      "contractVersion": "1.0.0",
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "/zh/admin/payments",
+        "/api/v1/admin/payment-ops"
+      ],
+      "ownerModules": [
+        "src/services/payment-operations.ts",
+        "src/components/admin/payment-operations-console.tsx"
+      ],
+      "dependencies": [
+        "CAP-001",
+        "CAP-005",
+        "CAP-006",
+        "CAP-007",
+        "CAP-010"
+      ],
+      "testIds": [
+        "REGRESSION-CAP-011"
+      ],
+      "fixtures": [
+        "scripts/test-payment-operations.ts",
+        "scripts/test-payment-operations-browser.mjs"
+      ],
+      "ownerGate": "Owner requested AUD-005 local integration/regression; actual provider payment/refund/public notifications and production activation remain deferred until HTTPS deployment.",
+      "changeImpact": "additive",
+      "changeApproval": null,
+      "deploymentApproval": null
+    },
+    {
+      "id": "CAP-012",
+      "name": "Private site-scoped object storage, encrypted local data recovery and Worker readiness",
+      "lifecycle": "qa-passed",
+      "availability": "enabled",
+      "protection": "release-critical",
+      "contractVersion": "1.0.0",
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "/api/v1/upload",
+        "/api/v1/uploads/[id]",
+        "/api/v1/tools/video/tasks/[id]/file",
+        "/api/ready",
+        "/zh/admin/runtime"
+      ],
+      "ownerModules": [
+        "src/services/private-storage.ts",
+        "src/services/private-uploads.ts",
+        "src/services/runtime-health.ts",
+        "scripts/backup-site.ts"
+      ],
+      "dependencies": [
+        "CAP-001",
+        "CAP-002",
+        "CAP-003",
+        "CAP-005",
+        "CAP-007",
+        "CAP-011"
+      ],
+      "testIds": [
+        "REGRESSION-CAP-012"
+      ],
+      "fixtures": [
+        "scripts/test-storage-runtime.ts",
+        "scripts/test-storage-api.ts",
+        "scripts/check-private-storage.ts",
+        "scripts/test-runtime-browser.mjs"
+      ],
+      "ownerGate": "Owner authorized AUD-006 local integration/regression and Cloudflare R2 provisioning. Independent private test bucket verified; production disaster recovery, alerting and actual payment acceptance remain later gates.",
+      "changeImpact": "additive",
+      "changeApproval": null,
+      "deploymentApproval": null
+    },
+    {
+      "id": "CAP-013",
+      "name": "Versioned model/price policy, user call limits and auditable estimated-cost budgets",
+      "lifecycle": "qa-passed",
+      "availability": "enabled",
+      "protection": "release-critical",
+      "contractVersion": "1.0.0",
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "/zh/admin/ai",
+        "/api/v1/admin/ai",
+        "/api/v1/tools/text-summary",
+        "/api/v1/tools/video"
+      ],
+      "ownerModules": [
+        "src/services/ai-governance.ts",
+        "src/ai/governance-contract.ts",
+        "src/components/admin/ai-governance-console.tsx"
+      ],
+      "dependencies": [
+        "CAP-001",
+        "CAP-003",
+        "CAP-004",
+        "CAP-005",
+        "CAP-007",
+        "CAP-008",
+        "CAP-012"
+      ],
+      "testIds": [
+        "REGRESSION-CAP-013"
+      ],
+      "fixtures": [
+        "scripts/test-ai-governance.ts",
+        "scripts/test-ai-governance-browser.mjs",
+        "scripts/test-text-tasks.ts",
+        "scripts/test-video-jobs.mjs"
+      ],
+      "ownerGate": "Owner requested AUD-007 local model/limit/budget integration and explicitly accepted 5 new tasks/minute/user,50/day/user,USD10/day/site,USD100/month/site. No new actual model generation, production activation or payment-platform acceptance is implied.",
+      "changeImpact": "additive",
+      "changeApproval": null,
+      "deploymentApproval": null
+    },
+    {
+      "id": "CAP-014",
+      "name": "Cross-preset tool continuity, responsive keyboard UI, truthful SEO and production auth configuration",
+      "lifecycle": "qa-passed",
+      "availability": "enabled",
+      "protection": "release-critical",
+      "contractVersion": "1.0.0",
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "/",
+        "/text-summary",
+        "/text-to-video",
+        "/ui-studio",
+        "/api/v1/auth/config",
+        "/login"
+      ],
+      "ownerModules": [
+        "src/ui-presets/site-renderer.tsx",
+        "src/lib/auth/production-config.ts",
+        "src/services/owner-initialization.ts",
+        "src/app/sitemap.ts"
+      ],
+      "dependencies": [
+        "CAP-001",
+        "CAP-002",
+        "CAP-003",
+        "CAP-004",
+        "CAP-005",
+        "CAP-008",
+        "CAP-012",
+        "CAP-013"
+      ],
+      "testIds": [
+        "REGRESSION-CAP-014"
+      ],
+      "fixtures": [
+        "scripts/test-ui-acceptance.mjs",
+        "scripts/test-preview-accessibility.mjs",
+        "scripts/test-preview-offline.mjs",
+        "scripts/test-presentation-policy.ts",
+        "scripts/test-seo-routes.mjs"
+      ],
+      "ownerGate": "Owner requested AUD-008 local UI/theme/language/mobile/keyboard/SEO/legacy/auth checks with existing business preservation. Actual Google callbacks, email delivery, additional browser/device coverage and production deployment remain separate gates.",
+      "changeImpact": "additive",
+      "changeApproval": null,
+      "deploymentApproval": null
+    },
+    {
+      "id": "CAP-015",
+      "name": "Clean independent-site initialization, zero-diagnostic CI quality gates and static production preflight",
+      "lifecycle": "qa-passed",
+      "availability": "enabled",
+      "protection": "release-critical",
+      "contractVersion": "1.0.1",
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "site:create",
+        "production:check",
+        ".github/workflows/quality.yml"
+      ],
+      "ownerModules": [
+        "scripts/create-local-site.mjs",
+        "scripts/instance-state.mjs",
+        "scripts/lint-gate.mjs",
+        "src/config/production-check.ts",
+        "scripts/prepare-ci.mjs"
+      ],
+      "dependencies": [
+        "CAP-001",
+        "CAP-008",
+        "CAP-009",
+        "CAP-012",
+        "CAP-014"
+      ],
+      "testIds": [
+        "REGRESSION-CAP-015"
+      ],
+      "fixtures": [
+        "scripts/test-site-factory.mjs",
+        "scripts/test-release-gates.mjs",
+        "scripts/test-production-config.ts",
+        "scripts/check-initialized-site.mjs",
+        ".github/workflows/quality.yml",
+        "scripts/test-email-render.tsx",
+        "scripts/tsconfig.email.json"
+      ],
+      "ownerGate": "Owner authorized AUD-010 to clear historical lint debt and the remaining low dependency advisory without business regression. Source lint now requires zero diagnostics, all dependency severities are audited, and real platform/deployment gates remain deferred. CI-001 hosted source and quality jobs now passed on the owned fork; real deployment/platform acceptance remains deferred.",
+      "changeImpact": "compatible",
+      "changeApproval": null,
+      "deploymentApproval": null
+    }
+  ]
+}

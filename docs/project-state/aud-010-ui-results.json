@@ -1,0 +1,466 @@
+{
+  "at": "2026-11-02T06:46:38.441Z",
+  "browser": "Playwright/Chromium; Browser plugin not available",
+  "combinations": 12,
+  "viewports": [
+    390,
+    768,
+    1440
+  ],
+  "matrixCases": 36,
+  "cases": [
+    {
+      "check": "real UI Studio apply protects revision and changes only UI",
+      "passed": true
+    },
+    {
+      "check": "text: one POST/task/hold/settlement across three layouts",
+      "taskId": "9168e7a1-5c12-44d4-86e0-1de411410d37",
+      "passed": true
+    },
+    {
+      "check": "video: one POST/task/hold/settlement across three layouts",
+      "taskId": "fcb0dee7-2d01-4640-b818-0a877e2f558e",
+      "passed": true
+    },
+    {
+      "preset": "minimal",
+      "mode": "light",
+      "locale": "zh",
+      "width": 390,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "minimal",
+      "mode": "light",
+      "locale": "zh",
+      "width": 768,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "minimal",
+      "mode": "light",
+      "locale": "zh",
+      "width": 1440,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "minimal",
+      "mode": "light",
+      "locale": "en",
+      "width": 390,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "minimal",
+      "mode": "light",
+      "locale": "en",
+      "width": 768,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "minimal",
+      "mode": "light",
+      "locale": "en",
+      "width": 1440,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "minimal",
+      "mode": "dark",
+      "locale": "zh",
+      "width": 390,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "minimal",
+      "mode": "dark",
+      "locale": "zh",
+      "width": 768,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "minimal",
+      "mode": "dark",
+      "locale": "zh",
+      "width": 1440,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "minimal",
+      "mode": "dark",
+      "locale": "en",
+      "width": 390,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "minimal",
+      "mode": "dark",
+      "locale": "en",
+      "width": 768,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "minimal",
+      "mode": "dark",
+      "locale": "en",
+      "width": 1440,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "studio",
+      "mode": "light",
+      "locale": "zh",
+      "width": 390,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "studio",
+      "mode": "light",
+      "locale": "zh",
+      "width": 768,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "studio",
+      "mode": "light",
+      "locale": "zh",
+      "width": 1440,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "studio",
+      "mode": "light",
+      "locale": "en",
+      "width": 390,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "studio",
+      "mode": "light",
+      "locale": "en",
+      "width": 768,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "studio",
+      "mode": "light",
+      "locale": "en",
+      "width": 1440,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "studio",
+      "mode": "dark",
+      "locale": "zh",
+      "width": 390,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "studio",
+      "mode": "dark",
+      "locale": "zh",
+      "width": 768,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "studio",
+      "mode": "dark",
+      "locale": "zh",
+      "width": 1440,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "studio",
+      "mode": "dark",
+      "locale": "en",
+      "width": 390,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "studio",
+      "mode": "dark",
+      "locale": "en",
+      "width": 768,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "studio",
+      "mode": "dark",
+      "locale": "en",
+      "width": 1440,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "portal",
+      "mode": "light",
+      "locale": "zh",
+      "width": 390,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "portal",
+      "mode": "light",
+      "locale": "zh",
+      "width": 768,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "portal",
+      "mode": "light",
+      "locale": "zh",
+      "width": 1440,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "portal",
+      "mode": "light",
+      "locale": "en",
+      "width": 390,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "portal",
+      "mode": "light",
+      "locale": "en",
+      "width": 768,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "portal",
+      "mode": "light",
+      "locale": "en",
+      "width": 1440,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "portal",
+      "mode": "dark",
+      "locale": "zh",
+      "width": 390,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "portal",
+      "mode": "dark",
+      "locale": "zh",
+      "width": 768,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "portal",
+      "mode": "dark",
+      "locale": "zh",
+      "width": 1440,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "portal",
+      "mode": "dark",
+      "locale": "en",
+      "width": 390,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "portal",
+      "mode": "dark",
+      "locale": "en",
+      "width": 768,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "preset": "portal",
+      "mode": "dark",
+      "locale": "en",
+      "width": 1440,
+      "tools": [
+        "summary",
+        "video"
+      ],
+      "keyboard": true,
+      "noOverflow": true
+    },
+    {
+      "check": "language navigation preserves dedicated tool route and private draft",
+      "passed": true
+    }
+  ],
+  "pageErrors": [],
+  "realProviderCalls": 0,
+  "fixtureVideoSubmissions": 1
+}

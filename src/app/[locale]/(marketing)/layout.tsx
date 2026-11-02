@@ -1,16 +1,21 @@
 import { Suspense } from "react";
+import { headers } from "next/headers";
 
 import { getCurrentUser } from "@/lib/auth";
 
 import { ModalProvider } from "@/components/modal-provider";
 import { LandingHeader } from "@/components/landing/header";
 import { LandingFooter } from "@/components/landing/footer";
+import { LegacyToolNotice } from "@/components/legacy-tool-notice";
 
 export default async function MarketingLayout({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }) {
+  if ((await headers()).get("x-ui-home") === "true") return <>{children}</>;
   const user = await getCurrentUser();
 
   return (
@@ -39,7 +44,12 @@ export default async function MarketingLayout({
       </Suspense>
 
       <ModalProvider>
-        <main className="flex-1">{children}</main>
+        <main className="flex-1">
+          {(await headers()).get("x-legacy-tool") === "true" && (
+            <LegacyToolNotice locale={(await params).locale} />
+          )}
+          {children}
+        </main>
       </ModalProvider>
 
       <LandingFooter />

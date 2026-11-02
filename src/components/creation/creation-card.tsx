@@ -1,4 +1,5 @@
 "use client";
+import { siteManifest } from "@/config/site-manifest";
 
 // ============================================
 // Creation Card Component
@@ -6,7 +7,14 @@
 
 import { useRef, useState } from "react";
 import Link from "next/link";
-import { Play, Clock, AlertCircle, MoreHorizontal, Download, Trash2 } from "lucide-react";
+import {
+  Play,
+  Clock,
+  AlertCircle,
+  MoreHorizontal,
+  Download,
+  Trash2,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { cn } from "@/components/ui";
@@ -81,7 +89,9 @@ export function CreationCard({
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
-  const normalizedStatus = (video.status || "pending").toLowerCase() as keyof typeof statusConfig;
+  const normalizedStatus = (
+    video.status || "pending"
+  ).toLowerCase() as keyof typeof statusConfig;
   const config = statusConfig[normalizedStatus] ?? statusConfig.pending;
   const StatusIcon = config.icon;
   const statusLabel = t(config.labelKey as "status.completed");
@@ -102,7 +112,7 @@ export function CreationCard({
     if (video.videoUrl) {
       const link = document.createElement("a");
       link.href = video.videoUrl;
-      link.download = `videofly-${video.uuid}.mp4`;
+      link.download = `${siteManifest.id}-${video.uuid}.mp4`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -130,7 +140,7 @@ export function CreationCard({
       <div
         className={cn(
           "group relative overflow-hidden rounded-lg border border-border bg-card transition-all hover:shadow-lg cursor-pointer",
-          isDeleting && "opacity-50 pointer-events-none"
+          isDeleting && "opacity-50 pointer-events-none",
         )}
         onClick={() => onClick(video.uuid)}
         onMouseEnter={handlePreviewStart}
@@ -163,7 +173,11 @@ export function CreationCard({
                   {(() => {
                     try {
                       const parsed = JSON.parse(video.errorMessage);
-                      return parsed.error?.message || parsed.message || video.errorMessage;
+                      return (
+                        parsed.error?.message ||
+                        parsed.message ||
+                        video.errorMessage
+                      );
                     } catch {
                       return video.errorMessage;
                     }
@@ -192,7 +206,10 @@ export function CreationCard({
           {/* Duration badge (completed only) */}
           {isCompleted && video.duration > 0 && (
             <div className="absolute bottom-2 right-2">
-              <Badge variant="secondary" className="bg-black/70 text-white border-0">
+              <Badge
+                variant="secondary"
+                className="bg-black/70 text-white border-0"
+              >
                 {Math.floor(video.duration)}s
               </Badge>
             </div>
@@ -212,13 +229,21 @@ export function CreationCard({
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 {isCompleted && (
-                  <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleDownload(); }}>
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDownload();
+                    }}
+                  >
                     <Download className="h-4 w-4 mr-2" />
                     {t("actions.download")}
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuItem
-                  onClick={(e) => { e.stopPropagation(); setShowDeleteDialog(true); }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowDeleteDialog(true);
+                  }}
                   className="text-destructive"
                 >
                   <Trash2 className="h-4 w-4 mr-2" />
@@ -244,7 +269,9 @@ export function CreationCard({
 
           {/* Date */}
           <div className="text-xs text-muted-foreground">
-            {formatDistanceToNow(new Date(video.createdAt), { addSuffix: true })}
+            {formatDistanceToNow(new Date(video.createdAt), {
+              addSuffix: true,
+            })}
           </div>
 
           {/* Error is displayed in the preview area for failed videos */}

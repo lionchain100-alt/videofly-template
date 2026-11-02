@@ -1,3 +1,4 @@
+import { siteManifest as siteBrand } from "@/config/site-manifest";
 import type { BaseEmailProps } from "@/mail/types";
 import EmailButton from "@/mail/components/email-button";
 import EmailLayout from "@/mail/components/email-layout";
@@ -23,9 +24,7 @@ export default function MagicLinkEmail({
 
   return (
     <EmailLayout locale={locale} messages={messages}>
-      <Text className="text-base text-gray-900">
-        {t("greeting", { name })}
-      </Text>
+      <Text className="text-base text-gray-900">{t("greeting", { name })}</Text>
       <Text className="mt-8 text-2xl font-bold text-gray-900">
         {t("title")}
       </Text>
@@ -52,8 +51,8 @@ MagicLinkEmail.PreviewProps = {
       },
       magicLink: {
         greeting: "Hi {name},",
-        title: "Sign In to VideoFly",
-        body: "We received a request to sign in to your VideoFly account.",
+        title: `Sign In to ${siteBrand.ui.brand.name}`,
+        body: `We received a request to sign in to your ${siteBrand.ui.brand.name} account.`,
         instruction: "Click the button below to sign in:",
         button: "Sign In",
         validity: "This link will expire in 24 hours.",
@@ -63,5 +62,5 @@ MagicLinkEmail.PreviewProps = {
     },
   },
   name: "John Doe",
-  magicLink: "https://videofly.app/auth/callback?token=abc123",
+  magicLink: `${siteBrand.origin}/auth/callback?token=abc123`,
 };

@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUserVideos, getUserVideoStats } from "@/lib/admin/user-videos";
+import { requireAdmin } from "@/lib/api/auth";
+import { handleApiError } from "@/lib/api/response";
 
 export async function GET(request: NextRequest) {
   try {
+    await requireAdmin(request);
     const searchParams = request.nextUrl.searchParams;
     const userId = searchParams.get("userId");
-    const page = parseInt(searchParams.get("page") || "1");
+    const page = Math.max(1, Number.parseInt(searchParams.get("page") || "1", 10) || 1);
     const status = searchParams.get("status");
 
     if (!userId) {
@@ -30,10 +33,6 @@ export async function GET(request: NextRequest) {
       stats,
     });
   } catch (error) {
-    console.error("获取用户视频失败:", error);
-    return NextResponse.json(
-      { error: "获取用户视频失败" },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }

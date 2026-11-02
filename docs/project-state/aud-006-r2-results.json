@@ -1,0 +1,17 @@
+{
+  "at": "2026-11-02T01:47:07.344Z",
+  "checks": [
+    "authenticated bucket HEAD",
+    "signed PUT/GET integrity",
+    "signed Range",
+    "anonymous object denied",
+    "owned probe deleted"
+  ],
+  "secretOutput": false,
+  "privateBucketCreatedForThisTemplate": true,
+  "publicDevelopmentUrlDisabled": true,
+  "noPublicCustomDomain": true,
+  "bucketScopedObjectReadWrite": true,
+  "credentialsSavedLocally": true,
+  "backendEnabled": "s3"
+}

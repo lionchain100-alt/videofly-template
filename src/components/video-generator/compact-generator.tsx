@@ -1,3 +1,4 @@
+"use client";
 /**
  * CompactGenerator Component
  *
@@ -6,8 +7,6 @@
  *
  * @module compact-generator
  */
-
-"use client";
 
 import * as React from "react";
 import {
@@ -115,13 +114,16 @@ function CompactRenderer() {
   const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
 
   // 检查是否显示类型切换
-  const showTypeSwitch = features.showGenerationTypeSwitch !== false &&
+  const showTypeSwitch =
+    features.showGenerationTypeSwitch !== false &&
     config.videoModels.length > 0 &&
     config.imageModels.length > 0;
 
   // 检查是否显示模式选择器
-  const showModeSelector = features.showModeSelector !== false &&
-    (state.generationType === "video" ? config.videoModes : config.imageModes).length > 0;
+  const showModeSelector =
+    features.showModeSelector !== false &&
+    (state.generationType === "video" ? config.videoModes : config.imageModes)
+      .length > 0;
 
   // 检查是否显示图片上传
   const showImageUpload = features.showImageUpload !== false;
@@ -137,7 +139,11 @@ function CompactRenderer() {
 
   // 辅助函数：检查图标是否为 URL
   const isIconUrl = (icon: string) => {
-    return icon.startsWith("http://") || icon.startsWith("https://") || icon.startsWith("/");
+    return (
+      icon.startsWith("http://") ||
+      icon.startsWith("https://") ||
+      icon.startsWith("/")
+    );
   };
 
   // 辅助函数：获取模型图标
@@ -191,39 +197,40 @@ function CompactRenderer() {
         {/* 上传和输入行 */}
         <div className="flex gap-2">
           {/* 图片上传区域 */}
-          {showImageUpload && computed.uploadSlots.map((slot) => {
-            const image = handlers.getImageForSlot(slot.id);
-            return (
-              <div key={slot.id} className="flex flex-col items-center gap-1">
-                {image ? (
-                  <div className="relative group">
-                    <button
-                      onClick={() => handlers.handleRemoveImage(slot.id)}
-                      className="absolute -top-1 -right-1 z-10 p-0.5 rounded-full bg-zinc-700 hover:bg-zinc-600 opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <X className="w-2.5 h-2.5 text-white" />
-                    </button>
-                    <div className="w-10 h-12 rounded-lg p-0.5 bg-zinc-800 border border-zinc-700">
-                      <div className="relative w-full h-full rounded overflow-hidden">
-                        <img
-                          src={image.preview}
-                          alt={slot.label}
-                          className="w-full h-full object-cover"
-                        />
+          {showImageUpload &&
+            computed.uploadSlots.map((slot) => {
+              const image = handlers.getImageForSlot(slot.id);
+              return (
+                <div key={slot.id} className="flex flex-col items-center gap-1">
+                  {image ? (
+                    <div className="relative group">
+                      <button type="button"
+                        onClick={() => handlers.handleRemoveImage(slot.id)}
+                        className="absolute -top-1 -right-1 z-10 p-0.5 rounded-full bg-zinc-700 hover:bg-zinc-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X className="w-2.5 h-2.5 text-white" />
+                      </button>
+                      <div className="w-10 h-12 rounded-lg p-0.5 bg-zinc-800 border border-zinc-700">
+                        <div className="relative w-full h-full rounded overflow-hidden">
+                          <img
+                            src={image.preview}
+                            alt={slot.label}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => handlers.handleUploadClick(slot.id)}
-                    className="w-10 h-12 rounded-lg border border-dashed border-zinc-700 hover:border-zinc-500 transition-colors flex items-center justify-center text-zinc-500 hover:text-zinc-400"
-                  >
-                    <Plus className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
-            );
-          })}
+                  ) : (
+                    <button type="button"
+                      onClick={() => handlers.handleUploadClick(slot.id)}
+                      className="w-10 h-12 rounded-lg border border-dashed border-zinc-700 hover:border-zinc-500 transition-colors flex items-center justify-center text-zinc-500 hover:text-zinc-400"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+              );
+            })}
 
           {/* 提示词输入 */}
           {showPromptInput && (
@@ -239,7 +246,7 @@ function CompactRenderer() {
                 className={cn(
                   "w-full h-full min-h-[48px] max-h-[120px] bg-transparent placeholder:text-zinc-500 resize-none focus:outline-none text-sm leading-relaxed",
                   validation.promptError ? "text-red-400" : "text-zinc-100",
-                  isLoading && "opacity-50 cursor-not-allowed"
+                  isLoading && "opacity-50 cursor-not-allowed",
                 )}
                 rows={2}
               />
@@ -252,7 +259,7 @@ function CompactRenderer() {
           <div
             className={cn(
               "text-xs mt-1 text-right",
-              validation.promptError ? "text-red-400" : "text-zinc-500"
+              validation.promptError ? "text-red-400" : "text-zinc-500",
             )}
           >
             {validation.charCount}
@@ -266,15 +273,19 @@ function CompactRenderer() {
         {features.showModelSelector !== false && computed.currentModel && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-zinc-800/50 hover:bg-zinc-700/50 transition-colors text-xs text-zinc-300">
+              <button type="button" className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-zinc-800/50 hover:bg-zinc-700/50 transition-colors text-xs text-zinc-300">
                 {renderModelIcon(computed.currentModel)}
-                <span className="max-w-[80px] truncate">{computed.currentModel.name}</span>
+                <span className="max-w-[80px] truncate">
+                  {computed.currentModel.name}
+                </span>
                 <ChevronDown className="w-3 h-3 text-zinc-500" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="bg-zinc-900 border-zinc-800 w-64 max-h-[320px] overflow-y-auto">
               <DropdownMenuLabel className="text-zinc-400 text-xs">
-                {state.generationType === "video" ? texts.videoModels : texts.imageModels}
+                {state.generationType === "video"
+                  ? texts.videoModels
+                  : texts.imageModels}
               </DropdownMenuLabel>
               <DropdownMenuSeparator className="bg-zinc-800" />
               {computed.availableModels.map((model: any) => (
@@ -299,7 +310,9 @@ function CompactRenderer() {
                     )}
                   </div>
                   {model.description && (
-                    <div className="text-[10px] text-zinc-500 mt-0.5 ml-6">{model.description}</div>
+                    <div className="text-[10px] text-zinc-500 mt-0.5 ml-6">
+                      {model.description}
+                    </div>
                   )}
                 </DropdownMenuItem>
               ))}
@@ -311,29 +324,34 @@ function CompactRenderer() {
         {showSettings && (
           <Popover open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
             <PopoverTrigger asChild>
-              <button className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-zinc-800/50 hover:bg-zinc-700/50 transition-colors text-xs text-zinc-400">
+              <button type="button" className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-zinc-800/50 hover:bg-zinc-700/50 transition-colors text-xs text-zinc-400">
                 <Settings className="w-3.5 h-3.5" />
                 <span>{texts.settings ?? "Settings"}</span>
               </button>
             </PopoverTrigger>
-            <PopoverContent className="w-64 bg-zinc-900 border-zinc-800 p-3" align="start">
+            <PopoverContent
+              className="w-64 bg-zinc-900 border-zinc-800 p-3"
+              align="start"
+            >
               {/* 宽高比 */}
               <div className="mb-3">
-                <Label className="text-xs text-zinc-400 mb-1.5 block">{texts.aspectRatio}</Label>
+                <Label className="text-xs text-zinc-400 mb-1.5 block">
+                  {texts.aspectRatio}
+                </Label>
                 <div className="grid grid-cols-4 gap-1.5">
                   {computed.currentAspectRatio &&
                     (state.generationType === "video"
                       ? computed.effectiveVideoAspectRatios
                       : computed.effectiveImageAspectRatios
                     ).map((ratio: string) => (
-                      <button
+                      <button type="button"
                         key={ratio}
                         onClick={() => handlers.handleAspectRatioChange(ratio)}
                         className={cn(
                           "px-2 py-1.5 rounded text-xs transition-colors",
                           computed.currentAspectRatio === ratio
                             ? "bg-zinc-700 text-white"
-                            : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
+                            : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700",
                         )}
                       >
                         {ratio}
@@ -343,63 +361,69 @@ function CompactRenderer() {
               </div>
 
               {/* 时长（仅视频） */}
-              {state.generationType === "video" && computed.showDurationControl && (
-                <div className="mb-3">
-                  <Label className="text-xs text-zinc-400 mb-1.5 block">{texts.duration}</Label>
-                  <div className="grid grid-cols-4 gap-1.5">
-                    {computed.effectiveDurations.map((d: string) => (
-                      <button
-                        key={d}
-                        onClick={() => actions.setDuration(d)}
-                        className={cn(
-                          "px-2 py-1.5 rounded text-xs transition-colors",
-                          state.duration === d
-                            ? "bg-zinc-700 text-white"
-                            : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
-                        )}
-                      >
-                        {d}
-                      </button>
-                    ))}
+              {state.generationType === "video" &&
+                computed.showDurationControl && (
+                  <div className="mb-3">
+                    <Label className="text-xs text-zinc-400 mb-1.5 block">
+                      {texts.duration}
+                    </Label>
+                    <div className="grid grid-cols-4 gap-1.5">
+                      {computed.effectiveDurations.map((d: string) => (
+                        <button type="button"
+                          key={d}
+                          onClick={() => actions.setDuration(d)}
+                          className={cn(
+                            "px-2 py-1.5 rounded text-xs transition-colors",
+                            state.duration === d
+                              ? "bg-zinc-700 text-white"
+                              : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700",
+                          )}
+                        >
+                          {d}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
               {/* 分辨率（仅视频） */}
-              {state.generationType === "video" && computed.showResolutionControl && (
-                <div>
-                  <Label className="text-xs text-zinc-400 mb-1.5 block">{texts.resolution}</Label>
-                  <div className="grid grid-cols-4 gap-1.5">
-                    {computed.effectiveResolutions.map((r: string) => (
-                      <button
-                        key={r}
-                        onClick={() => actions.setResolution(r)}
-                        className={cn(
-                          "px-2 py-1.5 rounded text-xs transition-colors",
-                          state.resolution === r
-                            ? "bg-zinc-700 text-white"
-                            : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
-                        )}
-                      >
-                        {r}
-                      </button>
-                    ))}
+              {state.generationType === "video" &&
+                computed.showResolutionControl && (
+                  <div>
+                    <Label className="text-xs text-zinc-400 mb-1.5 block">
+                      {texts.resolution}
+                    </Label>
+                    <div className="grid grid-cols-4 gap-1.5">
+                      {computed.effectiveResolutions.map((r: string) => (
+                        <button type="button"
+                          key={r}
+                          onClick={() => actions.setResolution(r)}
+                          className={cn(
+                            "px-2 py-1.5 rounded text-xs transition-colors",
+                            state.resolution === r
+                              ? "bg-zinc-700 text-white"
+                              : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700",
+                          )}
+                        >
+                          {r}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
             </PopoverContent>
           </Popover>
         )}
 
         {/* 生成按钮 */}
-        <button
+        <button type="button"
           onClick={handlers.handleSubmit}
           disabled={!validation.canSubmit}
           className={cn(
             "ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all",
             validation.canSubmit
               ? "bg-white text-black hover:bg-zinc-200"
-              : "bg-zinc-800 text-zinc-600 cursor-not-allowed"
+              : "bg-zinc-800 text-zinc-600 cursor-not-allowed",
           )}
         >
           {isLoading ? (
@@ -414,51 +438,63 @@ function CompactRenderer() {
             </>
           )}
           <span className="text-zinc-500">•</span>
-          <span>{calculatedCredits} {texts.credits}</span>
+          <span>
+            {calculatedCredits} {texts.credits}
+          </span>
         </button>
       </div>
 
       {/* 高级设置（仅显示需要时） */}
-      {showAdvancedSettings && (computed.effectiveVideoOutputNumbers.length > 1 || computed.modelSupportsAudio) && (
-        <div className="flex items-center gap-3 pt-2 border-t border-zinc-800">
-          {/* 输出数量 */}
-          {computed.effectiveVideoOutputNumbers.length > 1 && (
-            <div className="flex items-center gap-2">
-              <Label className="text-xs text-zinc-400">{texts.outputNumber}</Label>
-              <div className="flex gap-1">
-                {computed.effectiveVideoOutputNumbers.map((option: OutputNumberOption) => (
-                  <button
-                    key={option.value}
-                    onClick={() => handlers.handleOutputNumberChange(option)}
-                    className={cn(
-                      "px-2 py-0.5 rounded text-xs transition-colors",
-                      computed.currentOutputNumber === option.value
-                        ? "bg-zinc-700 text-white"
-                        : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700",
-                      option.isPro && !isPro && "opacity-70"
-                    )}
-                  >
-                    {option.value}
-                  </button>
-                ))}
+      {showAdvancedSettings &&
+        (computed.effectiveVideoOutputNumbers.length > 1 ||
+          computed.modelSupportsAudio) && (
+          <div className="flex items-center gap-3 pt-2 border-t border-zinc-800">
+            {/* 输出数量 */}
+            {computed.effectiveVideoOutputNumbers.length > 1 && (
+              <div className="flex items-center gap-2">
+                <Label className="text-xs text-zinc-400">
+                  {texts.outputNumber}
+                </Label>
+                <div className="flex gap-1">
+                  {computed.effectiveVideoOutputNumbers.map(
+                    (option: OutputNumberOption) => (
+                      <button type="button"
+                        key={option.value}
+                        onClick={() =>
+                          handlers.handleOutputNumberChange(option)
+                        }
+                        className={cn(
+                          "px-2 py-0.5 rounded text-xs transition-colors",
+                          computed.currentOutputNumber === option.value
+                            ? "bg-zinc-700 text-white"
+                            : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700",
+                          option.isPro && !isPro && "opacity-70",
+                        )}
+                      >
+                        {option.value}
+                      </button>
+                    ),
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* 生成音频（仅视频且模型支持时） */}
-          {computed.modelSupportsAudio && (
-            <div className="flex items-center gap-2">
-              <Volume2 className="w-3.5 h-3.5 text-zinc-500" />
-              <Label className="text-xs text-zinc-300">{texts.generateAudio ?? "Audio"}</Label>
-              <Switch
-                checked={state.generateAudio}
-                onCheckedChange={actions.setGenerateAudio}
-                className="scale-75"
-              />
-            </div>
-          )}
-        </div>
-      )}
+            {/* 生成音频（仅视频且模型支持时） */}
+            {computed.modelSupportsAudio && (
+              <div className="flex items-center gap-2">
+                <Volume2 className="w-3.5 h-3.5 text-zinc-500" />
+                <Label className="text-xs text-zinc-300">
+                  {texts.generateAudio ?? "Audio"}
+                </Label>
+                <Switch
+                  checked={state.generateAudio}
+                  onCheckedChange={actions.setGenerateAudio}
+                  className="scale-75"
+                />
+              </div>
+            )}
+          </div>
+        )}
     </div>
   );
 }

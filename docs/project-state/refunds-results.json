@@ -1,0 +1,73 @@
+{
+  "testedAt": "2026-11-01T23:45:22.984Z",
+  "clientDate": "2026-11-02",
+  "task": "RFN-001",
+  "scope": "Local integration/regression; real provider test refunds and public callbacks deferred by Owner until HTTPS deployment",
+  "retainedSuites": 8,
+  "refundGroups": 13,
+  "browserApiGroups": 3,
+  "productionBuild": true,
+  "typecheck": true,
+  "productionIsolation": true,
+  "siteIsolationGroups": 6,
+  "newRealProviderCalls": 0,
+  "sites": [
+    {
+      "site": "laconic",
+      "counts": {
+        "users": 2,
+        "tasks": 5,
+        "orders": 3,
+        "refunds": 3,
+        "fixture_users": 0
+      },
+      "tools": {
+        "text-summary": true,
+        "video-generation": true
+      },
+      "billing": {
+        "subscriptions": 0,
+        "cycles": 0,
+        "new_orders": 0,
+        "new_refunds": 0
+      },
+      "newProviders": {
+        "stripe": false,
+        "creem": false
+      },
+      "baseCommit": "4dae674a18a17508981cb77b18d2efe698f0a244",
+      "candidateTag": "refunds-local-20261102"
+    },
+    {
+      "site": "aurora-notes",
+      "counts": {
+        "users": 2,
+        "tasks": 0,
+        "orders": 0,
+        "refunds": 0,
+        "fixture_users": 0
+      },
+      "tools": {
+        "text-summary": true,
+        "video-generation": false
+      },
+      "sourceCommit": "86ec66d89109ad8c4a5883a1b6596536a353b125"
+    }
+  ],
+  "notes": [
+    "Second site was stopped at verification entry and restarted with its existing AUD-003 source/schema/configuration; no source upgrade.",
+    "Production QA used the same dual-stack hostname as the normal local server.",
+    "Stripe/Creem cash amount must match standard USD order; tax-inclusive or ambiguous cases require manual reconciliation.",
+    "Refunding a period does not itself cancel the subscription."
+  ],
+  "evidence": [
+    "four-channel-refund-results.json",
+    "refund-browser-results.json",
+    "refund-billing-results.json",
+    "refund-billing-browser-results.json",
+    "refund-isolation-results.json",
+    "refund-production-results.json"
+  ],
+  "recoveryTag": "refunds-local-20261102",
+  "beforeTag": "refunds-before-20261102"
+}

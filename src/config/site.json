@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "id": "laconic",
+  "origin": "http://localhost:3000",
+  "languages": {
+    "default": "en",
+    "enabled": ["en", "zh"]
+  },
+  "tools": {
+    "text-summary": true,
+    "video-generation": true
+  },
+  "contact": {
+    "supportEmail": "support@laconic.local",
+    "privacyEmail": "privacy@laconic.local",
+    "docsUrl": ""
+  },
+  "local": {
+    "port": 3000,
+    "databasePort": 55432,
+    "databaseName": "laconic_local",
+    "databaseUser": "laconic_local",
+    "nativeWorkspace": "LaconicReel/workspace"
+  },
+  "isolation": {
+    "cookiePrefix": "better-auth",
+    "fileNamespace": "laconic",
+    "localVideoDirectory": ".local/generated-videos"
+  },
+  "ui": {
+    "schemaVersion": 1,
+    "presetVersion": "1.0.0",
+    "presetId": "studio",
+    "brand": {
+      "name": "Laconic",
+      "mark": "L",
+      "logoPath": ""
+    },
+    "theme": {
+      "mode": "light",
+      "accent": "#5146e5",
+      "background": "#ffffff",
+      "font": "system",
+      "fontSize": 15,
+      "radius": 12,
+      "shadow": "soft"
+    },
+    "layout": {
+      "density": "comfortable",
+      "contentMaxWidth": 1280,
+      "sidebarWidth": 208,
+      "arrangement": "split",
+      "columns": 2
+    },
+    "content": {
+      "title": {
+        "zh": "把灵感，变成作品。",
+        "en": "A little space for your next big idea."
+      },
+      "subtitle": {
+        "zh": "从一段文字、一个想法开始。让 AI 帮你整理思路，释放创作时间。",
+        "en": "Start with a few words or an idea. Make room for the work that matters."
+      },
+      "cta": {
+        "zh": "生成摘要",
+        "en": "Create summary"
+      }
+    },
+    "defaultTool": "text",
+    "sections": ["examples", "features", "faq"]
+  }
+}

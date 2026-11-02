@@ -1,27 +1,21 @@
-import { NextResponse, type NextRequest } from "next/server";
-
-import { handleEvent, stripe, type Stripe } from "@/payment";
-
-import { env } from "@/env.mjs";
-
-const handler = async (req: NextRequest) => {
-  const payload = await req.text();
-  const signature = req.headers.get("Stripe-Signature")!;
+import { verifyStripe } from "@/payment/providers/stripe";
+import { readBounded } from "@/payment/providers/http";
+import { receivePaymentEvent } from "@/services/orders";
+import { ApiError } from "@/lib/api/error";
+export const dynamic = "force-dynamic";
+export async function POST(request: Request) {
   try {
-    const event = stripe.webhooks.constructEvent(
-      payload,
-      signature,
-      env.STRIPE_WEBHOOK_SECRET!,
-    ) as Stripe.DiscriminatedEvent;
-    await handleEvent(event);
-
-    console.log("✅ Handled Stripe Event", event.type);
-    return NextResponse.json({ received: true }, { status: 200 });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown error";
-    console.log(`❌ Error when handling Stripe Event: ${message}`);
-    return NextResponse.json({ error: message }, { status: 400 });
+    await receivePaymentEvent(
+      await verifyStripe(request, await readBounded(request)),
+    );
+    return Response.json({ received: true });
+  } catch (e) {
+    return Response.json(
+      { received: false },
+      {
+        status:
+          e instanceof ApiError ? (e.status === 409 ? 500 : e.status) : 500,
+      },
+    );
   }
-};
-
-export { handler as GET, handler as POST };
+}

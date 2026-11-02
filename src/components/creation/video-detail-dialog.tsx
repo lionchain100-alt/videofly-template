@@ -1,4 +1,5 @@
 "use client";
+import { siteManifest } from "@/config/site-manifest";
 
 // ============================================
 // Video Detail Dialog Component
@@ -9,11 +10,7 @@ import { X, Download, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { cn } from "@/components/ui";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
@@ -77,7 +74,7 @@ export function VideoDetailDialog({
     if (video.videoUrl) {
       const link = document.createElement("a");
       link.href = video.videoUrl;
-      link.download = `videofly-${video.uuid}.mp4`;
+      link.download = `${siteManifest.id}-${video.uuid}.mp4`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -87,7 +84,8 @@ export function VideoDetailDialog({
 
   const normalizedStatus = (video.status || "pending").toLowerCase();
   const statusLabel =
-    t(`status.${normalizedStatus}` as "status.completed") || t("status.processing");
+    t(`status.${normalizedStatus}` as "status.completed") ||
+    t("status.processing");
 
   return (
     <>
@@ -95,14 +93,14 @@ export function VideoDetailDialog({
         <DialogContent
           className="p-0 overflow-hidden"
           style={{
-            width: '75vw',
-            maxWidth: '85vw',
-            height: '80vh',
+            width: "75vw",
+            maxWidth: "85vw",
+            height: "80vh",
           }}
         >
           <DialogTitle className="sr-only">{t("title")}</DialogTitle>
           {/* Close button */}
-          <button
+          <button type="button"
             onClick={onClose}
             className="absolute right-4 top-4 z-10 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground bg-background"
           >
@@ -141,8 +139,8 @@ export function VideoDetailDialog({
                     normalizedStatus === "completed"
                       ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
                       : normalizedStatus === "failed"
-                      ? "bg-rose-500/10 text-rose-500 border-rose-500/20"
-                      : "bg-blue-500/10 text-blue-500 border-blue-500/20"
+                        ? "bg-rose-500/10 text-rose-500 border-rose-500/20"
+                        : "bg-blue-500/10 text-blue-500 border-blue-500/20"
                   }
                   variant="outline"
                 >
@@ -153,17 +151,23 @@ export function VideoDetailDialog({
               {/* Model info */}
               <div className="space-y-4">
                 <div className="space-y-1">
-                  <div className="text-sm text-muted-foreground">{t("detail.model")}</div>
+                  <div className="text-sm text-muted-foreground">
+                    {t("detail.model")}
+                  </div>
                   <div className="font-medium capitalize">{video.model}</div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <div className="text-sm text-muted-foreground">{t("detail.duration")}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {t("detail.duration")}
+                    </div>
                     <div className="font-medium">{video.duration}s</div>
                   </div>
                   <div className="space-y-1">
-                    <div className="text-sm text-muted-foreground">{t("detail.aspectRatio")}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {t("detail.aspectRatio")}
+                    </div>
                     <div className="font-medium">{video.aspectRatio}</div>
                   </div>
                 </div>
@@ -173,7 +177,9 @@ export function VideoDetailDialog({
 
               {/* Prompt */}
               <div className="space-y-2">
-                <div className="text-sm text-muted-foreground">{t("detail.prompt")}</div>
+                <div className="text-sm text-muted-foreground">
+                  {t("detail.prompt")}
+                </div>
                 <p className="text-sm leading-relaxed">{video.prompt}</p>
               </div>
 
@@ -182,13 +188,19 @@ export function VideoDetailDialog({
               {/* Metadata */}
               <div className="space-y-3">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">{t("detail.createdAt")}</span>
+                  <span className="text-muted-foreground">
+                    {t("detail.createdAt")}
+                  </span>
                   <span className="font-medium">
-                    {formatDistanceToNow(new Date(video.createdAt), { addSuffix: true })}
+                    {formatDistanceToNow(new Date(video.createdAt), {
+                      addSuffix: true,
+                    })}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">{t("detail.creditsUsed")}</span>
+                  <span className="text-muted-foreground">
+                    {t("detail.creditsUsed")}
+                  </span>
                   <span className="font-medium">{video.creditsUsed}</span>
                 </div>
               </div>

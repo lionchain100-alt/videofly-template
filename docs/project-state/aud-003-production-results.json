@@ -1,0 +1,8 @@
+{
+  "testedAt": "2026-11-01T14:35:46.127Z",
+  "passed": [
+    "Laconic: production homepage/brand assets work; local password and Studio page/API disabled",
+    "Aurora Notes: production homepage/brand assets work; local password and Studio page/API disabled"
+  ],
+  "providerCalls": 0
+}

@@ -1,0 +1,131 @@
+{
+  "testedAt": "2026-11-02T03:46:21.420Z",
+  "task": "AUD-008",
+  "scope": "Local UI business/theme/language/responsive/keyboard acceptance, SEO/legacy route truth and production authentication configuration; no actual OAuth/email/paid generation acceptance",
+  "retainedSuites": 10,
+  "originalBusinessSuites": 9,
+  "governanceGroups": 9,
+  "siteIsolationGroups": 6,
+  "storageGroups": 9,
+  "privateStorageApiGroups": 4,
+  "typecheck": true,
+  "productionBuild": true,
+  "productionIsolation": true,
+  "readiness": {
+    "status": "ready",
+    "checks": {
+      "database": true,
+      "storage": true,
+      "workers": true
+    },
+    "checkedAt": "2026-11-02T03:46:21.410Z"
+  },
+  "sites": [
+    {
+      "site": "laconic",
+      "counts": {
+        "users": 2,
+        "tasks": 5,
+        "assets": 1,
+        "orders": 3,
+        "refunds": 3,
+        "migrations": 15
+      },
+      "adminCredits": {
+        "available": 190,
+        "frozen": 0,
+        "refund_reserved": 0
+      }
+    },
+    {
+      "site": "aurora-notes",
+      "counts": {
+        "users": 2,
+        "tasks": 0,
+        "assets": 0,
+        "orders": 0,
+        "refunds": 0,
+        "migrations": 8
+      },
+      "adminCredits": {
+        "available": 102,
+        "frozen": 0,
+        "refund_reserved": 0
+      }
+    }
+  ],
+  "policyState": {
+    "revision": 1,
+    "versions": 1,
+    "costs": 0,
+    "reviews": 0,
+    "incidents": 0,
+    "limits": {
+      "perMinute": 5,
+      "perDay": 50,
+      "dailyUSD": 10,
+      "monthlyUSD": 100
+    },
+    "originalTaskCreditPrices": [
+      1,
+      10
+    ]
+  },
+  "finalBusinessBackup": "E:\\codex项目\\Laconic Reel\\videofly-template\\.local\\backups\\1793590550828-0cdb4ee0",
+  "finalBusinessRestore": {
+    "database": "laconic_local_restore_aud008_verified",
+    "assetDirectory": "E:\\codex项目\\Laconic Reel\\videofly-template\\.local\\restores\\laconic_local_restore_aud008_verified\\assets",
+    "siteId": "laconic",
+    "sourceDigestVerified": true,
+    "filesVerified": 1,
+    "workersStarted": false,
+    "financialDataUnchanged": true,
+    "storageRouting": "portable-local",
+    "requiresOriginalSecrets": true
+  },
+  "newModelCalls": 0,
+  "newPaymentCalls": 0,
+  "realR2Regression": true,
+  "recoveryTag": "aud-008-local-20261102",
+  "beforeTag": "aud-008-before-20261102",
+  "evidence": [
+    "aud-008-governance-results.json",
+    "aud-008-ui-results.json",
+    "aud-008-isolation-results.json",
+    "aud-008-storage-results.json",
+    "aud-008-storage-api-results.json",
+    "aud-008-billing-results.json",
+    "aud-008-refund-results.json",
+    "aud-008-payment-ops-results.json",
+    "aud-008-production-results.json",
+    "aud-008-runtime-results.json",
+    "aud-008-accessibility-results.json",
+    "aud-008-auth-results.json",
+    "aud-008-seo-results.json",
+    "aud-008-offline-preview-results.json"
+  ],
+  "boundaries": [
+    "Actual HTTPS Google callback / email delivery and link expiry/use acceptance",
+    "Real device/Safari/Firefox/screen-reader coverage and full WCAG certification",
+    "AUD-009 clean install/CI/fixed deployment and deferred real payments/production disaster recovery"
+  ],
+  "uiCombinations": 12,
+  "viewportCases": 36,
+  "viewports": [
+    390,
+    768,
+    1440
+  ],
+  "uiBusinessTools": 2,
+  "layoutsPerTool": 3,
+  "previewDialogCombinations": 12,
+  "dialogsPerCombination": 3,
+  "noDatabasePreview": true,
+  "ownerInitializationLocalAtomicQA": true,
+  "sourceRecoveryTag": "aud-008-local-20261102",
+  "remaining": [
+    "Actual HTTPS Google callback / email delivery and link expiry/use acceptance",
+    "Real device/Safari/Firefox/screen-reader coverage and full WCAG certification",
+    "AUD-009 clean install/CI/fixed deployment and deferred real payments/production disaster recovery"
+  ]
+}

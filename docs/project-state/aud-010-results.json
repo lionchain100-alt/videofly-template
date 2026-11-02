@@ -1,0 +1,182 @@
+{
+  "testedAt": "2026-11-02T07:05:24.051Z",
+  "task": "AUD-010",
+  "scope": "Clear original source lint debt and remove low dependency advisory; retain business behavior and leave independent site versions/deployment/platform acceptance unchanged",
+  "lint": {
+    "before": 265,
+    "afterErrors": 0,
+    "afterWarnings": 0,
+    "scope": "src/scripts under unchanged Biome rules/exclusions",
+    "waiverEntries": 0,
+    "nonemptyWaiversRejected": true,
+    "rawLintPassed": true,
+    "scopedFiles": 448,
+    "repositoryFiles": 460,
+    "repositoryCheckUsesExistingGitIgnore": true
+  },
+  "dependencies": {
+    "beforeLow": 1,
+    "current": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0
+    },
+    "override": "@react-email/components>@react-email/render=2.2.0",
+    "removed": [
+      "@react-email/render@2.0.6",
+      "html-to-text@9.0.5",
+      "deepmerge@4.3.1"
+    ],
+    "allOtherResolutionsUnchanged": true,
+    "frozenInstall": true,
+    "ciThreshold": "low"
+  },
+  "regression": {
+    "retainedBusinessSuites": 10,
+    "modelAdminBrowserGroups": 3,
+    "uiViewportCases": 36,
+    "previewCombinations": 12,
+    "siteIsolationGroups": 12,
+    "storageRecoveryGroups": 9,
+    "realR2ApiGroups": 4,
+    "emailVariants": 14,
+    "sdkHttpIntercepted": 1,
+    "authRedirectAsciiRejected": 33,
+    "storageControlCharactersRejected": 32,
+    "storagePunctuationRejected": 3,
+    "legacyStorageInterface": true,
+    "productionBuildAndTypes": true,
+    "noDatabaseBuild": true,
+    "productionPrivacy": true,
+    "offlinePreview": true,
+    "oldBackupSignatureCompatible": true
+  },
+  "sites": [
+    {
+      "id": "laconic",
+      "origin": "http://localhost:3000",
+      "databasePort": 55432,
+      "databaseName": "laconic_local",
+      "counts": {
+        "users": 2,
+        "tasks": 5,
+        "assets": 1,
+        "orders": 3,
+        "refunds": 3,
+        "migrations": 15
+      },
+      "administratorCredits": {
+        "available": 190,
+        "frozen": 0,
+        "refund_reserved": 0
+      },
+      "readiness": {
+        "status": "ready",
+        "checks": {
+          "database": true,
+          "storage": true,
+          "workers": true
+        },
+        "checkedAt": "2026-11-02T07:05:14.827Z"
+      }
+    },
+    {
+      "id": "aurora-notes",
+      "origin": "http://localhost:3002",
+      "databasePort": 55433,
+      "databaseName": "aurora_notes_local",
+      "counts": {
+        "users": 2,
+        "tasks": 0,
+        "assets": 0,
+        "orders": 0,
+        "refunds": 0,
+        "migrations": 8
+      },
+      "administratorCredits": {
+        "available": 102,
+        "frozen": 0,
+        "refund_reserved": 0
+      }
+    },
+    {
+      "id": "cedar-tools",
+      "origin": "http://localhost:3003",
+      "databasePort": 55434,
+      "databaseName": "cedar_tools_local",
+      "counts": {
+        "users": 2,
+        "tasks": 0,
+        "assets": 0,
+        "orders": 0,
+        "refunds": 0,
+        "migrations": 15
+      },
+      "administratorCredits": {
+        "available": 102,
+        "frozen": 0,
+        "refund_reserved": 0
+      },
+      "readiness": {
+        "status": "ready",
+        "checks": {
+          "database": true,
+          "storage": true,
+          "workers": true
+        },
+        "checkedAt": "2026-11-02T07:05:24.004Z"
+      }
+    }
+  ],
+  "businessBackup": {
+    "backup": "E:\\codex项目\\Laconic Reel\\videofly-template\\.local\\backups\\1793602403681-9d71718f"
+  },
+  "businessRestore": {
+    "database": "laconic_local_restore_aud010_verified",
+    "assetDirectory": "E:\\codex项目\\Laconic Reel\\videofly-template\\.local\\restores\\laconic_local_restore_aud010_verified\\assets",
+    "siteId": "laconic",
+    "sourceDigestVerified": true,
+    "filesVerified": 1,
+    "workersStarted": false,
+    "financialDataUnchanged": true,
+    "storageRouting": "portable-local",
+    "requiresOriginalSecrets": true
+  },
+  "testEnvironmentCorrection": "Production QA env was inherited by a combined local restart, causing dev middleware errors. Restarted with explicit NODE_ENV=development; admin desktop/mobile and readiness passed, with no application policy relaxation.",
+  "independentSiteSourcesUpgraded": false,
+  "newPaidModelCalls": 0,
+  "newPaymentOrRefundCalls": 0,
+  "realEmailsSent": 0,
+  "recoveryTag": "aud-010-local-20261102",
+  "beforeTag": "aud-010-before-20261102",
+  "evidence": [
+    "aud-010-lint-results.json",
+    "aud-010-dependency-results.json",
+    "aud-010-email-results.json",
+    "aud-010-ast-review-results.json",
+    "aud-010-auth-results.json",
+    "aud-010-billing-results.json",
+    "aud-010-ai-browser-results.json",
+    "aud-010-cedar-isolation-results.json",
+    "aud-010-isolation-results.json",
+    "aud-010-governance-results.json",
+    "aud-010-payment-ops-results.json",
+    "aud-010-refund-results.json",
+    "aud-010-runtime-results.json",
+    "aud-010-production-results.json",
+    "aud-010-storage-api-results.json",
+    "aud-010-storage-results.json",
+    "aud-010-storage-interface-results.json",
+    "aud-010-ui-results.json",
+    "aud-010-accessibility-results.json",
+    "aud-010-seo-results.json",
+    "aud-010-offline-preview-results.json"
+  ],
+  "deferred": [
+    "Actual GitHub-hosted CI/Linux standalone results after remote submission",
+    "Fixed HTTPS production deployment, actual OAuth/email/Owner and operational acceptance",
+    "Previously deferred actual Stripe/Creem and per-channel platform receipts/refunds/subscription acceptance"
+  ]
+}

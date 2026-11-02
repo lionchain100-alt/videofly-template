@@ -1,0 +1,18 @@
+{
+  "testedAt": "2026-11-01T14:38:14.428Z",
+  "simultaneousBrowserSessions": true,
+  "results": [
+    {
+      "name": "Laconic",
+      "availableCredits": 190,
+      "frozenCredits": 0
+    },
+    {
+      "name": "Aurora Notes",
+      "availableCredits": 102,
+      "frozenCredits": 0
+    }
+  ],
+  "browserErrors": [],
+  "browserWarnings": []
+}

@@ -13,7 +13,10 @@ if (PROXY_URL) {
   try {
     // Note: In Next.js server context, undici might not be directly importable
     // We'll use a dynamic require/import approach
-    let undici;
+    let undici: {
+      ProxyAgent: new (url: string) => object;
+      setGlobalDispatcher: (agent: object) => void;
+    } | undefined;
 
     // Try CommonJS require first (for server-side compatibility)
     try {

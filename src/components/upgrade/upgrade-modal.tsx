@@ -1,3 +1,4 @@
+"use client";
 /**
  * Upgrade Modal
  *
@@ -6,8 +7,6 @@
  * - 支持三种类型：一次性积分包、按月订阅、按年订阅
  * - 根据 openModal 传入的 reason 显示不同的提示信息
  */
-
-"use client";
 
 import { useTranslations } from "next-intl";
 import { X } from "lucide-react";
@@ -103,7 +102,9 @@ function UpgradeModalContent() {
   const getDescription = () => {
     switch (reason) {
       case "insufficient_credits":
-        return t("insufficient_credits_description", { credits: requiredCredits ?? 0 });
+        return t("insufficient_credits_description", {
+          credits: requiredCredits ?? 0,
+        });
       case "expired":
         return t("expired_description");
       default:
@@ -116,12 +117,12 @@ function UpgradeModalContent() {
       <DialogContent
         className="!p-0 overflow-hidden max-h-[90vh]"
         style={{
-          width: '100%',
-          maxWidth: '880px',
+          width: "100%",
+          maxWidth: "880px",
         }}
       >
         {/* 关闭按钮 */}
-        <button
+        <button type="button"
           onClick={closeModal}
           className="absolute right-4 top-4 z-50 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground bg-background"
         >
@@ -131,9 +132,13 @@ function UpgradeModalContent() {
 
         {/* 标题区域 */}
         <div className="px-4 sm:px-6 pt-6 pb-4 border-b">
-          <DialogTitle className="text-xl sm:text-2xl">{getTitle()}</DialogTitle>
+          <DialogTitle className="text-xl sm:text-2xl">
+            {getTitle()}
+          </DialogTitle>
           {getDescription() && (
-            <p className="text-sm text-muted-foreground mt-2">{getDescription()}</p>
+            <p className="text-sm text-muted-foreground mt-2">
+              {getDescription()}
+            </p>
           )}
         </div>
 

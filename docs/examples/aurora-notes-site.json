@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "id": "aurora-notes",
+  "origin": "http://localhost:3002",
+  "languages": {
+    "default": "zh",
+    "enabled": ["zh"]
+  },
+  "tools": {
+    "text-summary": true,
+    "video-generation": false
+  },
+  "contact": {
+    "supportEmail": "support@aurora-notes.local",
+    "privacyEmail": "privacy@aurora-notes.local",
+    "docsUrl": ""
+  },
+  "local": {
+    "port": 3002,
+    "databasePort": 55433,
+    "databaseName": "aurora_notes_local",
+    "databaseUser": "aurora_notes_local",
+    "nativeWorkspace": "LaconicReel/sites/aurora-notes"
+  },
+  "isolation": {
+    "cookiePrefix": "aurora-notes-auth",
+    "fileNamespace": "aurora-notes",
+    "localVideoDirectory": ".local/sites/aurora-notes/generated-videos"
+  },
+  "ui": {
+    "schemaVersion": 1,
+    "presetVersion": "1.0.0",
+    "presetId": "minimal",
+    "brand": {
+      "name": "Aurora Notes",
+      "mark": "A",
+      "logoPath": ""
+    },
+    "theme": {
+      "mode": "light",
+      "accent": "#5146e5",
+      "background": "#ffffff",
+      "font": "system",
+      "fontSize": 15,
+      "radius": 12,
+      "shadow": "soft"
+    },
+    "layout": {
+      "density": "comfortable",
+      "contentMaxWidth": 1280,
+      "sidebarWidth": 208,
+      "arrangement": "split",
+      "columns": 2
+    },
+    "content": {
+      "title": {
+        "zh": "把长文变成清楚的重点",
+        "en": "Clear notes from long reads"
+      },
+      "subtitle": {
+        "zh": "独立的文字工具站。粘贴内容，整理重点。",
+        "en": "An independent workspace for useful summaries."
+      },
+      "cta": {
+        "zh": "生成摘要",
+        "en": "Create summary"
+      }
+    },
+    "defaultTool": "text",
+    "sections": ["examples", "features", "faq"]
+  }
+}

@@ -1,3 +1,4 @@
+import { siteManifest as siteBrand } from "@/config/site-manifest";
 import type { BaseEmailProps } from "@/mail/types";
 import EmailButton from "@/mail/components/email-button";
 import EmailLayout from "@/mail/components/email-layout";
@@ -23,9 +24,7 @@ export default function ResetPasswordEmail({
 
   return (
     <EmailLayout locale={locale} messages={messages}>
-      <Text className="text-base text-gray-900">
-        {t("greeting", { name })}
-      </Text>
+      <Text className="text-base text-gray-900">{t("greeting", { name })}</Text>
       <Text className="mt-8 text-2xl font-bold text-gray-900">
         {t("title")}
       </Text>
@@ -57,16 +56,18 @@ ResetPasswordEmail.PreviewProps = {
       resetPassword: {
         greeting: "Hi {name},",
         title: "Reset Your Password",
-        body: "We received a request to reset your password for your VideoFly account.",
+        body: `We received a request to reset your password for your ${siteBrand.ui.brand.name} account.`,
         instruction: "Click the button below to reset your password:",
         button: "Reset Password",
-        validity: "This link will expire in 30 minutes and can only be used once.",
+        validity:
+          "This link will expire in 30 minutes and can only be used once.",
         security: "For security reasons, this link expires after 30 minutes.",
-        ignore: "If you did not request a password reset, you can safely ignore this email.",
+        ignore:
+          "If you did not request a password reset, you can safely ignore this email.",
         footer: "If you didn't request this, please ignore this email.",
       },
     },
   },
   name: "John Doe",
-  resetUrl: "https://videofly.app/reset-password?token=abc123",
+  resetUrl: `${siteBrand.origin}/reset-password?token=abc123`,
 };

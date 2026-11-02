@@ -1,3 +1,4 @@
+import { siteManifest as siteBrand } from "@/config/site-manifest";
 import {
   Body,
   Button,
@@ -37,7 +38,7 @@ export const WelcomeEmail = ({
   name = "",
   locale = "en",
   translations,
-  appUrl = "https://videofly.app",
+  appUrl = `${siteBrand.origin}`,
 }: WelcomeEmailProps) => {
   const currentYear = new Date().getFullYear();
 
@@ -68,12 +69,14 @@ export const WelcomeEmail = ({
                 color: "#18181b",
               }}
             >
-              VideoFly
+              {siteBrand.ui.brand.name}
             </Text>
           </Section>
 
           {/* Greeting */}
-          <Text style={{ fontSize: "16px", lineHeight: "26px", color: "#333333" }}>
+          <Text
+            style={{ fontSize: "16px", lineHeight: "26px", color: "#333333" }}
+          >
             {translations.greeting.replace("{name}", name || "there")}
           </Text>
 
@@ -91,7 +94,9 @@ export const WelcomeEmail = ({
           </Text>
 
           {/* Body */}
-          <Text style={{ fontSize: "16px", lineHeight: "26px", color: "#333333" }}>
+          <Text
+            style={{ fontSize: "16px", lineHeight: "26px", color: "#333333" }}
+          >
             {translations.body}
           </Text>
 

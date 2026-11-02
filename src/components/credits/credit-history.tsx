@@ -17,6 +17,12 @@ interface CreditHistoryProps {
 }
 
 const typeConfig: Record<string, { icon: any; label: string; color: string }> = {
+  task_hold: {icon: Settings,label: "Task hold",color: "text-rose-500"},
+  task_settle: {icon: Settings,label: "Task settled",color: "text-muted-foreground"},
+  task_release: {icon: RotateCcw,label: "Task released",color: "text-emerald-500"},
+  refund_hold:{icon:Settings,label:"退款待确认 / 预留",color:"text-rose-500"},
+  refund_reclaim:{icon:RotateCcw,label:"现金退款积分回收",color:"text-rose-500"},
+  refund_release:{icon:RotateCcw,label:"退款失败释放",color:"text-emerald-500"},
   NEW_USER: {
     icon: ShoppingBag,
     label: "New User Gift",
@@ -142,7 +148,7 @@ export function CreditHistory({ transactions, hasMore, onLoadMore }: CreditHisto
       {/* Load more */}
       {hasMore && onLoadMore && (
         <div className="text-center pt-4">
-          <button
+          <button type="button"
             onClick={onLoadMore}
             className="px-4 py-2 text-sm font-medium rounded-md border border-border hover:bg-muted transition-colors"
           >

@@ -1,0 +1,90 @@
+{
+  "testedAt": "2026-11-02T01:59:55.754Z",
+  "task": "AUD-006",
+  "scope": "Local private storage/data recovery/runtime QA plus real Cloudflare R2 test-bucket round trips; payment provider acceptance remains deferred",
+  "retainedSuites": 9,
+  "storageGroups": 9,
+  "privateApiGroups": 4,
+  "siteIsolationGroups": 6,
+  "browserDesktopMobile": true,
+  "typecheck": true,
+  "productionBuild": true,
+  "productionIsolation": true,
+  "readiness": {
+    "status": "ready",
+    "checks": {
+      "database": true,
+      "storage": true,
+      "workers": true
+    },
+    "checkedAt": "2026-11-02T01:59:55.746Z"
+  },
+  "sites": [
+    {
+      "site": "laconic",
+      "counts": {
+        "users": 2,
+        "tasks": 5,
+        "assets": 1,
+        "orders": 3,
+        "refunds": 3,
+        "migrations": 13
+      },
+      "adminCredits": {
+        "available": 190,
+        "frozen": 0,
+        "refund_reserved": 0
+      }
+    },
+    {
+      "site": "aurora-notes",
+      "counts": {
+        "users": 2,
+        "tasks": 0,
+        "assets": 0,
+        "orders": 0,
+        "refunds": 0,
+        "migrations": 8
+      },
+      "adminCredits": {
+        "available": 102,
+        "frozen": 0,
+        "refund_reserved": 0
+      }
+    }
+  ],
+  "finalBusinessBackup": "E:\\codex项目\\Laconic Reel\\videofly-template\\.local\\backups\\1793584646689-44b820db",
+  "finalBusinessRestore": {
+    "database": "laconic_local_restore_aud006_verified",
+    "assetDirectory": "E:\\codex项目\\Laconic Reel\\videofly-template\\.local\\restores\\laconic_local_restore_aud006_verified\\assets",
+    "siteId": "laconic",
+    "sourceDigestVerified": true,
+    "filesVerified": 1,
+    "workersStarted": false,
+    "financialDataUnchanged": true,
+    "storageRouting": "portable-local",
+    "requiresOriginalSecrets": true
+  },
+  "modelCalls": 0,
+  "paymentCalls": 0,
+  "realR2": true,
+  "recoveryTag": "aud-006-local-20261102",
+  "beforeTag": "aud-006-before-20261102",
+  "evidence": [
+    "aud-006-storage-results.json",
+    "aud-006-api-results.json",
+    "aud-006-r2-results.json",
+    "aud-006-browser-results.json",
+    "aud-006-isolation-results.json",
+    "aud-006-billing-results.json",
+    "aud-006-refund-results.json",
+    "aud-006-payment-ops-results.json",
+    "aud-006-production-results.json"
+  ],
+  "remaining": [
+    "No automatic offsite backup schedule/retention or production PITR/failover acceptance",
+    "No external alert delivery/process supervisor or complete business queue monitoring",
+    "Unverified legacy image-to-model flows require a separate private input handoff",
+    "Stripe/Creem real accounts and public payment/refund receipts remain deployment gates"
+  ]
+}

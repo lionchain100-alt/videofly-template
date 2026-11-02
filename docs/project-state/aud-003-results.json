@@ -1,0 +1,73 @@
+{
+  "testedAt": "2026-11-01T14:39:51.496Z",
+  "task": "AUD-003",
+  "commonSourceFiles": 503,
+  "commonSourceDigest": "d5b5ea6e082577937d27a5eb783751f45aefabb91540af56ed53a7f088aa7ceb",
+  "commonSourceMismatches": [],
+  "sites": [
+    {
+      "id": "laconic",
+      "origin": "http://localhost:3000",
+      "tools": {
+        "text-summary": true,
+        "video-generation": true
+      },
+      "languages": {
+        "default": "en",
+        "enabled": [
+          "en",
+          "zh"
+        ]
+      },
+      "counts": {
+        "users": 2,
+        "tasks": 5,
+        "assets": 1,
+        "orders": 3,
+        "refunds": 3,
+        "leftover_test_users": 0
+      }
+    },
+    {
+      "id": "aurora-notes",
+      "origin": "http://localhost:3002",
+      "tools": {
+        "text-summary": true,
+        "video-generation": false
+      },
+      "languages": {
+        "default": "zh",
+        "enabled": [
+          "zh"
+        ]
+      },
+      "counts": {
+        "users": 2,
+        "tasks": 0,
+        "assets": 0,
+        "orders": 0,
+        "refunds": 0,
+        "leftover_test_users": 0
+      }
+    }
+  ],
+  "retainedSuites": 6,
+  "bothSiteBuilds": true,
+  "productionIsolation": true,
+  "mainEnvLastWritten": "2026-11-01 20:40:49 +08:00 (unchanged during AUD-003)",
+  "newRealProviderCalls": 0,
+  "security": {
+    "critical": 0,
+    "high": 0,
+    "moderate": 0,
+    "low": 1,
+    "dependencyChanges": false
+  },
+  "evidence": [
+    "aud-003-isolation-results.json",
+    "aud-003-browser-results.json",
+    "aud-003-production-results.json",
+    "aud-003-final-smoke-results.json"
+  ],
+  "recoveryTag": "aud-003-reuse-20261101"
+}

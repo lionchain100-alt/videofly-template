@@ -1,3 +1,4 @@
+import { siteManifest as siteBrand } from "@/config/site-manifest";
 import type { BaseEmailProps } from "@/mail/types";
 import EmailButton from "@/mail/components/email-button";
 import EmailLayout from "@/mail/components/email-layout";
@@ -11,7 +12,7 @@ interface WelcomeEmailProps extends BaseEmailProps {
 
 export default function WelcomeEmail({
   name = "there",
-  appUrl = "https://videofly.app",
+  appUrl = `${siteBrand.origin}`,
   locale,
   messages,
 }: WelcomeEmailProps) {
@@ -23,9 +24,7 @@ export default function WelcomeEmail({
 
   return (
     <EmailLayout locale={locale} messages={messages}>
-      <Text className="text-base text-gray-900">
-        {t("greeting", { name })}
-      </Text>
+      <Text className="text-base text-gray-900">{t("greeting", { name })}</Text>
       <Text className="mt-8 text-2xl font-bold text-gray-900">
         {t("title")}
       </Text>
@@ -42,7 +41,9 @@ export default function WelcomeEmail({
         • {t("featuresList.share")}
       </Text>
 
-      <EmailButton href={`${appUrl}?utm_source=transactional&utm_medium=email&utm_campaign=welcome`}>
+      <EmailButton
+        href={`${appUrl}?utm_source=transactional&utm_medium=email&utm_campaign=welcome`}
+      >
         {t("cta")}
       </EmailButton>
 
@@ -62,19 +63,20 @@ WelcomeEmail.PreviewProps = {
       },
       welcome: {
         greeting: "Hi {name},",
-        title: "Welcome to VideoFly!",
-        body: "Thank you for joining VideoFly! We're thrilled to have you on board.",
-        features: "With VideoFly, you can:",
+        title: `Welcome to ${siteBrand.ui.brand.name}!`,
+        body: `Thank you for joining ${siteBrand.ui.brand.name}! We're thrilled to have you on board.`,
+        features: `With ${siteBrand.ui.brand.name}, you can:`,
         featuresList: {
           generate: "Generate stunning AI videos in minutes",
           models: "Use multiple AI models like Sora 2, Veo 3.1, and more",
           share: "Download and share your creations anywhere",
         },
         cta: "Start Creating Videos",
-        footer: "If you have any questions, feel free to reach out to our support team.",
+        footer:
+          "If you have any questions, feel free to reach out to our support team.",
       },
     },
   },
   name: "John Doe",
-  appUrl: "https://videofly.app",
+  appUrl: `${siteBrand.origin}`,
 };

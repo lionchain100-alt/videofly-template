@@ -1,0 +1,189 @@
+{
+  "testedAt": "2026-11-02T04:57:17.903Z",
+  "task": "AUD-009",
+  "scope": "Local clean latest-template initialization, CI implementation and production configuration gates; actual deployment/platform acceptance deferred",
+  "retainedSuites": 10,
+  "dualSiteIsolationGroups": 12,
+  "uiMatrixCases": 36,
+  "previewKeyboardThemeCombinations": 12,
+  "privateStorageApiGroups": 4,
+  "storageRecoveryGroups": 9,
+  "sites": [
+    {
+      "id": "laconic",
+      "origin": "http://localhost:3000",
+      "databasePort": 55432,
+      "databaseName": "laconic_local",
+      "counts": {
+        "users": 2,
+        "tasks": 5,
+        "assets": 1,
+        "orders": 3,
+        "refunds": 3,
+        "migrations": 15
+      },
+      "administratorCredits": {
+        "available": 190,
+        "frozen": 0,
+        "refund_reserved": 0
+      },
+      "readiness": {
+        "status": "ready",
+        "checks": {
+          "database": true,
+          "storage": true,
+          "workers": true
+        },
+        "checkedAt": "2026-11-02T04:57:17.032Z"
+      }
+    },
+    {
+      "id": "aurora-notes",
+      "origin": "http://localhost:3002",
+      "databasePort": 55433,
+      "databaseName": "aurora_notes_local",
+      "counts": {
+        "users": 2,
+        "tasks": 0,
+        "assets": 0,
+        "orders": 0,
+        "refunds": 0,
+        "migrations": 8
+      },
+      "administratorCredits": {
+        "available": 102,
+        "frozen": 0,
+        "refund_reserved": 0
+      }
+    },
+    {
+      "id": "cedar-tools",
+      "origin": "http://localhost:3003",
+      "databasePort": 55434,
+      "databaseName": "cedar_tools_local",
+      "counts": {
+        "users": 2,
+        "tasks": 0,
+        "assets": 0,
+        "orders": 0,
+        "refunds": 0,
+        "migrations": 15
+      },
+      "administratorCredits": {
+        "available": 102,
+        "frozen": 0,
+        "refund_reserved": 0
+      },
+      "readiness": {
+        "status": "ready",
+        "checks": {
+          "database": true,
+          "storage": true,
+          "workers": true
+        },
+        "checkedAt": "2026-11-02T04:57:17.855Z"
+      }
+    }
+  ],
+  "newSite": {
+    "id": "cedar-tools",
+    "freshNodeModules": true,
+    "frozenInstall": true,
+    "migrations": 15,
+    "migrationChecksumsVerified": true,
+    "initializationPasses": 2,
+    "initialSeedCredits": 100,
+    "afterFirstLoginCredits": 102,
+    "providerKeysCopied": false,
+    "businessRowsCopied": false,
+    "independentCurrentState": true
+  },
+  "ci": {
+    "workflow": ".github/workflows/quality.yml",
+    "yamlAndPermissionsValidated": true,
+    "actionsPinnedToVerifiedSHA": true,
+    "node": "22.23.1",
+    "pnpm": "9.15.1",
+    "postgres": "17.11",
+    "ephemeralCredentialsOnly": true,
+    "hostedExecution": "NOT_RUN_NO_REMOTE_PUSH",
+    "localEquivalentGatesPassed": true,
+    "linuxStandaloneBuild": "PENDING_HOSTED_CI"
+  },
+  "lint": {
+    "knownDiagnostics": 265,
+    "newDiagnostics": 0,
+    "scope": "src and scripts under inherited biome.json exclusions; policy hash enforced",
+    "historicalDebt": "Explicit baseline; raw lint still exits nonzero"
+  },
+  "audit": {
+    "info": 0,
+    "low": 1,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0
+  },
+  "productionConfiguration": {
+    "fixturesPassed": true,
+    "unsafeVariants": 20,
+    "unsafeOriginVariants": 7,
+    "localConfigurationCorrectlyRejected": true,
+    "doesNotProveExternalAcceptance": true
+  },
+  "productionBuild": {
+    "passed": true,
+    "typecheck": true,
+    "databaseVariablesEmpty": true,
+    "windowsLocalNodeOutput": true
+  },
+  "fixes": [
+    "Catch-all auth route no longer excluded as path traversal",
+    "Non-site directories no longer break factory discovery",
+    "Waffo environment field and fresh provider-disable flags corrected",
+    "Fresh sites have separate current-state records",
+    "PowerShell 5/7 JSON timestamp-safe managed process shutdown; occupied ports preserve runtime record"
+  ],
+  "businessBackup": {
+    "backup": "E:\\codex项目\\Laconic Reel\\videofly-template\\.local\\backups\\1793594720093-b45222fb"
+  },
+  "businessRestore": {
+    "database": "laconic_local_restore_aud009_verified",
+    "assetDirectory": "E:\\codex项目\\Laconic Reel\\videofly-template\\.local\\restores\\laconic_local_restore_aud009_verified\\assets",
+    "siteId": "laconic",
+    "sourceDigestVerified": true,
+    "filesVerified": 1,
+    "workersStarted": false,
+    "financialDataUnchanged": true,
+    "storageRouting": "portable-local",
+    "requiresOriginalSecrets": true
+  },
+  "realR2Regression": true,
+  "newPaidModelCalls": 0,
+  "newPaymentOrRefundCalls": 0,
+  "recoveryTag": "aud-009-local-20261102",
+  "beforeTag": "aud-009-before-20261102",
+  "evidence": [
+    "aud-009-auth-results.json",
+    "aud-009-billing-results.json",
+    "aud-009-fresh-isolation-results.json",
+    "aud-009-governance-results.json",
+    "aud-009-isolation-results.json",
+    "aud-009-payment-ops-results.json",
+    "aud-009-preflight-results.json",
+    "aud-009-production-results.json",
+    "aud-009-refund-results.json",
+    "aud-009-runtime-results.json",
+    "aud-009-storage-api-results.json",
+    "aud-009-storage-results.json",
+    "aud-009-ui-results.json",
+    "aud-009-accessibility-results.json",
+    "aud-009-offline-preview-results.json",
+    "aud-009-seo-results.json"
+  ],
+  "deferred": [
+    "Hosted GitHub Actions/Linux standalone results after authorized remote push",
+    "Owned fixed HTTPS deployment and genuine OAuth/email/production Owner",
+    "Actual production database, private bucket policy, worker supervision and offsite DR/rollback",
+    "Per-provider real signed payment/subscription/refund acceptance including Stripe/Creem after deployment"
+  ]
+}

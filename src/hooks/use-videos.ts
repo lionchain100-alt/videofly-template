@@ -169,7 +169,7 @@ export function useDownloadVideo() {
 export function useRefreshProcessingVideos(
   videos: Array<{ status?: string }>,
   refetch: () => void,
-  interval: number = 5000
+  interval = 5000
 ) {
   const hasProcessing = videos.some((v) => {
     const status = (v.status || "").toLowerCase();

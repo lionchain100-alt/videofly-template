@@ -1,4 +1,5 @@
 "use client";
+import { siteManifest as siteBrand } from "@/config/site-manifest";
 
 import Link from "next/link";
 import { useLocalePathname, useLocaleRouter } from "@/i18n/navigation";
@@ -20,6 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { userMenuItems } from "@/config/navigation";
+import { localePath } from "@/config/site-manifest";
 import { i18n, localeMap } from "@/config/i18n-config";
 
 interface HeaderSimpleProps {
@@ -66,8 +68,10 @@ export function HeaderSimple({
           >
             <Menu className="h-5 w-5" />
           </button>
-          <Link href={`/${lang}`} className="flex items-center gap-2">
-            <span className="text-xl font-semibold">VideoFly</span>
+          <Link href={localePath(lang)} className="flex items-center gap-2">
+            <span className="text-xl font-semibold">
+              {siteBrand.ui.brand.name}
+            </span>
           </Link>
         </div>
 
@@ -97,7 +101,7 @@ export function HeaderSimple({
                   onSelect={() => switchLocale(locale)}
                   className={cn(
                     "cursor-pointer",
-                    locale === currentLocale && "bg-muted"
+                    locale === currentLocale && "bg-muted",
                   )}
                 >
                   <span>{localeMap[locale]}</span>
@@ -120,15 +124,24 @@ export function HeaderSimple({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="min-w-[120px]">
-              <DropdownMenuItem onClick={() => setTheme("light")} className="cursor-pointer">
+              <DropdownMenuItem
+                onClick={() => setTheme("light")}
+                className="cursor-pointer"
+              >
                 <Sun className="mr-2 h-4 w-4" />
                 Light
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme("dark")} className="cursor-pointer">
+              <DropdownMenuItem
+                onClick={() => setTheme("dark")}
+                className="cursor-pointer"
+              >
                 <Moon className="mr-2 h-4 w-4" />
                 Dark
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme("system")} className="cursor-pointer">
+              <DropdownMenuItem
+                onClick={() => setTheme("system")}
+                className="cursor-pointer"
+              >
                 <Monitor className="mr-2 h-4 w-4" />
                 System
               </DropdownMenuItem>
@@ -163,7 +176,7 @@ export function HeaderSimple({
                 <DropdownMenuSeparator />
                 {userMenuItems.map((item) => (
                   <DropdownMenuItem key={item.id} asChild>
-                    <Link href={`/${lang}${item.href}`}>
+                    <Link href={localePath(lang, `${item.href}`)}>
                       {menuLabelMap[item.id] ?? item.title}
                     </Link>
                   </DropdownMenuItem>
@@ -173,7 +186,7 @@ export function HeaderSimple({
                   className="cursor-pointer text-destructive"
                   onSelect={async () => {
                     await authClient.signOut();
-                    router.push(`/${lang}`);
+                    router.push(localePath(lang, `/`));
                     router.refresh();
                   }}
                 >
@@ -182,7 +195,11 @@ export function HeaderSimple({
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button variant="default" size="sm" onClick={() => signInModal.onOpen()}>
+            <Button
+              variant="default"
+              size="sm"
+              onClick={() => signInModal.onOpen()}
+            >
               {tCommon("login")}
             </Button>
           )}

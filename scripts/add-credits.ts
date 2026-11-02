@@ -21,10 +21,10 @@ import { nanoid } from "nanoid";
 import { CreditTransType, CreditPackageStatus } from "@/db/schema";
 
 const email = process.argv[2];
-const creditsAmount = parseInt(process.argv[3], 10);
+const creditsAmount = Number.parseInt(process.argv[3], 10);
 const reason = process.argv[4] || "System add credits";
 
-if (!email || isNaN(creditsAmount) || creditsAmount <= 0) {
+if (!email || Number.isNaN(creditsAmount) || creditsAmount <= 0) {
   console.error("❌ Usage: pnpm script:add-credits <email> <credits> [reason]");
   console.error("   Example: pnpm script:add-credits user@example.com 100");
   process.exit(1);

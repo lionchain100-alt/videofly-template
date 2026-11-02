@@ -1,0 +1,76 @@
+name: Template quality
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: quality-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version-file: .node-version
+      - run: corepack enable
+      - run: corepack pnpm install --frozen-lockfile
+      - run: node scripts/prepare-ci.mjs --build-only
+      - run: corepack pnpm lint
+      - run: corepack pnpm lint:raw
+      - run: corepack pnpm capability:check
+      - run: corepack pnpm typecheck
+      - run: corepack pnpm test:production-config
+      - run: corepack pnpm test:email-render
+      - run: corepack pnpm test:release-gates
+      - run: corepack pnpm test:site-factory
+      - run: corepack pnpm audit:security
+      - run: corepack pnpm build
+      - name: Verify Linux standalone output
+        run: |
+          test -f .next/standalone/server.js
+          node --check .next/standalone/server.js
+      - run: git diff --exit-code -- package.json pnpm-lock.yaml .node-version src/config/site.json
+  quality:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17.11
+        env:
+          POSTGRES_PASSWORD: ci-ephemeral-postgres-only
+        ports:
+          - 55432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      CI_POSTGRES_PASSWORD: ci-ephemeral-postgres-only
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version-file: .node-version
+      - run: corepack enable
+      - run: corepack pnpm install --frozen-lockfile
+      - run: node scripts/prepare-ci.mjs
+      - name: Empty database migrations, policy and seed (twice)
+        run: |
+          for pass in 1 2; do
+            node scripts/migrate-admin.mjs
+            corepack pnpm ai:initialize
+            node scripts/seed-local-admin.mjs
+          done
+          node scripts/check-initialized-site.mjs
+      - run: node scripts/test-ci.mjs
+      - name: Ensure frozen dependency inputs were not rewritten
+        run: git diff --exit-code -- package.json pnpm-lock.yaml .node-version

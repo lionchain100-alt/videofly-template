@@ -2,6 +2,7 @@
  * Site configuration
  * Central place for website settings, auth providers, and features
  */
+import { siteManifest } from "./site-manifest";
 export interface SiteConfig {
   name: string;
   description: string;
@@ -23,10 +24,10 @@ export interface SiteConfig {
 }
 
 export const siteConfig: SiteConfig = {
-  name: "VideoFly",
-  description: "AI Video Generation Platform - Create stunning videos with Sora 2, Veo 3.1, and more",
-  url: process.env.NEXT_PUBLIC_APP_URL || "https://videofly.app",
-  ogImage: "/og.png",
+  name: siteManifest.ui.brand.name,
+  description: siteManifest.ui.content.subtitle[siteManifest.languages.default],
+  url: siteManifest.origin,
+  ogImage: "/api/site/og",
   links: {},
   auth: {
     enableGoogleLogin: true,
@@ -34,7 +35,7 @@ export const siteConfig: SiteConfig = {
     defaultProvider: "google",
   },
   routes: {
-    defaultLoginRedirect: "/text-to-video",
+    defaultLoginRedirect: "/",
   },
 };
 

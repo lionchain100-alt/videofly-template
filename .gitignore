@@ -35,6 +35,8 @@ yarn-error.log*
 
 # local env files
 .env.local
+.env.*
+!.env.example
 
 # vercel
 .vercel
@@ -52,3 +54,14 @@ package-lock.json
 
 .env
 .contentlayer/
+
+# Local UI Studio backups and interrupted atomic writes
+src/config/site-ui.previous.json
+src/config/site-ui.json.*.tmp
+
+# Persistent local PostgreSQL data, logs and development credentials
+.local/
+
+# Canonical site manifest editor backup
+src/config/site.previous.json
+src/config/site.json.*.tmp

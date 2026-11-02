@@ -1,0 +1,16 @@
+{
+  "at": "2026-11-02T06:41:25.443Z",
+  "configurationChecks": true,
+  "placeholderAndInsecureOriginClosed": true,
+  "safeRelativeRedirects": true,
+  "ownerInitialization": {
+    "existingVerifiedOnly": true,
+    "firstAdminOnly": true,
+    "dryRun": true,
+    "auditAtomic": true,
+    "idempotent": true,
+    "allFixturesRolledBack": true
+  },
+  "realOAuthCallback": false,
+  "realEmailDelivery": false
+}

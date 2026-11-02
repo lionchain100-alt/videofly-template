@@ -1,4 +1,5 @@
 import { s3mini } from "s3mini";
+import { siteManifest } from "@/config/site-manifest";
 
 export interface StorageConfig {
   endpoint: string;
@@ -35,17 +36,21 @@ export class Storage {
     body: Buffer;
     contentType?: string;
   }): Promise<{ url: string; key: string }> {
+    const uploadParams = {
+      ...params,
+      key: `${siteManifest.isolation.fileNamespace}/${params.key}`,
+    };
     const response = await this.client.putObject(
-      params.key,
-      params.body,
-      params.contentType || "application/octet-stream"
+      uploadParams.key,
+      uploadParams.body,
+      uploadParams.contentType || "application/octet-stream",
     );
 
     if (!response.ok) {
       throw new Error(`Failed to upload file: ${response.statusText}`);
     }
 
-    return { url: this.getPublicUrl(params.key), key: params.key };
+    return { url: this.getPublicUrl(uploadParams.key), key: uploadParams.key };
   }
 
   /**
@@ -63,9 +68,7 @@ export class Storage {
 
     const buffer = Buffer.from(await response.arrayBuffer());
     const contentType =
-      params.contentType ||
-      response.headers.get("content-type") ||
-      "video/mp4";
+      params.contentType || response.headers.get("content-type") || "video/mp4";
 
     return this.uploadFile({
       key: params.key,
@@ -97,7 +100,7 @@ export function getStorage(): Storage {
 
     if (!endpoint || !accessKeyId || !secretAccessKey || !bucket) {
       throw new Error(
-        "Storage configuration missing. Required: STORAGE_ENDPOINT, STORAGE_ACCESS_KEY, STORAGE_SECRET_KEY, STORAGE_BUCKET"
+        "Storage configuration missing. Required: STORAGE_ENDPOINT, STORAGE_ACCESS_KEY, STORAGE_SECRET_KEY, STORAGE_BUCKET",
       );
     }
 

@@ -43,7 +43,7 @@ export function VideoHistoryCard({
         minute: "2-digit",
         hour12: false,
       });
-    } else {
+    }
       // 其他日期显示日期和时间
       return date.toLocaleString("en-US", {
         month: "short",
@@ -52,7 +52,6 @@ export function VideoHistoryCard({
         minute: "2-digit",
         hour12: false,
       });
-    }
   };
 
   // 复制提示词

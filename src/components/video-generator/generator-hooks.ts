@@ -293,7 +293,7 @@ export function useGeneratorState(
         { id: "start", label: "Start", subLabel: "", required: true },
         { id: "end", label: "End", subLabel: "(Opt)", required: false },
       ];
-    } else if (mode?.uploadType === "characters") {
+    }if (mode?.uploadType === "characters") {
       return [
         { id: "char1", label: "Image1", subLabel: "", required: true },
         { id: "char2", label: "Image2", subLabel: "(Opt)", required: false },

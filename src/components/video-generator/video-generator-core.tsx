@@ -1,3 +1,4 @@
+"use client";
 /**
  * VideoGeneratorCore Component
  *
@@ -5,8 +6,6 @@
  *
  * @module video-generator-core
  */
-
-"use client";
 
 import * as React from "react";
 import { cn } from "@/components/ui";
@@ -246,36 +245,36 @@ export function VideoGeneratorCore({
   const texts = { ...DEFAULT_TEXTS, ...userTexts };
 
   // 准备 hooks 配置
-  const hooksConfig = React.useMemo(() => ({
-    videoModels: config.videoModels ?? [],
-    imageModels: config.imageModels ?? [],
-    videoModes: config.videoModes ?? [],
-    imageModes: config.imageModes ?? [],
-    videoAspectRatios: config.aspectRatios?.video ?? [],
-    imageAspectRatios: config.aspectRatios?.image ?? [],
-    durations: config.durations ?? [],
-    resolutions: config.resolutions ?? [],
-    videoOutputNumbers: config.outputNumbers?.video ?? [],
-    imageOutputNumbers: config.outputNumbers?.image ?? [],
-    defaults: config.defaults,
-  }), [config]);
+  const hooksConfig = React.useMemo(
+    () => ({
+      videoModels: config.videoModels ?? [],
+      imageModels: config.imageModels ?? [],
+      videoModes: config.videoModes ?? [],
+      imageModes: config.imageModes ?? [],
+      videoAspectRatios: config.aspectRatios?.video ?? [],
+      imageAspectRatios: config.aspectRatios?.image ?? [],
+      durations: config.durations ?? [],
+      resolutions: config.resolutions ?? [],
+      videoOutputNumbers: config.outputNumbers?.video ?? [],
+      imageOutputNumbers: config.outputNumbers?.image ?? [],
+      defaults: config.defaults,
+    }),
+    [config],
+  );
 
   // 使用状态管理 hook
-  const {
-    state,
-    computed,
-    actions,
-    handlers,
-    refs,
-  } = useGeneratorState(hooksConfig, {
-    onGenerationTypeChange,
-    onModelChange,
-    onModeChange,
-    onPromptChange,
-    onImageUpload,
-    onImageRemove,
-    onProFeatureClick,
-  });
+  const { state, computed, actions, handlers, refs } = useGeneratorState(
+    hooksConfig,
+    {
+      onGenerationTypeChange,
+      onModelChange,
+      onModeChange,
+      onPromptChange,
+      onImageUpload,
+      onImageRemove,
+      onProFeatureClick,
+    },
+  );
 
   // 使用验证 hook
   const validation = useGeneratorValidation(
@@ -290,7 +289,7 @@ export function VideoGeneratorCore({
       maxPromptLength,
       validatePrompt,
       validateImages,
-    }
+    },
   );
 
   // 计算积分
@@ -301,7 +300,8 @@ export function VideoGeneratorCore({
         model: computed.currentModel.id,
         outputNumber: computed.currentOutputNumber,
         duration: state.generationType === "video" ? state.duration : undefined,
-        resolution: state.generationType === "video" ? state.resolution : undefined,
+        resolution:
+          state.generationType === "video" ? state.resolution : undefined,
       });
     }
     if (estimatedCredits !== undefined) {
@@ -337,22 +337,37 @@ export function VideoGeneratorCore({
 
   // 处理提交
   const handleSubmit = React.useCallback(() => {
-    if (!validation.canSubmit || !computed.currentModel || !computed.currentMode) return;
+    if (
+      !validation.canSubmit ||
+      !computed.currentModel ||
+      !computed.currentMode
+    )
+      return;
 
     const data: SubmitData = {
       type: state.generationType,
       prompt: state.prompt,
-      images: state.uploadedImages.length > 0 ? state.uploadedImages.map((img) => img.file) : undefined,
-      imageSlots: state.uploadedImages.length > 0
-        ? state.uploadedImages.map((img) => ({ slot: img.slot, file: img.file }))
-        : undefined,
+      images:
+        state.uploadedImages.length > 0
+          ? state.uploadedImages.map((img) => img.file)
+          : undefined,
+      imageSlots:
+        state.uploadedImages.length > 0
+          ? state.uploadedImages.map((img) => ({
+              slot: img.slot,
+              file: img.file,
+            }))
+          : undefined,
       model: computed.currentModel.id,
       mode: computed.currentMode.id,
       aspectRatio: computed.currentAspectRatio,
       duration: state.generationType === "video" ? state.duration : undefined,
-      resolution: state.generationType === "video" ? state.resolution : undefined,
+      resolution:
+        state.generationType === "video" ? state.resolution : undefined,
       outputNumber: computed.currentOutputNumber,
-      generateAudio: computed.modelSupportsAudio ? state.generateAudio : undefined,
+      generateAudio: computed.modelSupportsAudio
+        ? state.generateAudio
+        : undefined,
       estimatedCredits: calculatedCredits,
     };
 
@@ -370,106 +385,116 @@ export function VideoGeneratorCore({
   ]);
 
   // 处理回车提交
-  const handleKeyDown = React.useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSubmit();
-    }
-  }, [handleSubmit]);
+  const handleKeyDown = React.useCallback(
+    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        handleSubmit();
+      }
+    },
+    [handleSubmit],
+  );
 
   // 处理输出数量变更
-  const handleOutputNumberChange = React.useCallback((option: OutputNumberOption) => {
-    if (option.isPro && !isPro) {
-      onProFeatureClick?.(`output_number_${option.value}`);
-      return;
-    }
-    if (state.generationType === "video") {
-      actions.setVideoOutputNumber(option.value);
-    } else {
-      actions.setImageOutputNumber(option.value);
-    }
-    onChange?.({ outputNumber: option.value });
-  }, [isPro, onProFeatureClick, state.generationType, actions, onChange]);
+  const handleOutputNumberChange = React.useCallback(
+    (option: OutputNumberOption) => {
+      if (option.isPro && !isPro) {
+        onProFeatureClick?.(`output_number_${option.value}`);
+        return;
+      }
+      if (state.generationType === "video") {
+        actions.setVideoOutputNumber(option.value);
+      } else {
+        actions.setImageOutputNumber(option.value);
+      }
+      onChange?.({ outputNumber: option.value });
+    },
+    [isPro, onProFeatureClick, state.generationType, actions, onChange],
+  );
 
   // 处理宽高比变更
-  const handleAspectRatioChange = React.useCallback((ratio: string) => {
-    if (state.generationType === "video") {
-      actions.setVideoAspectRatio(ratio);
-    } else {
-      actions.setImageAspectRatio(ratio);
-    }
-    onChange?.({ aspectRatio: ratio });
-  }, [state.generationType, actions, onChange]);
+  const handleAspectRatioChange = React.useCallback(
+    (ratio: string) => {
+      if (state.generationType === "video") {
+        actions.setVideoAspectRatio(ratio);
+      } else {
+        actions.setImageAspectRatio(ratio);
+      }
+      onChange?.({ aspectRatio: ratio });
+    },
+    [state.generationType, actions, onChange],
+  );
 
   // ============================================================================
   // Context Value
   // ============================================================================
 
-  const contextValue = React.useMemo(() => ({
-    // Config
-    config,
-    uiMode,
-    features,
-    texts,
+  const contextValue = React.useMemo(
+    () => ({
+      // Config
+      config,
+      uiMode,
+      features,
+      texts,
 
-    // User state
-    isPro,
-    isLoading,
-    disabled,
+      // User state
+      isPro,
+      isLoading,
+      disabled,
 
-    // State
-    state,
+      // State
+      state,
 
-    // Computed
-    computed,
+      // Computed
+      computed,
 
-    // Validation
-    validation,
+      // Validation
+      validation,
 
-    // Actions
-    actions,
+      // Actions
+      actions,
 
-    // Handlers
-    handlers: {
-      ...handlers,
+      // Handlers
+      handlers: {
+        ...handlers,
+        handleSubmit,
+        handleKeyDown,
+        handleOutputNumberChange,
+        handleAspectRatioChange,
+      },
+
+      // Refs
+      refs,
+
+      // Derived
+      calculatedCredits,
+    }),
+    [
+      config,
+      uiMode,
+      features,
+      texts,
+      isPro,
+      isLoading,
+      disabled,
+      state,
+      computed,
+      validation,
+      actions,
+      handlers,
       handleSubmit,
       handleKeyDown,
       handleOutputNumberChange,
       handleAspectRatioChange,
-    },
-
-    // Refs
-    refs,
-
-    // Derived
-    calculatedCredits,
-  }), [
-    config,
-    uiMode,
-    features,
-    texts,
-    isPro,
-    isLoading,
-    disabled,
-    state,
-    computed,
-    validation,
-    actions,
-    handlers,
-    handleSubmit,
-    handleKeyDown,
-    handleOutputNumberChange,
-    handleAspectRatioChange,
-    refs,
-    calculatedCredits,
-  ]);
+      refs,
+      calculatedCredits,
+    ],
+  );
 
   // 渲染子组件
   return (
     <VideoGeneratorCoreContext.Provider value={contextValue}>
-      <div className={cn("w-full", className)}>
-        {children}
-      </div>
+      <div className={cn("w-full", className)}>{children}</div>
     </VideoGeneratorCoreContext.Provider>
   );
 }
@@ -522,7 +547,8 @@ export interface VideoGeneratorCoreContextValue {
   calculatedCredits: number;
 }
 
-export const VideoGeneratorCoreContext = React.createContext<VideoGeneratorCoreContextValue | null>(null);
+export const VideoGeneratorCoreContext =
+  React.createContext<VideoGeneratorCoreContextValue | null>(null);
 
 /**
  * useVideoGeneratorCore Hook
@@ -532,7 +558,9 @@ export const VideoGeneratorCoreContext = React.createContext<VideoGeneratorCoreC
 export function useVideoGeneratorCore() {
   const context = React.useContext(VideoGeneratorCoreContext);
   if (!context) {
-    throw new Error("useVideoGeneratorCore must be used within VideoGeneratorCore");
+    throw new Error(
+      "useVideoGeneratorCore must be used within VideoGeneratorCore",
+    );
   }
   return context;
 }

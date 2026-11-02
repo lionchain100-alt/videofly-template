@@ -1,5 +1,5 @@
-// app/providers.tsx
 "use client";
+// app/providers.tsx
 
 import { useEffect } from "react";
 import { usePathname, useSearchParams } from "next/navigation";

@@ -41,7 +41,7 @@ export interface EmailTranslations {
  * 获取指定语言的邮件翻译
  */
 export async function getEmailTranslations(
-  locale: string = "en"
+  locale = "en"
 ): Promise<EmailTranslations> {
   const messages = await getMessages({ locale });
 

@@ -1,0 +1,131 @@
+{
+  "verifiedAt": "2026-11-01T13:35:17.586Z",
+  "baselineCommit": "0219ad75ad2ec4ad54c5f59fb66e42ee86a7d20d",
+  "candidateTag": "aud-002-upgraded-20261101",
+  "runtime": "v22.23.1",
+  "versions": {
+    "next": "15.5.28",
+    "react": "19.2.9",
+    "react-dom": "19.2.9",
+    "better-auth": "1.7.15",
+    "@creem_io/better-auth": "2.0.4",
+    "zod": "4.6.7",
+    "drizzle-orm": "0.45.4"
+  },
+  "hashes": {
+    "package": "70ac8aaf4c3f23bc70e145f52d7ce230ee95000a9479542438e8c6123ea85de8",
+    "lockfile": "ea3bfe965b9596e5b033f99fb62e342ca45f26d943611d11e4d0766645909bf5",
+    "nextConfig": "32637bb6c6c53bb83362191cdf8f84b7f091f6c6d1f913a6dad41ee20f0d0c06"
+  },
+  "audit": {
+    "production": {
+      "info": 0,
+      "low": 1,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0
+    },
+    "all": {
+      "info": 0,
+      "low": 1,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0
+    },
+    "remaining": [
+      {
+        "module": "deepmerge",
+        "severity": "low",
+        "url": "https://github.com/advisories/GHSA-gcqx-w48m-w2h4",
+        "patch": "<0.0.0"
+      }
+    ]
+  },
+  "recovery": {
+    "beforeFiles": 617,
+    "archiveHashesVerified": true,
+    "frozenRestoreInstallPassed": true
+  },
+  "gates": {
+    "frozenInstall": "passed",
+    "typecheck": "passed",
+    "productionBuild": "passed",
+    "retainedIntegrationSuites": 6,
+    "retainedAPIAndBrowser": "passed",
+    "productionIsolation": "homepage200; Studio/preview404; config403; local-password403",
+    "emailPreview": "200 with three existing templates",
+    "existingBrowserSession": "200",
+    "businessSourceDiff": "no changes from baseline"
+  },
+  "browser": [
+    "Actual login form, existing password hashes, active session, dashboard 200 and task totals",
+    "Wrong password, anonymous/member admin access and cross-origin writes remain denied",
+    "Retained summary results, protected video Range, orders/refunds and operational pages remain readable",
+    "PayPal/Waffo test availability, prices and purchase UI retained (no purchase clicked)",
+    "Three preset previews, language/state switch; no real submission or configuration-file mutation",
+    "Home/mobile viewport and admin render without application errors",
+    "Sign-out invalidates the test session"
+  ],
+  "database": {
+    "checkedAt": "2026-11-01T13:30:59.346Z",
+    "users": 2,
+    "migrations": 8,
+    "tasks": [
+      {
+        "tool_id": "text-summary",
+        "status": "FAILED",
+        "n": 1
+      },
+      {
+        "tool_id": "text-summary",
+        "status": "SUCCEEDED",
+        "n": 2
+      },
+      {
+        "tool_id": "video-generation",
+        "status": "FAILED",
+        "n": 1
+      },
+      {
+        "tool_id": "video-generation",
+        "status": "SUCCEEDED",
+        "n": 1
+      }
+    ],
+    "payments": [
+      {
+        "provider": "paypal",
+        "status": "PAID",
+        "n": 2,
+        "cents": 1000,
+        "refunded_cents": 500
+      },
+      {
+        "provider": "waffo",
+        "status": "PAID",
+        "n": 1,
+        "cents": 500,
+        "refunded_cents": 500
+      }
+    ],
+    "refunds": [
+      {
+        "provider": "paypal",
+        "status": "SUCCEEDED",
+        "n": 2,
+        "cents": 500
+      },
+      {
+        "provider": "waffo",
+        "status": "SUCCEEDED",
+        "n": 1,
+        "cents": 500
+      }
+    ],
+    "balance": {
+      "available": 190,
+      "frozen": 0,
+      "refund_reserved": 0
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "testedAt": "2026-11-02T04:39:21.887Z",
+  "sites": [
+    "laconic",
+    "aurora-notes"
+  ],
+  "passed": [
+    "distinct databases, roles, passwords, auth secrets, provider key configuration and file namespaces; cross-cluster credentials rejected",
+    "both admins log in simultaneously; foreign and renamed foreign session cookies cannot authenticate",
+    "second-site admin grant and retry affect only its ledger, including identical fixture user IDs in both databases",
+    "same task ID serves different private files on each site; main-site historical asset is absent from the second site",
+    "each tool and both tools disabled: POST 403 before payload/provider/credits; GET unavailable; enabled tool with missing second-site key returns 503 without charging",
+    "UI Studio writes only its site UI while preserving policy/identity; stale revisions rejected; first-site config unchanged"
+  ],
+  "fixturesRemoved": true,
+  "financialStateUnchanged": true,
+  "realProviderCalls": 0
+}

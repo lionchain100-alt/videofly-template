@@ -1,0 +1,76 @@
+{
+  "testedAt": "2026-11-01T16:03:01.078Z",
+  "task": "AUD-004",
+  "scope": "Local implementation/regression only; real Stripe/Creem acceptance explicitly deferred by Owner until HTTPS deployment",
+  "sites": [
+    {
+      "id": "laconic",
+      "origin": "http://localhost:3000",
+      "counts": {
+        "users": 2,
+        "tasks": 5,
+        "orders": 3,
+        "refunds": 3,
+        "creem_subscriptions": 0,
+        "billing_fixture_users": 0
+      },
+      "tools": {
+        "text-summary": true,
+        "video-generation": true
+      },
+      "billing": {
+        "subscriptions": 0,
+        "cycles": 0,
+        "new_channel_orders": 0
+      },
+      "newProviders": {
+        "stripe": "false",
+        "creem": "false"
+      }
+    },
+    {
+      "id": "aurora-notes",
+      "origin": "http://localhost:3002",
+      "counts": {
+        "users": 2,
+        "tasks": 0,
+        "orders": 0,
+        "refunds": 0,
+        "creem_subscriptions": 0,
+        "billing_fixture_users": 0
+      },
+      "tools": {
+        "text-summary": true,
+        "video-generation": false
+      }
+    }
+  ],
+  "retainedSuites": 7,
+  "billingTestGroups": 10,
+  "browserAPIContract": true,
+  "productionIsolation": true,
+  "frozenInstall": true,
+  "typecheck": true,
+  "productionBuild": true,
+  "security": {
+    "critical": 0,
+    "high": 0,
+    "moderate": 0,
+    "low": 1
+  },
+  "stripeSdk": "23.1.0",
+  "stripeApi": "2026-10-28.endive",
+  "newRealProviderCalls": 0,
+  "creemStoreCreated": false,
+  "realProviderAcceptance": {
+    "stripe": "pending test account and deployed endpoint",
+    "creem": "deferred by Owner; store URL/products/API/webhook not configured"
+  },
+  "evidence": [
+    "aud-004-billing-results.json",
+    "aud-004-browser-results.json",
+    "aud-004-production-results.json",
+    "aud-004-isolation-results.json"
+  ],
+  "recoveryTag": "aud-004-local-20261102"
+}

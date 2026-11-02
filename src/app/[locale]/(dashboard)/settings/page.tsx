@@ -1,3 +1,4 @@
+import { localePath } from "@/config/site-manifest";
 import { SettingsPage } from "@/components/billing/settings-page";
 import { requireAuth } from "@/lib/auth";
 import { i18n, type Locale } from "@/config/i18n-config";
@@ -14,13 +15,9 @@ export function generateStaticParams() {
 
 export default async function SettingsRoute({ params }: PageProps) {
   const { locale } = await params;
-  const user = await requireAuth(`/${locale}/login`);
+  const user = await requireAuth(localePath(locale, `/login`));
 
   return (
-    <SettingsPage
-      locale={locale}
-      userEmail={user.email}
-      userId={user.id}
-    />
+    <SettingsPage locale={locale} userEmail={user.email} userId={user.id} />
   );
 }

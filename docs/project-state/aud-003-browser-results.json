@@ -1,0 +1,13 @@
+{
+  "testedAt": "2026-11-01T14:26:05.067Z",
+  "browser": "Local Playwright (Browser plugin not available)",
+  "passed": [
+    "second-site admin login, branding and default-Chinese navigation without hardcoded locale prefix",
+    "all three presets switch, save and render desktop/mobile with video entry absent and site policy preserved",
+    "disabled video routes, disabled English routes and sitemap follow second-site configuration",
+    "both tools disabled in every main-site preset: no executable workspace or tool entry remains"
+  ],
+  "pageErrors": [],
+  "evidenceDirectory": ".local/aud003-screenshots",
+  "configurationRestored": true
+}
