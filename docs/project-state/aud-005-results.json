@@ -1,0 +1,69 @@
+{
+  "testedAt": "2026-11-02T01:07:53.460Z",
+  "clientDate": "2026-11-02",
+  "task": "AUD-005",
+  "scope": "Local integration/regression only; actual provider payment/refund/reconciliation acceptance deferred until HTTPS deployment",
+  "retainedSuites": 9,
+  "operationGroups": 12,
+  "browserGroups": 3,
+  "siteIsolationGroups": 6,
+  "typecheck": true,
+  "productionBuild": true,
+  "productionIsolation": true,
+  "newRealProviderCalls": 0,
+  "sites": [
+    {
+      "site": "laconic",
+      "counts": {
+        "users": 2,
+        "tasks": 5,
+        "orders": 3,
+        "refunds": 3,
+        "migrations": 11,
+        "fixture_users": 0
+      },
+      "adminCredits": {
+        "available": 190,
+        "frozen": 0,
+        "refund_reserved": 0
+      },
+      "paymentOperations": [],
+      "newProviderFlags": {
+        "stripe": false,
+        "creem": false
+      }
+    },
+    {
+      "site": "aurora-notes",
+      "counts": {
+        "users": 2,
+        "tasks": 0,
+        "orders": 0,
+        "refunds": 0,
+        "migrations": 8,
+        "fixture_users": 0
+      },
+      "adminCredits": {
+        "available": 102,
+        "frozen": 0,
+        "refund_reserved": 0
+      }
+    }
+  ],
+  "recoveryTag": "aud-005-local-20261102",
+  "beforeTag": "aud-005-before-20261102",
+  "boundaries": [
+    "Waffo status/priceSnapshot never substitutes for an authoritative receipt; signed resend/replay is required when no trustworthy paid evidence exists.",
+    "Dispute/reversal acknowledgment is an audited review record, not resolution or an automatic cash/credit reversal.",
+    "Compensation never creates checkout/capture/refund; subscription requires original paid-period facts.",
+    "No production activation or new account/config/key change; second site remains independent AUD-003."
+  ],
+  "evidence": [
+    "aud-005-operations-results.json",
+    "aud-005-browser-results.json",
+    "aud-005-isolation-results.json",
+    "aud-005-billing-results.json",
+    "aud-005-refund-results.json",
+    "aud-005-production-results.json"
+  ]
+}

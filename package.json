@@ -38,7 +38,9 @@
     "test:billing": "node --import tsx scripts/test-billing-unification.ts",
     "test:billing-browser": "node scripts/test-billing-browser.mjs",
     "test:refunds-four": "node --import tsx scripts/test-four-channel-refunds.ts",
-    "test:refunds-browser": "node --import tsx scripts/test-four-channel-refunds.ts --browser"
+    "test:refunds-browser": "node --import tsx scripts/test-four-channel-refunds.ts --browser",
+    "test:payment-ops": "node --import tsx scripts/test-payment-operations.ts",
+    "test:payment-ops-browser": "node --import tsx scripts/test-payment-operations.ts --browser"
   },
   "dependencies": {
     "@creem_io/better-auth": "2.0.4",

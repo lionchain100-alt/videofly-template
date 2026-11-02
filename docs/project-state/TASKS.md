@@ -12,10 +12,12 @@ Last reconciled: 2026-11-02
 Milestone: Local V1.2 core with four-channel billing/refunds; current full audit records remaining implementation and deferred real-provider gates.
 Active task: IDLE-000
 
-Definition of Ready: AUD-004 and RFN-001 local QA recorded; Owner requested an updated V1.2 review and explicitly deferred real-provider payment/refund acceptance until HTTPS deployment.
-Definition of Done: reconcile all 39 V1.2 acceptance IDs against source/evidence, separate actual sandbox/test from production-money gates, record prioritized next packages and save the current review without changing business behavior.
+Definition of Ready: AUD-004/RFN-001 local QA and REV-001 review recorded; Owner authorized AUD-005 local operations and kept actual provider acceptance deferred until HTTPS deployment.
+Definition of Done: scoped exception console, trusted replay and receipt-backed compensation, permission/reason/immutable audit, crash/duplicate protection, nine retained suites, browser/production/isolation gates, clean data snapshot and source recovery.
 
 ## Backlog
+
+- [x] AUD-005 Payment exception queries, persisted verified-event replay, evidence-backed reconciliation and query-only refund recovery. Depends on: RFN-001. Acceptance: 12 operation groups, 3 browser/API groups, all nine retained suites, six isolation groups, typecheck/build/production guards, data snapshot and source recovery; aud-005-results.json and parent AUD-005-PAYMENT-OPERATIONS-GUIDE.md. Actual provider acceptance remains deferred.
 
 - [x] REV-001 Update V1.2 overall review after AUD-004/RFN-001. Depends on: RFN-001 evidence. Acceptance: parent `V1.2-整体检查与后续实施建议-2026-11-02.md`, `v12-review-20261102.json`, 39 acceptance IDs, deployment-only real-payment gates, link/state checks. Read-only review; no financial replay or new paid calls.
 
@@ -31,7 +33,7 @@ Definition of Done: reconcile all 39 V1.2 acceptance IDs against source/evidence
 
 - [ ] BILL-001 Verify Stripe/Creem actual test-account checkout/refunds, two paid periods, public signed callbacks, duplicate delivery and state changes. Depends on: Owner resumes after HTTPS deployment and supplies provider accounts/products/keys. Acceptance: real test receipts and reconciliation; no fixture substitution. Production-money acceptance is separately governed by R05/AUD-009.
 
-Suggested next implementation: AUD-005 payment exception operations and reconciliation, followed by AUD-006 storage/recovery/runtime. These and AUD-007/008/009 are proposed in the parent 2026-11-02 review, not started by this review request.
+Suggested next implementation: AUD-006 storage/recovery/runtime, followed by AUD-007/008/009. These remain proposed and have not started. Actual provider receipt/bulk-statement reconciliation remains deferred under BILL-001 and deployment gates.
 
 ## Blocked / decision-needed register
 

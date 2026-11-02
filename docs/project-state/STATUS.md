@@ -1,37 +1,34 @@
 # Project Status
 
 Last updated: 2026-11-02
-Current stage: V1.2 overall review updated after RFN-001 local QA; implementation gaps and deferred real-payment gates remain
+Current stage: AUD-005 local payment operations QA passed; actual provider acceptance deferred
 Active task: IDLE-000
 Canonical specification: `docs/project-state/contract.md`
 Current registry: None required
 Capability registry: `docs/project-state/capabilities.json`
-Source recovery point: local tag `refunds-local-20261102`; before tag `refunds-before-20261102` at AUD-004. Parent recovery index `.recovery/refunds-current-after.json`; archives exclude credentials, database and generated assets. Previous AUD-002/003/004 recovery indexes remain intact.
-Current review: parent `V1.2-整体检查与后续实施建议-2026-11-02.md`; read-only snapshot `docs/project-state/v12-review-20261102.json`. The RFN-001 recovery tag is the reviewed business-code baseline; the review/documentation supplement is indexed separately at parent `.recovery/v12-review-current.json`.
+Source recovery point: local tag `aud-005-local-20261102`; before `aud-005-before-20261102`; parent index `.recovery/aud-005-current-after.json`. Previous recovery indexes retained. Archives exclude credentials, databases and generated assets.
+Current review: parent 2026-11-02 V1.2 review is a dated gap snapshot; its top note links this later implementation. Current usage: parent `AUD-005-PAYMENT-OPERATIONS-GUIDE.md`.
 
 ## Critical Resume State
 
 ### Active objective
-No active implementation. REV-001 review and RFN-001 local integration/regression are complete. V1.2 overall is still incomplete. Owner explicitly deferred actual Stripe/Creem test refunds and public callback acceptance until HTTPS deployment; production-money acceptance is a separate later gate.
+No active implementation. AUD-005 local exception console, trusted-event replay and compensation are complete. V1.2 overall remains incomplete; actual sandbox/test and production-money acceptance remain separate and deferred by Owner.
 
 ### Verified completed
-- Existing login/Studio, DeepSeek summary, Kie video, atomic credits/admin, common purchases and subscription renewal/cancel/resume remain protected. All eight retained suites passed against this candidate; no new real payment/model/refund calls.
-- Stripe/Creem use the existing refund command, admin/CSRF checks, immutable UUID, per-user/order locks, original source hold/reclaim/release and audited waiver. Migration 0010 expands only the refund provider constraint. Existing PayPal/Waffo provider adapters and accepted records remain preserved.
-- Stripe partial/full refunds resolve the original PaymentIntent or one invoice payment. Signed refunds use authenticated API queries. Creem uses its full-transaction refund endpoint; query and signed callback share a transaction-level identity. Signed ref_ ID is retained when available. Explicit failed attempts cannot capture a later refund attempt's hold.
-- Consumed/expired/frozen sources block backend cash calls. External refunds reclaim only their original source, record shortfall, gate new tasks and allow existing tasks to settle. Failed-task release repays original-source debt atomically; consumed loss waiver remains audited and idempotent. Unknown cash outcomes keep reservations and only query; duplicate/concurrent events cannot debit twice. Refunds do not cancel subscriptions.
-- 13 refund groups, three browser/API groups, billing UI/contract, production isolation, typecheck/build and six independent-site isolation groups passed. Main keeps 2 users, 5 tasks, 3 orders and 3 refunds; no fixture users or new-channel orders/refunds/subscriptions remain.
-- Main Web + three Workers restored at 3000. Aurora Notes was not running at verification entry; restarted using its existing independent AUD-003 source/configuration and eight migrations. Its database, keys and files remain separate; no upgrade was applied.
-- Evidence: `docs/project-state/refunds-results.json` and its linked detail records. Usage/configuration and current boundaries: parent `FOUR-CHANNEL-REFUND-GUIDE.md`.
-- REV-001 reconciled all 39 V1.2 acceptance IDs and original AUD-001~009 packages, with actual sandbox/test and production-money gates separated. New evidence is read-only DB/HTTP, not a rerun of all integration suites. Main data still 2 users/5 tasks/3 orders/3 refunds, administrator available 190/frozen 0/refund-reserved 0; main has 10 migrations and independent second site has 8.
+- New /zh/admin/payments with order/event/refund/audit views; four-provider filtering, scoped searches, bounded pagination and processing/error metadata. Existing order console now supports four providers and receipt/user search.
+- Scoped administrator-only JSON commands require 12–300 character reason, immutable UUID/target/action and durable audit intent before any side effect. Rechecks current actor state; leases and a separate resumed process recover. Changed request content conflicts; financial uniqueness guards different-ID repeats.
+- Saved verified receipts and supported authoritative read-only queries compensate through original order/cycle/package/ledger boundaries. No new checkout/capture/cash-refund or model call. PayPal normal purchase capture remains unchanged. Waffo without signed actual receipt stays NEEDS_REVIEW; no mint from completed/priceSnapshot. Subscription active alone cannot grant.
+- Refund replay/recheck uses existing source-only, expiry, frozen/consumed/debt and duplicate protection. Verified disputes/reversals/unmatched events have reasoned review acknowledgment; no automatic financial resolution is implied.
+- Nine retained suites, 12 operation groups, three browser/API groups (response loss, immutable retry/reload, auth/CSRF, raw-fact rejection), six site-isolation groups, typecheck/build and production-private operation route checks passed. New real-provider calls: zero. Details: aud-005-results.json and linked records.
+- Main remains 2 users, 5 tasks, 3 orders, 3 refunds, administrator 190 available/0 frozen/0 refund reserved; eleven applied migrations. Isolated operation/financial fixtures removed. Web and three Workers restored at 3000. Second independent site remains AUD-003/eight migrations, 102 credits, own keys/files/DB; no upgrade applied.
 
 ### Pending or needs review
-- BILL-001 remains deferred: Stripe test account; completed Creem store with HTTPS product URL, products/API/webhook credentials; real payment and refund receipts/public notifications, recurring paid periods and provider-side retry/async behavior. Stripe/Creem flags remain false. No new Creem store/product/key was created.
-- Added automated refunds cover standard USD cash matching the stored order. Creem partial, tax-inclusive/multiple-payment/ambiguous cash cases require manual reconciliation. Complex billing, disputes and production refund activation remain separate scopes.
-- Source recovery is not a database or secret backup. The second site is intentionally not synchronized to these new billing/refund modules.
-- AUD-005~009 retain remaining local work: exception operations/reconciliation, production storage and data recovery/readiness, model/budget governance, business-across-layout/SEO/auth acceptance and CI/fixed deployment. Latest-template empty initialization and full UI matrix are not implied by historical second-site or UI tests.
+- BILL-001: actual Stripe/Creem test checkout/refund, two paid periods and public callbacks after HTTPS deployment. No new Creem shop/API/product or Stripe account setup; both flags remain false. Production-money R05 remains a separate later gate.
+- Waffo actual query/statement schema must prove captured amount before direct lost-notification compensation; use official signed resend/replay meanwhile. Bulk provider statement import/periodic real-platform reconciliation and dispute financial policies are not claimed completed.
+- AUD-006 storage/data recovery/readiness, AUD-007 model/budget governance, AUD-008 full UI/SEO/production auth and AUD-009 CI/fixed deployment remain. Latest-template clean initialization and business-data backup restoration are still required; source archives do not replace them.
 
 ### Blockers
-None for completed local work. External account/product gates wait for the Owner to resume after deployment.
+None for completed local scope. External provider/account/HTTPS gates wait for Owner to resume deployment-backed acceptance.
 
 ### Exact next action
-Read the parent 2026-11-02 V1.2 review. Recommended next scoped implementation is AUD-005, payment exception operations and reconciliation, using isolated fixtures; it has not started. Keep Stripe/Creem disabled and defer actual platform/payment/refund acceptance until the Owner resumes after HTTPS deployment.
+Open http://localhost:3000/zh/admin/payments with the existing local administrator; read parent AUD-005-PAYMENT-OPERATIONS-GUIDE.md. Uncheck exception-only filtering to inspect successful historical records. Recommended next scoped implementation is AUD-006; it has not started. Keep Stripe/Creem disabled and do not substitute manual grants for payment compensation.

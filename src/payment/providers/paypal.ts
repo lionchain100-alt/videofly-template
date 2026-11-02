@@ -175,14 +175,17 @@ export function paypalFact(
     currency: order.currency,
   };
 }
-export async function queryPaypal(order: OrderSnapshot) {
+export async function queryPaypal(
+  order: OrderSnapshot,
+  captureApproved = true,
+) {
   if (!order.externalId) return null;
   const data = await paypalRequest(
     `/v2/checkout/orders/${encodeURIComponent(order.externalId)}`,
   );
   const knownFact = paypalFact(order, data);
   // Stable capture key; no automatic retry beyond PayPal's documented retention window.
-  if (data.status === "APPROVED") {
+  if (data.status === "APPROVED" && captureApproved) {
     const captured = await paypalRequest(
       `/v2/checkout/orders/${encodeURIComponent(order.externalId)}/capture`,
       "POST",

@@ -10,6 +10,9 @@ async function main() {
   );
   const { db } = await import("../src/db");
   const { processRefund } = await import("../src/services/refunds");
+  const { processPaymentOperation } = await import(
+    "../src/services/payment-operations"
+  );
   let stopping = false;
   process.on("SIGTERM", () => {
     stopping = true;
@@ -26,7 +29,8 @@ async function main() {
         const recovered = await recoverPaymentEvent();
         const worked = await processOrder();
         const refunded = await processRefund();
-        if (!worked && !recovered && !refunded)
+        const operated = await processPaymentOperation();
+        if (!worked && !recovered && !refunded && !operated)
           await new Promise((r) => setTimeout(r, 2000));
       } catch {
         console.error("Payment step interrupted; durable retry retained.");

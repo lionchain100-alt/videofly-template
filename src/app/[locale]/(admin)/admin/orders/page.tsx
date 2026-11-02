@@ -30,12 +30,14 @@ export default async function OrdersPage({
           ilike(paymentOrders.id, pattern),
           ilike(users.email, pattern),
           ilike(paymentOrders.externalId, pattern),
+          ilike(paymentOrders.userId, pattern),
+          sql`exists(select 1 from payment_fulfillments f where f.order_id=${paymentOrders.id} and f.payment_id ilike ${pattern})`,
         )
       : undefined,
     ["CREATING", "PENDING", "PAID", "REVIEW"].includes(status)
       ? eq(paymentOrders.status, status)
       : undefined,
-    ["paypal", "waffo"].includes(provider)
+    ["paypal", "waffo", "stripe", "creem"].includes(provider)
       ? eq(paymentOrders.provider, provider)
       : undefined,
   );
@@ -89,6 +91,8 @@ export default async function OrdersPage({
               <option value="">全部</option>
               <option>paypal</option>
               <option>waffo</option>
+              <option>stripe</option>
+              <option>creem</option>
             </select>
           </label>
           <label className={s.filter}>

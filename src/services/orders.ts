@@ -345,7 +345,46 @@ export async function fulfillPayment(fact: PaymentFact) {
   if (!hint) throw new ApiError("找不到关联订单", 404);
   return db.transaction((tx) => fulfill(tx, fact, hint));
 }
-export async function receivePaymentEvent(event: VerifiedEvent) {
+export async function receivePaymentEvent(
+  event: VerifiedEvent,
+  options: { queryOnly?: boolean; reconcile?: boolean } = {},
+) {
+  const scope = and(
+    eq(paymentEvents.provider, event.provider),
+    eq(paymentEvents.environment, event.environment),
+    eq(paymentEvents.accountId, event.accountId),
+    eq(paymentEvents.eventId, event.id),
+  );
+  try {
+    const result = await deliverPaymentEvent(event, options);
+    await db
+      .update(paymentEvents)
+      .set({
+        attemptCount: sql`${paymentEvents.attemptCount}+1`,
+        lastAttemptAt: new Date(),
+        lastError: null,
+      })
+      .where(scope);
+    return result;
+  } catch (e) {
+    await db
+      .update(paymentEvents)
+      .set({
+        attemptCount: sql`${paymentEvents.attemptCount}+1`,
+        lastAttemptAt: new Date(),
+        lastError:
+          e instanceof ApiError
+            ? e.message.slice(0, 300)
+            : "事件处理失败，事务未完成，需重放核实",
+      })
+      .where(scope);
+    throw e;
+  }
+}
+async function deliverPaymentEvent(
+  event: VerifiedEvent,
+  options: { queryOnly?: boolean; reconcile?: boolean },
+) {
   if (event.subscription) {
     const { receiveSubscriptionEvent } = await import("./subscriptions");
     return receiveSubscriptionEvent(event);
@@ -420,7 +459,7 @@ export async function receivePaymentEvent(event: VerifiedEvent) {
     (saved.normalizedEvent as VerifiedEvent).fingerprint !== event.fingerprint
   )
     throw new ApiError("同一退款事件编号的内容不可更改", 409);
-  if (saved.status === "PROCESSED") return;
+  if (saved.status === "PROCESSED" && !options.reconcile) return;
   if (event.refund) {
     const { receiveRefundFact } = await import("./refunds");
     await receiveRefundFact(event.refund);
@@ -438,7 +477,7 @@ export async function receivePaymentEvent(event: VerifiedEvent) {
       event.type,
     )
   )
-    fact = (await queryPaypal(snapshot(hint))) || undefined;
+    fact = (await queryPaypal(snapshot(hint), !options.queryOnly)) || undefined;
   await db.transaction(async (tx) => {
     if (fact) await fulfill(tx, fact, hint);
     await tx

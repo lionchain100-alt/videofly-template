@@ -200,7 +200,7 @@
         "scripts/test-refund-browser.mjs"
       ],
       "ownerGate": "Owner requested RFN-001 local Stripe/Creem refunds; account-backed/public callback and production acceptance remain deferred. Existing PayPal/Waffo retained.",
-      "changeImpact": "additive",
+      "changeImpact": "compatible",
       "changeApproval": null,
       "deploymentApproval": null
     },
@@ -310,6 +310,43 @@
         "scripts/test-billing-production.mjs"
       ],
       "ownerGate": "Owner chose local implementation/regression only; Stripe and Creem remain disabled pending separately requested HTTPS/account-backed acceptance. No live activation.",
+      "changeImpact": "compatible",
+      "changeApproval": null,
+      "deploymentApproval": null
+    },
+    {
+      "id": "CAP-011",
+      "name": "Audited payment exception console, trusted-event replay and receipt-backed compensation",
+      "lifecycle": "qa-passed",
+      "availability": "enabled",
+      "protection": "release-critical",
+      "contractVersion": "1.0.0",
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "/zh/admin/payments",
+        "/api/v1/admin/payment-ops"
+      ],
+      "ownerModules": [
+        "src/services/payment-operations.ts",
+        "src/components/admin/payment-operations-console.tsx"
+      ],
+      "dependencies": [
+        "CAP-001",
+        "CAP-005",
+        "CAP-006",
+        "CAP-007",
+        "CAP-010"
+      ],
+      "testIds": [
+        "REGRESSION-CAP-011"
+      ],
+      "fixtures": [
+        "scripts/test-payment-operations.ts",
+        "scripts/test-payment-operations-browser.mjs"
+      ],
+      "ownerGate": "Owner requested AUD-005 local integration/regression; actual provider payment/refund/public notifications and production activation remain deferred until HTTPS deployment.",
       "changeImpact": "additive",
       "changeApproval": null,
       "deploymentApproval": null

@@ -522,6 +522,10 @@ export const paymentEvents = pgTable(
     orderId: text("order_id").references(() => paymentOrders.id),
     status: text("status").notNull(),
     normalizedEvent: jsonb("normalized_event"),
+    attemptCount: integer("attempt_count").notNull().default(0),
+    lastAttemptAt: timestamp("last_attempt_at", { withTimezone: true }),
+    lastError: text("last_error"),
+    reviewStatus: text("review_status").notNull().default("OPEN"),
     nextAttemptAt: timestamp("next_attempt_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
@@ -535,6 +539,25 @@ export const paymentEvents = pgTable(
   }),
 );
 
+export const paymentOperations = pgTable("payment_operations", {
+  id: text("id").primaryKey(),
+  requestId: text("request_id").notNull().unique(),
+  requestHash: text("request_hash").notNull(),
+  actorUserId: text("actor_user_id").notNull().references(() => users.id),
+  action: text("action").notNull(),
+  reason: text("reason").notNull(),
+  target: jsonb("target").notNull(),
+  orderId: text("order_id").references(() => paymentOrders.id),
+  status: text("status").notNull(),
+  resultCode: text("result_code"),
+  message: text("message"),
+  attempts: integer("attempts").notNull().default(0),
+  leaseToken: text("lease_token"),
+  leaseUntil: timestamp("lease_until", {withTimezone:true}),
+  createdAt: timestamp("created_at", {withTimezone:true}).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", {withTimezone:true}).notNull().defaultNow(),
+  finishedAt: timestamp("finished_at", {withTimezone:true}),
+});
 export const paymentRefunds = pgTable(
   "payment_refunds",
   {

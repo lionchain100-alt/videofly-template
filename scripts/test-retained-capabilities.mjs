@@ -11,6 +11,7 @@ const suites = [
   "test-refunds.ts",
   "test-billing-unification.ts",
   "test-four-channel-refunds.ts",
+  "test-payment-operations.ts",
   "test-admin-operations.mjs",
 ];
 for (const name of suites) {

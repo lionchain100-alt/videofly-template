@@ -1,0 +1,9 @@
+{
+  "testedAt": "2026-11-02T01:06:50.040Z",
+  "productionPages": true,
+  "newProvidersStillDisabled": true,
+  "studioAndLocalPasswordClosed": true,
+  "unauthorizedSubscriptionsDenied": true,
+  "realProviderCalls": 0,
+  "paymentOperationsPrivate": true
+}

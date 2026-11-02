@@ -46,6 +46,7 @@ const navItems: NavItem[] = [
     icon: BarChart3,
   },
   { title: "充值订单", href: "/admin/orders", icon: BarChart3 },
+  { title: "支付异常", href: "/admin/payments", icon: BarChart3 },
   {
     title: "数据分析",
     href: "/admin/analytics",
