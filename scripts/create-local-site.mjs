@@ -10,6 +10,7 @@ import { execFileSync } from "node:child_process";
 import { randomBytes } from "node:crypto";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { instanceStateDocuments } from "./instance-state.mjs";
 const source = fileURLToPath(new URL("../", import.meta.url));
 const [id = "aurora-notes", portString = "3002", dbPortString = "55433"] =
   process.argv.slice(2).filter((v) => v !== "--");
@@ -43,12 +44,16 @@ for (const entry of await readdir(path.join(workspace, "sites"), {
   throw e;
 })) {
   if (!entry.isDirectory()) continue;
-  const other = JSON.parse(
-    await readFile(
+  let other;
+  try {
+    other = JSON.parse(await readFile(
       path.join(workspace, "sites", entry.name, "src/config/site.json"),
       "utf8",
-    ),
-  );
+    ));
+  } catch (e) {
+    if (e.code === "ENOENT") continue; // Ordinary non-site directories.
+    throw e;
+  }
   if (
     [port, databasePort].some((p) =>
       [other.local.port, other.local.databasePort].includes(p),
@@ -85,7 +90,7 @@ const allowed = files.filter(
     !f.endsWith(".log") &&
     !f.endsWith(".pid") &&
     !f.includes("previous.json") &&
-    !f.includes("..") &&
+    !f.split(/[\\/]/).some((segment) => segment === ".." || segment === ".") &&
     !path.isAbsolute(f),
 );
 await mkdir(destination, { recursive: true });
@@ -130,7 +135,7 @@ site.ui.brand.name = id
   .split("-")
   .map((w) => w[0].toUpperCase() + w.slice(1))
   .join(" ");
-site.ui.brand.mark = "A";
+site.ui.brand.mark = site.ui.brand.name[0];
 site.ui.presetId = "minimal";
 site.ui.defaultTool = "text";
 site.ui.content.title = {
@@ -172,7 +177,12 @@ const env = {
   TEXT_AI_ENABLED: "false",
   TEXT_AI_API_KEY: "",
   TEXT_AI_BASE_URL: "https://api.deepseek.com",
-  TEXT_AI_MODEL: "deepseek-chat",
+  TEXT_AI_MODEL: "deepseek-flash",
+  VIDEO_AI_ENABLED: "false",
+  VIDEO_AI_PROVIDER: "kie",
+  VIDEO_AI_BASE_URL: "https://api.kie.ai",
+  VIDEO_AI_MODEL: "wan/2-7-text-to-video",
+  VIDEO_GENERATION_CREDITS: "10",
   KIE_API_KEY: "",
   PAYPAL_ENABLED: "false",
   PAYPAL_ENVIRONMENT: "sandbox",
@@ -181,7 +191,11 @@ const env = {
   PAYPAL_MERCHANT_ID: "",
   PAYPAL_WEBHOOK_ID: "",
   WAFFO_ENABLED: "false",
-  WAFFO_MODE: "test",
+  WAFFO_ENVIRONMENT: "test",
+  STRIPE_ENABLED: "false",
+  STRIPE_ENVIRONMENT: "test",
+  CREEM_ENABLED: "false",
+  CREEM_ENVIRONMENT: "test",
 };
 await writeFile(
   path.join(destination, ".env.local"),
@@ -192,6 +206,10 @@ await writeFile(
     "\n",
   { mode: 0o600 },
 );
+for (const [file, contents] of Object.entries(instanceStateDocuments(site))) {
+  await mkdir(path.dirname(path.join(destination, file)), { recursive: true });
+  await writeFile(path.join(destination, file), contents);
+}
 execFileSync("git", ["init", "--quiet"], { cwd: destination });
 console.log(
   `SITE_CREATED ${destination}\nOrigin: ${site.origin}\nCredentials: this site's .env.local (not printed).\nNext: corepack pnpm install --frozen-lockfile; powershell -File scripts/start-local-site.ps1`,

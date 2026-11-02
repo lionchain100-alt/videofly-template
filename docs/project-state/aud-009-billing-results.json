@@ -1,0 +1,16 @@
+{
+  "testedAt": "2026-11-02T04:35:52.896Z",
+  "passed": [
+    "stripe: replayed create/lost response use one checkout; unpaid grants nothing; 8 signed notification replays fulfill once; mismatched amount rejected",
+    "creem: replayed create/lost response use one checkout; unpaid grants nothing; 8 signed notification replays fulfill once; mismatched amount rejected",
+    "stripe: active alone no credits; two paid cycles each grant once across concurrent/different events; own-user cancel/resume/cancel preserves credits; stale state cannot override newer confirmation",
+    "creem: active alone no credits; two paid cycles each grant once across concurrent/different events; own-user cancel/resume/cancel preserves credits; stale state cannot override newer confirmation",
+    "subscription fulfillment rollback is atomic; persisted normalized receipt recovers once without a paid HTTP retry",
+    "legacy Creem receipt links without reminting its first-period credits; next period grants normally",
+    "legacy Stripe Customer association works without new metadata; two invoices fulfill once each",
+    "wrong environment/account/user/currency, another receipt for one cycle and overlapping periods never grant credits",
+    "late historical payment preserves its original expiry; ended subscriptions have no paid access and cannot resume as an active plan",
+    "legacy Stripe plan projection observes canceled status rather than granting an extra grace day"
+  ],
+  "realProviderCalls": 0
+}

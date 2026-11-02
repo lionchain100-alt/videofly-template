@@ -8,10 +8,14 @@ if ($Stop -or $Restart) {
         $saved = Get-Content -LiteralPath $runtime -Raw -Encoding UTF8 | ConvertFrom-Json
         foreach ($entry in $saved.processes) {
             $process = Get-CimInstance Win32_Process -Filter "ProcessId=$($entry.pid)" -ErrorAction SilentlyContinue
-            if ($process -and $process.CreationDate.ToUniversalTime().ToString('o') -eq $entry.created -and $process.CommandLine -like "*$($entry.marker)*") {
+            # PowerShell 7.5 parses ISO JSON timestamps as DateTime; Windows
+            # PowerShell preserves strings. Compare UTC ticks in both hosts.
+            $createdUtc = if ($entry.created -is [DateTime]) { $entry.created.ToUniversalTime() } else { [DateTime]::Parse($entry.created, [Globalization.CultureInfo]::InvariantCulture, [Globalization.DateTimeStyles]::RoundtripKind).ToUniversalTime() }
+            if ($process -and $process.CreationDate.ToUniversalTime().Ticks -eq $createdUtc.Ticks -and $process.CommandLine -like "*$($entry.marker)*") {
                 & taskkill.exe /PID $entry.pid /T /F | Out-Null
             }
         }
+        if (Get-NetTCPConnection -LocalPort $site.local.port -State Listen -ErrorAction SilentlyContinue) { throw 'HTTP port remains occupied; process ownership was not verified. Runtime record retained.' }
         Remove-Item -LiteralPath $runtime
     }
     Write-Output "Stopped site processes for $($site.id). Database and data retained."

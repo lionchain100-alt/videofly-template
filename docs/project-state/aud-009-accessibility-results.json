@@ -1,0 +1,104 @@
+{
+  "at": "2026-11-02T04:44:14.638Z",
+  "cases": [
+    {
+      "preset": "minimal",
+      "mode": "light",
+      "locale": "zh",
+      "dialogKeyboardTrapAndReturn": true,
+      "dialogs": 3,
+      "accentAndButtonContrastAA": true
+    },
+    {
+      "preset": "minimal",
+      "mode": "light",
+      "locale": "en",
+      "dialogKeyboardTrapAndReturn": true,
+      "dialogs": 3,
+      "accentAndButtonContrastAA": true
+    },
+    {
+      "preset": "minimal",
+      "mode": "dark",
+      "locale": "zh",
+      "dialogKeyboardTrapAndReturn": true,
+      "dialogs": 3,
+      "accentAndButtonContrastAA": true
+    },
+    {
+      "preset": "minimal",
+      "mode": "dark",
+      "locale": "en",
+      "dialogKeyboardTrapAndReturn": true,
+      "dialogs": 3,
+      "accentAndButtonContrastAA": true
+    },
+    {
+      "preset": "studio",
+      "mode": "light",
+      "locale": "zh",
+      "dialogKeyboardTrapAndReturn": true,
+      "dialogs": 3,
+      "accentAndButtonContrastAA": true
+    },
+    {
+      "preset": "studio",
+      "mode": "light",
+      "locale": "en",
+      "dialogKeyboardTrapAndReturn": true,
+      "dialogs": 3,
+      "accentAndButtonContrastAA": true
+    },
+    {
+      "preset": "studio",
+      "mode": "dark",
+      "locale": "zh",
+      "dialogKeyboardTrapAndReturn": true,
+      "dialogs": 3,
+      "accentAndButtonContrastAA": true
+    },
+    {
+      "preset": "studio",
+      "mode": "dark",
+      "locale": "en",
+      "dialogKeyboardTrapAndReturn": true,
+      "dialogs": 3,
+      "accentAndButtonContrastAA": true
+    },
+    {
+      "preset": "portal",
+      "mode": "light",
+      "locale": "zh",
+      "dialogKeyboardTrapAndReturn": true,
+      "dialogs": 3,
+      "accentAndButtonContrastAA": true
+    },
+    {
+      "preset": "portal",
+      "mode": "light",
+      "locale": "en",
+      "dialogKeyboardTrapAndReturn": true,
+      "dialogs": 3,
+      "accentAndButtonContrastAA": true
+    },
+    {
+      "preset": "portal",
+      "mode": "dark",
+      "locale": "zh",
+      "dialogKeyboardTrapAndReturn": true,
+      "dialogs": 3,
+      "accentAndButtonContrastAA": true
+    },
+    {
+      "preset": "portal",
+      "mode": "dark",
+      "locale": "en",
+      "dialogKeyboardTrapAndReturn": true,
+      "dialogs": 3,
+      "accentAndButtonContrastAA": true
+    }
+  ],
+  "businessApiCalls": 0,
+  "pageErrors": [],
+  "scope": "Shared modal keyboard behavior and accent/button token contrast; not a full WCAG certification"
+}

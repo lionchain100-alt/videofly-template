@@ -9,7 +9,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "biome check .",
+    "lint": "node scripts/lint-gate.mjs",
     "format": "biome format --write .",
     "typecheck": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
@@ -57,7 +57,14 @@
     "test:presentation-policy": "node --import tsx scripts/test-presentation-policy.ts",
     "test:seo-routes": "node scripts/test-seo-routes.mjs",
     "owner:initialize": "node --import tsx scripts/initialize-owner.ts",
-    "test:ui-offline": "node scripts/test-preview-offline.mjs"
+    "test:ui-offline": "node scripts/test-preview-offline.mjs",
+    "lint:raw": "biome check .",
+    "production:check": "node --import tsx scripts/check-production.ts",
+    "test:production-config": "node --import tsx scripts/test-production-config.ts",
+    "site:verify-empty": "node scripts/check-initialized-site.mjs",
+    "test:release-gates": "node scripts/test-release-gates.mjs",
+    "test:site-factory": "node scripts/test-site-factory.mjs",
+    "capability:check": "node scripts/check-capabilities.mjs"
   },
   "dependencies": {
     "@creem_io/better-auth": "2.0.4",

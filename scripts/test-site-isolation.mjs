@@ -6,7 +6,9 @@ import path from "node:path";
 import { parse } from "dotenv";
 import postgres from "postgres";
 const root = fileURLToPath(new URL("../", import.meta.url));
-const roots = [root, path.resolve(root, "../sites/aurora-notes")];
+const peer = process.argv[2] || "aurora-notes";
+if (!/^[a-z][a-z0-9-]{2,30}$/.test(peer)) throw Error("Invalid peer site ID");
+const roots = [root, path.resolve(root, "../sites", peer)];
 const passed = [];
 const pass = (m) => {
   passed.push(m);

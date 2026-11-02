@@ -1,0 +1,118 @@
+{
+  "at": "2026-11-02T04:43:05.731Z",
+  "results": [
+    {
+      "route": "/",
+      "status": 200
+    },
+    {
+      "route": "/text-summary",
+      "status": 200
+    },
+    {
+      "route": "/text-to-video",
+      "status": 200
+    },
+    {
+      "route": "/pricing",
+      "status": 200
+    },
+    {
+      "route": "/privacy-policy",
+      "status": 200
+    },
+    {
+      "route": "/terms-of-service",
+      "status": 200
+    },
+    {
+      "legacy": "/image-to-video",
+      "noindex": true,
+      "notice": true
+    },
+    {
+      "legacy": "/reference-to-video",
+      "noindex": true,
+      "notice": true
+    },
+    {
+      "legacy": "/sora-2",
+      "noindex": true,
+      "notice": true
+    },
+    {
+      "legacy": "/veo-3-1",
+      "noindex": true,
+      "notice": true
+    },
+    {
+      "legacy": "/wan-2-6",
+      "noindex": true,
+      "notice": true
+    },
+    {
+      "legacy": "/seedance-1-5",
+      "noindex": true,
+      "notice": true
+    },
+    {
+      "route": "/zh",
+      "status": 200
+    },
+    {
+      "route": "/zh/text-summary",
+      "status": 200
+    },
+    {
+      "route": "/zh/text-to-video",
+      "status": 200
+    },
+    {
+      "route": "/zh/pricing",
+      "status": 200
+    },
+    {
+      "route": "/zh/privacy-policy",
+      "status": 200
+    },
+    {
+      "route": "/zh/terms-of-service",
+      "status": 200
+    },
+    {
+      "legacy": "/zh/image-to-video",
+      "noindex": true,
+      "notice": true
+    },
+    {
+      "legacy": "/zh/reference-to-video",
+      "noindex": true,
+      "notice": true
+    },
+    {
+      "legacy": "/zh/sora-2",
+      "noindex": true,
+      "notice": true
+    },
+    {
+      "legacy": "/zh/veo-3-1",
+      "noindex": true,
+      "notice": true
+    },
+    {
+      "legacy": "/zh/wan-2-6",
+      "noindex": true,
+      "notice": true
+    },
+    {
+      "legacy": "/zh/seedance-1-5",
+      "noindex": true,
+      "notice": true
+    }
+  ],
+  "canonicalRoutes": 12,
+  "legacyNoticeRoutes": 12,
+  "sitemapAllowlist": true,
+  "privateNoindex": true,
+  "publicAuthFlagsOnly": true
+}

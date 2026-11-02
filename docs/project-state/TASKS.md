@@ -12,10 +12,16 @@ Last reconciled: 2026-11-02
 Milestone: Local V1.2 core with four-channel billing/refunds; current full audit records remaining implementation and deferred real-provider gates.
 Active task: IDLE-000
 
-Definition of Ready: AUD-007 QA recorded; Owner authorized AUD-008 local UI/SEO/production-auth configuration checks without new paid/provider acceptance.
-Definition of Done: both tools across three layouts with one task/hold/settlement, 12 theme/language and 36 viewport cases, keyboard/dialog/preview/offline checks, route/SEO/auth/Owner guards, retained/storage/isolation/build gates and source recovery.
+Definition of Ready: AUD-008 recorded; Owner authorized AUD-009 local clean initialization, CI and production configuration gates, deferring actual deployment/platform acceptance.
+Definition of Done: independent fresh install/15 migrations/idempotent seed and isolation; CI workflow and local quality/configuration gates; retained business/UI/storage/build checks, unchanged financial snapshot and source recovery.
 
 ## Backlog
+
+- [x] AUD-009 Local clean latest-template initialization, CI automatic quality workflow and static production configuration checks. Depends on: AUD-008. Acceptance: new Cedar Tools, frozen install/15 migrations/two initializations, factory/CI/configuration guards, retained ten suites/UI/storage/two-peer isolation/production build and recovery; aud-009-results.json and parent AUD-009-INITIALIZATION-CI-PREFLIGHT-GUIDE.md. Actual hosted CI/deployment/platform acceptance are not claimed.
+
+- [ ] CI-001 Obtain actual GitHub-hosted source/integration job results, including Linux standalone build, after authorized remote submission. Depends on: remote repository submission. Acceptance: retained workflow run URL and successful job logs; local equivalents are not substituted.
+
+- [ ] REL-001 Fixed HTTPS pre-release deployment, genuine OAuth/email/verified Owner, production DB/private storage/Worker supervision, offsite restore/rollback and per-channel release acceptance. Depends on: Owner resumes deployment and supplies owned domain/hosting/account configuration; CI-001. Acceptance: real environment evidence and separate platform receipts. Local AUD-009 scope is complete.
 
 - [x] AUD-008 UI business continuity across presets, 12 theme/language combinations at 390/768/1440, keyboard/focus, SEO/legacy routes and production authentication configuration. Depends on: AUD-007. Acceptance: browser/DB single-task/hold/settlement evidence, accessibility/responsiveness matrix, SEO/disabled-route/auth configuration checks, retained suites/storage/isolation/build and source recovery. Actual OAuth/mail delivery remains HTTPS/account-backed. Evidence: aud-008-results.json and parent AUD-008-UI-SEO-AUTH-GUIDE.md.
 
@@ -39,7 +45,7 @@ Definition of Done: both tools across three layouts with one task/hold/settlemen
 
 - [ ] BILL-001 Verify Stripe/Creem actual test-account checkout/refunds, two paid periods, public signed callbacks, duplicate delivery and state changes. Depends on: Owner resumes after HTTPS deployment and supplies provider accounts/products/keys. Acceptance: real test receipts and reconciliation; no fixture substitution. Production-money acceptance is separately governed by R05/AUD-009.
 
-Suggested next implementation: AUD-009 clean initialization/CI/fixed deployment and pre-release gates. It remains proposed and unstarted. AUD-008 local scope is complete; actual authentication callbacks and provider gates still need deployment-backed acceptance. Actual provider receipt/bulk-statement reconciliation remains deferred under BILL-001 and deployment gates.
+Next gates: CI-001 hosted CI evidence, then REL-001 actual deployment and BILL-001 platform acceptance when the Owner resumes. AUD-009 local scope is complete; no production activation or external platform acceptance is inferred.
 
 ## Blocked / decision-needed register
 

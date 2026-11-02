@@ -1,34 +1,35 @@
 # Project Status
 
 Last updated: 2026-11-02
-Current stage: AUD-008 local UI/SEO/production-auth configuration QA passed
+Current stage: AUD-009 local initialization/CI/preflight QA passed
 Active task: IDLE-000
-Canonical specification: `docs/project-state/contract.md`
+Canonical specification: docs/project-state/contract.md
 Current registry: None required
-Capability registry: `docs/project-state/capabilities.json`
-Source recovery point: local tag `aud-008-local-20261102`; before `aud-008-before-20261102`; parent index `.recovery/aud-008-current-after.json`. Prior indexes retained. Source archives exclude credentials/databases/generated assets.
-Current review: parent dated 2026-11-02 review retains historic matrix with later implementation notes. Current usage: parent `AUD-008-UI-SEO-AUTH-GUIDE.md`.
+Capability registry: docs/project-state/capabilities.json
+Source recovery point: local tag aud-009-local-20261102; before aud-009-before-20261102; parent index .recovery/aud-009-current-after.json. Prior indexes retained. Archives exclude credentials, databases and generated assets.
+Current usage: parent AUD-009-INITIALIZATION-CI-PREFLIGHT-GUIDE.md; current evidence docs/project-state/aud-009-results.json. Dated V1.2 review keeps historical matrix with successor notes.
 
 ## Critical Resume State
 
 ### Active objective
-No active implementation. AUD-008 local UI/business/responsive/keyboard/SEO/auth configuration scope passed. V1.2 production/provider acceptance remains incomplete; do not treat configuration checks as actual login-provider or payment receipts.
+No active implementation. AUD-009 explicitly requested local scope passed; actual remote CI, deployment and platform acceptance remain pending and separate.
 
 ### Verified completed
-- Both accepted tools survive three preset/locale switches using one task, hold and settlement; private session drafts restore inputs/parameters and accepted receipts clear stale pending notices. Current workspace modules load on demand. Studio stays simulation-only with no business API dependency, including no-DB SSR/config proof.
-- 12 light/dark/en/zh/preset combinations at 390/768/1440, both workspaces, visible keyboard focus, mobile language/menu Enter/Escape, three preview dialogs with Tab wrapping and opener return. Accent/button contrast checked; screenshots parent .qa-aud008. Browser plugin absent; installed Playwright/Chromium used.
-- Dedicated /text-summary and /text-to-video route to reliable task UI. Legacy image/reference/model pages retain notice/noindex; published sitemap/metadata exclude unsupported claims and private/editor paths. Old generation410 and existing callback/download boundaries retained.
-- Production Google/email availability now matches HTTPS and corresponding real configuration, local password stays disabled in production; current localhost deployment intentionally has no production login methods. Login returns are restricted and mail API errors handled. New Owner CLI defaults dry-run and requires existing verified/enabled account, no admins, explicit site and atomic audit. Tests roll back roles; no actual production Owner promotion.
-- Ten retained suites, live 36-case UI matrix, preview keyboard/contrast, SEO/legacy inventory, auth/Owner checks, six dual-site groups, real R2 private API/storage+backup recovery, production build/privacy and live three-Worker readiness passed. Evidence aud-008-results.json. No new actual model/payment/refund/OAuth/mail provider calls.
-- Main remains 2 users/5 tasks/1 asset/3 orders/3 refunds,190 available/0 frozen/0 refund reserve,15 migrations and policy1 with approved5/50/USD10/USD100 limits and1/10 prices. Temporary users, costs, UI variants and role changes removed. Second site stays independent AUD-003/eight migrations/102 credits. Web and three Workers ready at3000. Latest encrypted backup restored to laconic_local_restore_aud008_verified, original main retained.
+- Latest independent Cedar Tools at3003/DB55434: source-only copy, own frozen install,15 migration checksums, policy/seed twice,100 initial test credits once,102 after first-login gift;2users/0tasks/assets/orders/refunds, no provider keys. Separate instance STATUS/TASKS/LEDGER mapping. Main plus old/new peer Cookie/DB/credential/credit/file/tool/UI isolation passed.
+- Fixed source factory catch-all login route omission, non-site directory handling, provider environment/default flags and per-brand initial mark. New site creation and CI bootstrap reject existing environments/destinations; no source data/keys are copied.
+- Added read-only SHA-pinned GitHub Actions source and ephemeral-Postgres jobs, fixed Node/pnpm/frozen install, incremental lint with265 explicit inherited diagnostics/no new diagnostics, capability protection, type/configuration/security/build and retained integration gates. Actual hosted run was not performed; no remote push. Latest audit0critical/high/moderate and1low deepmerge.
+- Static secret-free production preflight and positive/negative guards passed; current localhost configuration intentionally rejected16/28 rather than activated. Windows no-DB production build/types and runtime production privacy passed. Linux standalone remains hosted-CI pending.
+- Ten retained suites,36 live UI cases,12 preview keyboard/contrast combinations, SEO/offline/auth/Owner,12 peer-isolation groups, actual private R2 API/nine storage/recovery groups and desktop/mobile runtime checks passed. PowerShell5/7 timestamp-safe managed stop/start verified. Main and Cedar Web/Workers restored, readiness200.
+- Main retains2users/5tasks/1legacyasset/3orders/3refunds,190available/0frozen/0refund reserve,15migrations, policy1 and approved5/minute,50/day,USD10/day,USD100/month,1/10credit prices; no test costs/reviews/incidents/Owner promotions. Aurora remains AUD-003/eight migrations/102credits with source unchanged. Genuine encrypted backup restored to laconic_local_restore_aud009_verified; full tables and1file verified without main replacement. No new paid-model/payment/refund calls.
 
 ### Pending or needs review
-- AUD-009 clean latest-template initialization, CI/frozen install/lint/security gates, fixed HTTPS and production deployment remain unstarted. Actual Google callback or verified-domain email delivery/expiry/use and initial production Owner must be verified with real configuration after deployment. No new credentials needed for completed local scope.
-- BILL-001 actual Stripe/Creem checkout/refund/two periods/fixed callbacks remain deployment-backed; both flags false. Production-money R05 and Waffo authoritative statement protocol remain separate.
-- Real devices/Safari/Firefox/screen readers/full WCAG certification, live9:16/additional models, automatic supplier pricing/bill reconciliation, production DR/PITR/failover, offsite scheduler/retention and external alerts/supervision remain unverified gates. Source archive is not a business-data backup; retain original env and backup key independently.
+- CI-001: actual GitHub-hosted run and Linux standalone evidence after remote submission. Local workflow validation/equivalents do not substitute.
+- REL-001: owned fixed HTTPS deployment, production DB/TLS/private bucket, actual OAuth/verified sender email and first verified Owner, Worker supervision/alerts, offsite recovery and release rollback.
+- BILL-001: actual Stripe/Creem checkout/refund/two paid periods/fixed signed callbacks; both remain false. Per-channel production-money and Waffo authoritative statement gates remain separate.
+- Historical lint debt265 and1low dependency advisory are documented. Additional model/9:16/device/browser/accessibility/provider bill reconciliation gates retained from AUD-007/008. Source archives are not business-data backups; keep original env and backup key independently.
 
 ### Blockers
-None for completed local scope. Future actual production login requires owned HTTPS domain and Google OAuth client ID/secret or Resend key/verified sender. See guide for exact callbacks; do not fabricate credentials or claim external acceptance.
+None for completed local scope. Later real release requires owned domain/hosting and corresponding account/provider configuration; no invented keys or external acceptance.
 
 ### Exact next action
-Open http://localhost:3000/ui-studio or /zh/text-summary and /zh/text-to-video; use original local administrator for backend. Read parent AUD-008-UI-SEO-AUTH-GUIDE.md. Next recommended implementation AUD-009 awaits an explicit Owner request.
+Open http://localhost:3000 or new http://localhost:3003 and read parent AUD-009-INITIALIZATION-CI-PREFLIGHT-GUIDE.md. Credentials stay in each site's own .env.local. When Owner resumes release work, execute CI-001 before REL-001/BILL-001.
