@@ -4,6 +4,8 @@ The Owner authorized AUD-002 to establish recovery versions and upgrade dependen
 
 Original specification: parent workspace [V1.2](../../../videofly-completion-plan-v1.2.md). Audit and implementation evidence remain in the parent guides; dated earlier findings are not silently rewritten.
 
+Current gap/acceptance review: parent [2026-11-02 V1.2 review](../../../V1.2-整体检查与后续实施建议-2026-11-02.md). REV-001 is a read-only documentation reconciliation, not a new implementation or deployment approval. It separates deferred actual sandbox/test receipts from production-money R05 acceptance; original V1.2 requirements remain unchanged.
+
 | Capability | Observable retained contract | Executable evidence |
 | --- | --- | --- |
 | CAP-001 Login/authorization | Existing local password/session works; wrong password and disabled/member administrative access denied; role cannot be supplied by user. Local password remains disabled in production. | admin operations integration + candidate browser/auth smoke |

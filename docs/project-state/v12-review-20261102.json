@@ -1,0 +1,156 @@
+{
+  "clientDate": "2026-11-02",
+  "checkedAt": "2026-11-02T00:32:46.266Z",
+  "sourceCommit": "675bab847e88fd32fce773cc2ec17d1e8eb096fc",
+  "method": "Read-only source/evidence reconciliation, SELECT queries and HTTP GET; no login, writes, paid calls or replay",
+  "sites": [
+    {
+      "site": "laconic",
+      "origin": "http://localhost:3000",
+      "counts": {
+        "users": 2,
+        "tasks": 5,
+        "orders": 3,
+        "refunds": 3,
+        "migrations": 10,
+        "assets": 1
+      },
+      "grouped": [
+        {
+          "tool_id": "text-summary",
+          "status": "FAILED",
+          "count": 1
+        },
+        {
+          "tool_id": "text-summary",
+          "status": "SUCCEEDED",
+          "count": 2
+        },
+        {
+          "tool_id": "video-generation",
+          "status": "FAILED",
+          "count": 1
+        },
+        {
+          "tool_id": "video-generation",
+          "status": "SUCCEEDED",
+          "count": 1
+        }
+      ],
+      "adminCredits": {
+        "available": 190,
+        "frozen": 0,
+        "refund_reserved": 0
+      },
+      "providers": {
+        "paypal": {
+          "enabled": true,
+          "environment": "sandbox"
+        },
+        "waffo": {
+          "enabled": true,
+          "environment": "test"
+        },
+        "stripe": {
+          "enabled": false,
+          "environment": null
+        },
+        "creem": {
+          "enabled": false,
+          "environment": "test"
+        }
+      },
+      "languages": {
+        "default": "en",
+        "enabled": [
+          "en",
+          "zh"
+        ]
+      },
+      "tools": {
+        "text-summary": true,
+        "video-generation": true
+      },
+      "billing": {
+        "subscriptions": 0,
+        "cycles": 0
+      }
+    },
+    {
+      "site": "aurora-notes",
+      "origin": "http://localhost:3002",
+      "counts": {
+        "users": 2,
+        "tasks": 0,
+        "orders": 0,
+        "refunds": 0,
+        "migrations": 8,
+        "assets": 0
+      },
+      "grouped": [],
+      "adminCredits": {
+        "available": 102,
+        "frozen": 0,
+        "refund_reserved": 0
+      },
+      "providers": {
+        "paypal": {
+          "enabled": false,
+          "environment": "sandbox"
+        },
+        "waffo": {
+          "enabled": false,
+          "environment": null
+        },
+        "stripe": {
+          "enabled": false,
+          "environment": null
+        },
+        "creem": {
+          "enabled": false,
+          "environment": null
+        }
+      },
+      "languages": {
+        "default": "zh",
+        "enabled": [
+          "zh"
+        ]
+      },
+      "tools": {
+        "text-summary": true,
+        "video-generation": false
+      }
+    }
+  ],
+  "http": [
+    {
+      "url": "http://localhost:3000/zh",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:3000/zh/buy-credits",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:3000/api/health",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:3000/sitemap.xml",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:3000/api/v1/payments",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:3000/zh/admin",
+      "status": 307
+    },
+    {
+      "url": "http://localhost:3002/",
+      "status": 200
+    }
+  ]
+}

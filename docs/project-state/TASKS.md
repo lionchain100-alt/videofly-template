@@ -9,13 +9,15 @@ Last reconciled: 2026-11-02
 
 ## Active milestone
 
-Milestone: Local V1.2 template with unified four-channel billing and subscription period regression.
+Milestone: Local V1.2 core with four-channel billing/refunds; current full audit records remaining implementation and deferred real-provider gates.
 Active task: IDLE-000
 
-Definition of Ready: AUD-003 accepted; Owner authorized AUD-004 and explicitly deferred real Stripe/Creem testing until HTTPS deployment.
-Definition of Done: common order/credit fulfillment, period idempotency and legacy renewal/cancel/resume, seven retained suites, browser/API contract, build/production isolation, unchanged PayPal/Waffo/refunds, recorded account gates and recovery.
+Definition of Ready: AUD-004 and RFN-001 local QA recorded; Owner requested an updated V1.2 review and explicitly deferred real-provider payment/refund acceptance until HTTPS deployment.
+Definition of Done: reconcile all 39 V1.2 acceptance IDs against source/evidence, separate actual sandbox/test from production-money gates, record prioritized next packages and save the current review without changing business behavior.
 
 ## Backlog
+
+- [x] REV-001 Update V1.2 overall review after AUD-004/RFN-001. Depends on: RFN-001 evidence. Acceptance: parent `V1.2-整体检查与后续实施建议-2026-11-02.md`, `v12-review-20261102.json`, 39 acceptance IDs, deployment-only real-payment gates, link/state checks. Read-only review; no financial replay or new paid calls.
 
 - [x] RFN-001 Add local Stripe/Creem test refunds with signed callback/query reconciliation, source-only reclaim, consumed/frozen rules, duplicate protection and complete retained regression. Depends on: AUD-004. Acceptance: 13 refund groups, real local browser/API guards, all eight retained suites, production build/isolation, second-site isolation, clean data snapshot and source recovery; refunds-results.json and parent FOUR-CHANNEL-REFUND-GUIDE.md. Real provider tests deferred by Owner.
 
@@ -27,7 +29,9 @@ Definition of Done: common order/credit fulfillment, period idempotency and lega
 
 - [x] AUD-004 Unify Stripe/Creem purchases and subscription cycle fulfillment; preserve PayPal/Waffo/refunds. Depends on: AUD-003. Acceptance: local scope passed; `aud-004-results.json`, detailed billing/browser/production/isolation records and parent `AUD-004-BILLING-GUIDE.md`. Real-account testing deferred by Owner (DEC-AUD004-LOCAL-20261101).
 
-- [ ] BILL-001 Verify Stripe/Creem real test-account checkout, two paid periods, public signed callbacks and state changes. Depends on: Owner resumes after HTTPS deployment and supplies provider accounts/products/keys. Acceptance: real test receipts and reconciliation; no fixture substitution.
+- [ ] BILL-001 Verify Stripe/Creem actual test-account checkout/refunds, two paid periods, public signed callbacks, duplicate delivery and state changes. Depends on: Owner resumes after HTTPS deployment and supplies provider accounts/products/keys. Acceptance: real test receipts and reconciliation; no fixture substitution. Production-money acceptance is separately governed by R05/AUD-009.
+
+Suggested next implementation: AUD-005 payment exception operations and reconciliation, followed by AUD-006 storage/recovery/runtime. These and AUD-007/008/009 are proposed in the parent 2026-11-02 review, not started by this review request.
 
 ## Blocked / decision-needed register
 
