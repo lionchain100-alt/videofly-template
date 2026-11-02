@@ -1,7 +1,7 @@
 # Project Status
 
 Last updated: 2026-11-02
-Current stage: CI-001 actual hosted source/quality QA passed
+Current stage: CI-002 owned main merged and hosted QA passed
 Active task: IDLE-000
 Canonical specification: docs/project-state/contract.md
 Current registry: None required
@@ -12,7 +12,7 @@ Current usage: parent CI-001-GITHUB-ACTIONS-GUIDE.md; exact remote job/step evid
 ## Critical Resume State
 
 ### Active objective
-No active implementation. Real GitHub source/quality acceptance passed; actual deployment/platform acceptance remains deferred.
+No active implementation. Owned main includes the accepted CI branch and passed real post-merge source/quality; actual deployment/platform acceptance remains deferred.
 
 ### Verified completed
 - CI-001 actual hosted run41407071964/d49248c passed both source and quality: fixed install, zero lint, type/config/mail/security gates, Linux standalone build and 15 migrations/two seed passes/ten business suites/auth-Owner. Final explicit standalone output check/evidence candidate rerun remotely. No real provider keys or deployment; local sites/financial snapshots preserved.
@@ -23,7 +23,7 @@ No active implementation. Real GitHub source/quality acceptance passed; actual d
 - Main Web/three Workers healthy at3000/readiness200. Production test environment initially affected one combined dev restart; explicit NODE_ENV=development restart and real login/admin/runtime checks passed. No application-policy relaxation. Aurora3002 remains AUD-003/eight migrations; Cedar3003 remains AUD-009/fifteen migrations; both102credits/empty business/source unchanged.
 
 ### Pending or needs review
-- CI-001 hosted gates passed on owned fork; default main remains original. Latest evidence branch ci/ci-001-20261102; final run/recovery reference in parent guide/index.
+- Main now contains the accepted template and CI. Deployment and platform gates below remain incomplete; branch-only statements in CI-001 records are historical.
 - REL-001 owned HTTPS/production DB/private bucket/OAuth/email/verified Owner/Worker supervision/offsite recovery and rollback.
 - BILL-001 actual Stripe/Creem and per-channel payment/refund/subscription receipt acceptance after deployment; new-provider flags remain false.
 - Rehearsal sites retain independent previous source/dependency versions rather than receiving this patch automatically. Main-template zero audit is not a claim that these historic copies were upgraded. Additional model/device/accessibility/billing-reconciliation gates remain from prior audits. Keep each instance env/config and backup keys independently.
@@ -32,4 +32,4 @@ No active implementation. Real GitHub source/quality acceptance passed; actual d
 None for completed local scope. No additional API configuration needed. Real release/account-backed gates require later Owner scope and corresponding domain/accounts.
 
 ### Exact next action
-Read parent CI-001-GITHUB-ACTIONS-GUIDE.md and open its Actions run. When Owner resumes release, execute REL-001 and BILL-001 with real environment/account evidence. Main local Web/Workers continue at3000; no extra GitHub credentials needed for this completed scope.
+Read parent CI-002-MAIN-MERGE-GUIDE.md and open its final main Actions run. Continue using http://localhost:3000; when Owner requests actual release, execute REL-001/BILL-001 separately. No additional GitHub credentials required.

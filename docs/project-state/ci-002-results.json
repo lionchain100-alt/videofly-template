@@ -1,0 +1,276 @@
+{
+  "verifiedAt": "2026-11-02T08:11:07.160Z",
+  "task": "CI-002",
+  "repository": "lionchain100-alt/videofly-template",
+  "target": "main",
+  "headBranch": "ci/ci-001-20261102",
+  "pullRequest": "https://github.com/lionchain100-alt/videofly-template/pull/1",
+  "beforeMain": "16c26ea13a6ac1be34efebd077759cf973082a23",
+  "acceptedBranchCommit": "f22815db71dc84fe69b38798550ffdb86abbd658",
+  "mergeCommit": "63f56fcf300b13e157f10fad5a0c8e3ee4211d12",
+  "mergeTreeEqualsAcceptedBranch": true,
+  "mergeMethod": "merge",
+  "run": {
+    "id": 41410666857,
+    "url": "https://github.com/lionchain100-alt/videofly-template/actions/runs/41410666857",
+    "event": "push",
+    "branch": "main",
+    "commit": "63f56fcf300b13e157f10fad5a0c8e3ee4211d12",
+    "conclusion": "success"
+  },
+  "jobs": [
+    {
+      "name": "quality",
+      "url": "https://github.com/lionchain100-alt/videofly-template/actions/runs/41410666857/job/125162732305",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize containers",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run corepack enable",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run corepack pnpm install --frozen-lockfile",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run node scripts/prepare-ci.mjs",
+          "conclusion": "success"
+        },
+        {
+          "name": "Empty database migrations, policy and seed (twice)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run node scripts/test-ci.mjs",
+          "conclusion": "success"
+        },
+        {
+          "name": "Ensure frozen dependency inputs were not rewritten",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Stop containers",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "source",
+      "url": "https://github.com/lionchain100-alt/videofly-template/actions/runs/41410666857/job/125162732455",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run corepack enable",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run corepack pnpm install --frozen-lockfile",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run node scripts/prepare-ci.mjs --build-only",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run corepack pnpm lint",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run corepack pnpm lint:raw",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run corepack pnpm capability:check",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run corepack pnpm typecheck",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run corepack pnpm test:production-config",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run corepack pnpm test:email-render",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run corepack pnpm test:release-gates",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run corepack pnpm test:site-factory",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run corepack pnpm audit:security",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run corepack pnpm build",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify Linux standalone output",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run git diff --exit-code -- package.json pnpm-lock.yaml .node-version src/config/site.json",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "businessSuites": [
+    "test-admin-dashboard.ts",
+    "test-text-tasks.ts",
+    "test-video-jobs.mjs",
+    "test-payment-orders.ts",
+    "test-refunds.ts",
+    "test-billing-unification.ts",
+    "test-four-channel-refunds.ts",
+    "test-payment-operations.ts",
+    "test-admin-operations.mjs",
+    "test-ai-governance.ts"
+  ],
+  "localSnapshot": {
+    "testedAt": "2026-11-02T08:08:44.311Z",
+    "sites": [
+      {
+        "id": "laconic",
+        "origin": "http://localhost:3000",
+        "databasePort": 55432,
+        "databaseName": "laconic_local",
+        "counts": {
+          "users": 2,
+          "tasks": 5,
+          "assets": 1,
+          "orders": 3,
+          "refunds": 3,
+          "migrations": 15
+        },
+        "administratorCredits": {
+          "available": 190,
+          "frozen": 0,
+          "refund_reserved": 0
+        },
+        "readiness": {
+          "status": "ready",
+          "checks": {
+            "database": true,
+            "storage": true,
+            "workers": true
+          },
+          "checkedAt": "2026-11-02T08:08:43.582Z"
+        }
+      },
+      {
+        "id": "aurora-notes",
+        "origin": "http://localhost:3002",
+        "databasePort": 55433,
+        "databaseName": "aurora_notes_local",
+        "counts": {
+          "users": 2,
+          "tasks": 0,
+          "assets": 0,
+          "orders": 0,
+          "refunds": 0,
+          "migrations": 8
+        },
+        "administratorCredits": {
+          "available": 102,
+          "frozen": 0,
+          "refund_reserved": 0
+        }
+      },
+      {
+        "id": "cedar-tools",
+        "origin": "http://localhost:3003",
+        "databasePort": 55434,
+        "databaseName": "cedar_tools_local",
+        "counts": {
+          "users": 2,
+          "tasks": 0,
+          "assets": 0,
+          "orders": 0,
+          "refunds": 0,
+          "migrations": 15
+        },
+        "administratorCredits": {
+          "available": 102,
+          "frozen": 0,
+          "refund_reserved": 0
+        },
+        "readiness": {
+          "status": "ready",
+          "checks": {
+            "database": true,
+            "storage": true,
+            "workers": true
+          },
+          "checkedAt": "2026-11-02T08:08:44.308Z"
+        }
+      }
+    ]
+  },
+  "localMainTracks": "ci/main",
+  "originPreserved": "zifeixu85/videofly-template",
+  "deploymentHistoryBefore": [],
+  "configuredWebhooks": [],
+  "realDeploymentPerformed": false,
+  "realPlatformAcceptancePerformed": false,
+  "finalMainEvidence": "After this record is pushed, verify the exact final main SHA; final Actions metadata is retained in parent guide and .recovery/ci-002-current-after.json."
+}

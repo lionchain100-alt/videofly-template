@@ -17,6 +17,8 @@ Definition of Done: actual same-commit source/quality success, fixed install/lin
 
 ## Backlog
 
+- [x] CI-002 Merge ci/ci-001-20261102 into owned GitHub main and revalidate hosted source/quality. Depends on: CI-001 and explicit Owner merge authorization. Acceptance: PR1 merge63f56fc, tree identical to accepted f22815d; actual main push run41410666857 both jobs successful, fixed install/lint/types/standalone/ten business suites/auth and local financial snapshot retained. Evidence ci-002-results.json, parent CI-002-MAIN-MERGE-GUIDE.md; final recorded main candidate also rechecked. Actual deployment/platform acceptance deferred.
+
 - [x] AUD-010 Clear265 historical lint diagnostics and1low dependency advisory. Depends on: AUD-009. Acceptance: unchanged rules/exclusions, empty/refused waivers, scoped448/root460 zero checks, narrow renderer override/all advisories0,14mail variants/intercepted SDK, ten business suites/UI/storage/isolation/production and unchanged snapshots/recovery; aud-010-results.json and parent AUD-010-LINT-SECURITY-GUIDE.md. Rehearsal site sources and deferred deployment/platform gates retained.
 
 - [x] AUD-009 Local clean latest-template initialization, CI automatic quality workflow and static production configuration checks. Depends on: AUD-008. Acceptance: new Cedar Tools, frozen install/15 migrations/two initializations, factory/CI/configuration guards, retained ten suites/UI/storage/two-peer isolation/production build and recovery; aud-009-results.json and parent AUD-009-INITIALIZATION-CI-PREFLIGHT-GUIDE.md. Actual hosted CI/deployment/platform acceptance are not claimed.
