@@ -102,6 +102,7 @@ async function main() {
   });
   const { submitSummary, getSummaryTask, claimTask, finishTask, recoverExpiredTasks } =
     await import("../src/services/tasks");
+  const {aiPolicyFixture}=await import('./ai-policy-fixture');const policyFixture=await aiPolicyFixture(sql);
   const { executeSummary, textProviderConfig } = await import("../src/ai/text-provider");
   const { summaryInputSchema } = await import("../src/tools/text-summary/contract");
   const { db } = await import("../src/db");
@@ -290,6 +291,7 @@ async function main() {
       await tx`delete from credit_packages where user_id in (${uid},${other})`;
       await tx`delete from "user" where id in (${uid},${other})`;
     });
+    await policyFixture.restore();
     await sql.end();
     await db.$client.end({ timeout: 5 });
     await new Promise<void>((resolve) => provider.close(() => resolve()));

@@ -15,12 +15,16 @@ async function main() {
     executionSnapshot,
     snapshotHash,
     TextProviderError,
+    textTaskConfig,
   } = await import("../src/ai/text-provider");
   const { summaryInputSchema } = await import(
     "../src/tools/text-summary/contract"
   );
   const { db } = await import("../src/db");
   const { startHeartbeat } = await import("../src/services/runtime-health");
+  const { governedTask, beginAiDispatch } = await import(
+    "../src/services/ai-governance"
+  );
   const heartbeat = await startHeartbeat("text");
   let stopping = false;
   process.on("SIGTERM", () => {
@@ -45,14 +49,23 @@ async function main() {
         }
         let outcome: Parameters<typeof finishTask>[2];
         try {
-          const cfg = textProviderConfig();
+          let cfg = textProviderConfig();
+          const governed = await governedTask(task.id);
+          if (governed)
+            cfg = textTaskConfig(cfg, task.executionConfig, task.credits);
           if (
+            !governed &&
             snapshotHash(executionSnapshot(cfg)) !==
-            snapshotHash(task.executionConfig)
+              snapshotHash(task.executionConfig)
           )
             throw new TextProviderError(
               "CONFIG_CHANGED",
               "模型配置已变更，原任务已释放积分，请确认新配置后重新提交。",
+            );
+          if (!(await beginAiDispatch(task.id, task.leaseToken)))
+            throw new TextProviderError(
+              "DISPATCH_UNCERTAIN",
+              "调用许可已使用或租约失效，未重复调用；费用需核实。",
             );
           const result = await executeSummary(
             summaryInputSchema.parse(task.input),

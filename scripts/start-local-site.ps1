@@ -35,6 +35,8 @@ try {
     }
     & node scripts/migrate-admin.mjs
     if ($LASTEXITCODE -ne 0) { throw 'Migration failed' }
+    & node --import tsx scripts/initialize-ai-policy.ts
+    if ($LASTEXITCODE -ne 0) { throw 'AI policy initialization failed' }
     & node scripts/seed-local-admin.mjs
     if ($LASTEXITCODE -ne 0) { throw 'Account initialization failed' }
     $processes = @()

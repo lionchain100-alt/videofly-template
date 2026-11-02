@@ -12,10 +12,12 @@ Last reconciled: 2026-11-02
 Milestone: Local V1.2 core with four-channel billing/refunds; current full audit records remaining implementation and deferred real-provider gates.
 Active task: IDLE-000
 
-Definition of Ready: AUD-005 QA recorded; Owner authorized AUD-006 and independent private Cloudflare R2 test-bucket configuration.
-Definition of Done: private assets/uploads, encrypted offline database/file backup and isolated restore, Worker heartbeat/readiness, actual private R2 round trip, retained business/production/isolation/browser checks and source recovery.
+Definition of Ready: AUD-006 local/R2 QA recorded; Owner requested AUD-007 and explicitly approved local 5/minute,50/day,USD10/day,USD100/month defaults.
+Definition of Done: versioned capability/model/price policy, atomic user/site limits and cost reservations, historical snapshot/quote compatibility, audited terminal cost review, ten retained suites, storage/restore/browser/production/isolation gates, clean data and source recovery.
 
 ## Backlog
+
+- [x] AUD-007 Model capability configuration, immutable price/execution snapshots, per-user limits, atomic site cost reservations and audited cost review. Depends on: AUD-006. Acceptance: concurrent limits/budgets, historical compatibility, uncertain outcomes, admin permissions/audit, retained suites/storage/isolation/production checks and source recovery. Local defaults authorized: 5/minute, 50/day, USD10/day and USD100/month. Evidence: aud-007-results.json and parent AUD-007-MODEL-BUDGET-GUIDE.md.
 
 - [x] AUD-006 Private R2/S3 assets/uploads, encrypted database/file backup and isolated restore, worker heartbeats/readiness. Depends on: AUD-005. Acceptance: local S3 protocol/private API, database plus file restoration/tamper guards, current worker health, retained suites and build; real R2 independent private test bucket provisioned under Owner authorization and verified. Evidence: aud-006-results.json and parent AUD-006-STORAGE-RECOVERY-GUIDE.md.
 
@@ -35,7 +37,7 @@ Definition of Done: private assets/uploads, encrypted offline database/file back
 
 - [ ] BILL-001 Verify Stripe/Creem actual test-account checkout/refunds, two paid periods, public signed callbacks, duplicate delivery and state changes. Depends on: Owner resumes after HTTPS deployment and supplies provider accounts/products/keys. Acceptance: real test receipts and reconciliation; no fixture substitution. Production-money acceptance is separately governed by R05/AUD-009.
 
-Suggested next implementation: AUD-007 model/budget governance, followed by AUD-008/009. These remain proposed and have not started. AUD-006 local scope and real private R2 test-bucket integration are complete. Actual provider receipt/bulk-statement reconciliation remains deferred under BILL-001 and deployment gates.
+Suggested next implementation: AUD-008 UI/SEO/production-auth combination checks, followed by AUD-009 deployment/CI. These remain proposed and have not started. AUD-007 local model and estimated-cost governance is complete. Actual provider receipt/bulk-statement reconciliation remains deferred under BILL-001 and deployment gates.
 
 ## Blocked / decision-needed register
 

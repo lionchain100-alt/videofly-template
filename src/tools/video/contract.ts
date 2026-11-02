@@ -6,7 +6,11 @@ export const videoInputSchema = z
   })
   .strict();
 export const videoSubmissionSchema = z
-  .object({ requestId: z.string().uuid(), input: videoInputSchema })
+  .object({
+    requestId: z.string().uuid(),
+    input: videoInputSchema,
+    policyRevision: z.number().int().positive().optional(),
+  })
   .strict();
 export type VideoInput = z.infer<typeof videoInputSchema>;
 export interface LiveVideoTask {

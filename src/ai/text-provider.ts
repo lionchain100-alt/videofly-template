@@ -23,7 +23,10 @@ const configSchema = z.object({
 });
 export function textProviderConfig() {
   if (process.env.TEXT_AI_ENABLED !== "true")
-    throw new TextProviderError("NOT_CONFIGURED", "文本摘要尚未配置模型，当前不会扣积分。");
+    throw new TextProviderError(
+      "NOT_CONFIGURED",
+      "文本摘要尚未配置模型，当前不会扣积分。",
+    );
   const parsed = configSchema.safeParse({
     provider: process.env.TEXT_AI_PROVIDER,
     baseUrl: process.env.TEXT_AI_BASE_URL,
@@ -41,7 +44,10 @@ export function textProviderConfig() {
     );
   const cfg = parsed.data;
   if (cfg.provider === "deepseek" && cfg.tokenField !== "max_tokens")
-    throw new TextProviderError("NOT_CONFIGURED", "DeepSeek 需要将 TEXT_AI_TOKEN_FIELD 配置为 max_tokens。");
+    throw new TextProviderError(
+      "NOT_CONFIGURED",
+      "DeepSeek 需要将 TEXT_AI_TOKEN_FIELD 配置为 max_tokens。",
+    );
   const url = new URL(cfg.baseUrl);
   const localFixture =
     process.env.NODE_ENV !== "production" &&
@@ -66,9 +72,35 @@ export function publicTextConfig() {
     return { enabled: false, credits: null, maxCharacters: 8000 };
   }
 }
-export function executionSnapshot(config: ReturnType<typeof textProviderConfig>) {
+export function executionSnapshot(
+  config: ReturnType<typeof textProviderConfig>,
+) {
   const { apiKey: _key, credits: _credits, ...snapshot } = config;
   return snapshot;
+}
+export function textTaskConfig(
+  current: ReturnType<typeof textProviderConfig>,
+  snapshot: unknown,
+  credits: number,
+) {
+  const saved = executionSnapshot(
+    configSchema.parse({
+      ...current,
+      ...(snapshot as any),
+      apiKey: current.apiKey,
+      credits,
+    }),
+  );
+  if (
+    saved.provider !== current.provider ||
+    saved.baseUrl !== current.baseUrl ||
+    saved.tokenField !== current.tokenField
+  )
+    throw new TextProviderError(
+      "CONFIG_CHANGED",
+      "供应商连接配置已变更，请恢复后核实原任务。",
+    );
+  return configSchema.parse({ ...current, ...saved, credits });
 }
 export function snapshotHash(value: unknown) {
   const canonical = (v: unknown): unknown =>
@@ -96,12 +128,17 @@ export async function executeSummary(
       method: "POST",
       redirect: "error",
       signal: controller.signal,
-      headers: { Authorization: `Bearer ${config.apiKey}`, "Content-Type": "application/json" },
+      headers: {
+        Authorization: `Bearer ${config.apiKey}`,
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
         model: config.model,
         stream: false,
         [config.tokenField]: config.maxTokens,
-        ...(config.provider === "deepseek" ? { thinking: { type: "disabled" } } : {}),
+        ...(config.provider === "deepseek"
+          ? { thinking: { type: "disabled" } }
+          : {}),
         messages: [
           {
             role: "system",
@@ -125,7 +162,11 @@ export async function executeSummary(
     }
     // Bound provider responses as well as requests. Never log provider error bodies or credentials.
     const reader = response.body?.getReader();
-    if (!reader) throw new TextProviderError("INVALID_RESPONSE", "模型返回为空，已释放冻结积分。");
+    if (!reader)
+      throw new TextProviderError(
+        "INVALID_RESPONSE",
+        "模型返回为空，已释放冻结积分。",
+      );
     const chunks: Uint8Array[] = [];
     let size = 0;
     while (true) {
@@ -134,7 +175,10 @@ export async function executeSummary(
       size += value.length;
       if (size > 512000) {
         await reader.cancel();
-        throw new TextProviderError("INVALID_RESPONSE", "模型响应超出限制，已释放冻结积分。");
+        throw new TextProviderError(
+          "INVALID_RESPONSE",
+          "模型响应超出限制，已释放冻结积分。",
+        );
       }
       chunks.push(value);
     }
@@ -147,18 +191,25 @@ export async function executeSummary(
       !text.trim() ||
       text.length > 40000
     )
-      throw new TextProviderError("INVALID_RESPONSE", "模型未返回完整摘要，已释放冻结积分。");
+      throw new TextProviderError(
+        "INVALID_RESPONSE",
+        "模型未返回完整摘要，已释放冻结积分。",
+      );
     const usage =
       body.usage && typeof body.usage === "object"
         ? Object.fromEntries(
             ["prompt_tokens", "completion_tokens", "total_tokens"]
-              .filter((k) => Number.isSafeInteger(body.usage[k]) && body.usage[k] >= 0)
+              .filter(
+                (k) =>
+                  Number.isSafeInteger(body.usage[k]) && body.usage[k] >= 0,
+              )
               .map((k) => [k, body.usage[k]]),
           )
         : null;
     return {
       text: text.trim(),
-      providerRequestId: typeof body.id === "string" ? body.id.slice(0, 200) : null,
+      providerRequestId:
+        typeof body.id === "string" ? body.id.slice(0, 200) : null,
       usage,
     };
   } catch (error) {

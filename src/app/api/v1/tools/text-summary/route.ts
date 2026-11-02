@@ -4,15 +4,14 @@ import { apiSuccess, apiError, handleApiError } from "@/lib/api/response";
 import { publicTextConfig } from "@/ai/text-provider";
 import { summarySubmissionSchema } from "@/tools/text-summary/contract";
 import { submitSummary } from "@/services/tasks";
-import { assertToolEnabled, readSiteManifest } from "@/config/site-server";
+import { assertToolEnabled } from "@/config/site-server";
+import { publicGovernedConfig } from "@/services/ai-governance";
 
 export const dynamic = "force-dynamic";
 export async function GET() {
-  const enabled = (await readSiteManifest()).tools["text-summary"];
-  return apiSuccess({
-    ...publicTextConfig(),
-    ...(!enabled ? { enabled: false, reason: "TOOL_DISABLED" } : {}),
-  });
+  return apiSuccess(
+    await publicGovernedConfig("text-summary", publicTextConfig()),
+  );
 }
 export async function POST(request: Request) {
   try {

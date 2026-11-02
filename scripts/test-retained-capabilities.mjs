@@ -13,6 +13,7 @@ const suites = [
   "test-four-channel-refunds.ts",
   "test-payment-operations.ts",
   "test-admin-operations.mjs",
+  "test-ai-governance.ts",
 ];
 for (const name of suites) {
   console.log(`Retained regression: ${name}`);

@@ -4,14 +4,13 @@ import { requireUserMutation } from "@/lib/api/auth";
 import { apiSuccess, apiError, handleApiError } from "@/lib/api/response";
 import { submitVideo } from "@/services/video-jobs";
 import { z } from "zod";
-import { assertToolEnabled, readSiteManifest } from "@/config/site-server";
+import { assertToolEnabled } from "@/config/site-server";
+import { publicGovernedConfig } from "@/services/ai-governance";
 export const dynamic = "force-dynamic";
 export async function GET() {
-  const enabled = (await readSiteManifest()).tools["video-generation"];
-  return apiSuccess({
-    ...publicVideoConfig(),
-    ...(!enabled ? { enabled: false, reason: "TOOL_DISABLED" } : {}),
-  });
+  return apiSuccess(
+    await publicGovernedConfig("video-generation", publicVideoConfig()),
+  );
 }
 export async function POST(request: Request) {
   try {
@@ -34,7 +33,12 @@ export async function POST(request: Request) {
     const data = videoSubmissionSchema.parse(
       JSON.parse(Buffer.concat(chunks).toString("utf8")),
     );
-    const result = await submitVideo(user.id, data.requestId, data.input);
+    const result = await submitVideo(
+      user.id,
+      data.requestId,
+      data.input,
+      data.policyRevision,
+    );
     return apiSuccess(result, result.replayed ? 200 : 202);
   } catch (e) {
     if (e instanceof z.ZodError || e instanceof SyntaxError)

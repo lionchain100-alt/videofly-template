@@ -10,6 +10,7 @@ export const summaryInputSchema = z
 export const summarySubmissionSchema = z
   .object({
     requestId: z.string().uuid(),
+    policyRevision: z.number().int().positive().optional(),
     input: summaryInputSchema,
   })
   .strict();

@@ -48,7 +48,10 @@
     "backup:restore": "node --import tsx scripts/backup-site.ts restore",
     "test:storage-runtime": "node --import tsx scripts/test-storage-runtime.ts",
     "test:storage-api": "node --import tsx scripts/test-storage-api.ts",
-    "test:runtime-browser": "node scripts/test-runtime-browser.mjs"
+    "test:runtime-browser": "node scripts/test-runtime-browser.mjs",
+    "ai:initialize": "node --import tsx scripts/initialize-ai-policy.ts",
+    "test:ai-governance": "node --import tsx scripts/test-ai-governance.ts",
+    "test:ai-browser": "node --import tsx scripts/test-ai-governance-browser.mjs"
   },
   "dependencies": {
     "@creem_io/better-auth": "2.0.4",

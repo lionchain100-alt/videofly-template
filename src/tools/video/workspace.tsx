@@ -7,7 +7,7 @@ import { useCreditsStore } from "@/stores/credits-store";
 import type { LiveVideoTask, VideoInput } from "./contract";
 import s from "@/ui-presets/site.module.css";
 import extra from "@/tools/text-summary/workspace.module.css";
-type Intent = { requestId: string; input: VideoInput };
+type Intent = { requestId: string; input: VideoInput; policyRevision?: number };
 export function VideoWorkspace({
   locale,
   prompt,
@@ -27,6 +27,7 @@ export function VideoWorkspace({
   const [config, setConfig] = useState<{
     enabled: boolean;
     credits: number | null;
+    policyRevision?: number;
     model: string;
     duration: number;
     resolution: string;
@@ -186,6 +187,7 @@ export function VideoWorkspace({
       intent ||
       ({
         requestId: crypto.randomUUID(),
+        policyRevision: config?.policyRevision,
         input: {
           prompt: prompt.trim(),
           aspectRatio: aspect === "9:16" ? "9:16" : "16:9",
@@ -217,6 +219,14 @@ export function VideoWorkspace({
       });
       const body = await response.json();
       if (!response.ok) {
+        if (
+          response.status === 409 &&
+          body.error?.details?.code === "QUOTE_CHANGED"
+        ) {
+          sessionStorage.removeItem(`video-pending-${userId}`);
+          setIntent(null);
+          setConfig(await fetch(root, { cache: "no-store" }).then(json));
+        }
         if ([400, 401, 402, 403, 413, 429, 503].includes(response.status)) {
           sessionStorage.removeItem(`video-pending-${userId}`);
           setIntent(null);

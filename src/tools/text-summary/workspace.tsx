@@ -17,6 +17,7 @@ import extra from "./workspace.module.css";
 
 interface Intent {
   requestId: string;
+  policyRevision?: number;
   input: SummaryInput;
 }
 export function SummaryWorkspace({
@@ -41,6 +42,7 @@ export function SummaryWorkspace({
   const [config, setConfig] = useState<{
     enabled: boolean;
     credits: number | null;
+    policyRevision?: number;
   } | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [history, setHistory] = useState<SummaryTask[]>([]);
@@ -195,6 +197,7 @@ export function SummaryWorkspace({
       intent ||
       ({
         requestId: crypto.randomUUID(),
+        policyRevision: config?.policyRevision,
         input: {
           text: text.trim(),
           length: length === "long" ? "long" : "short",
@@ -224,6 +227,18 @@ export function SummaryWorkspace({
       });
       const body = await response.json();
       if (!response.ok) {
+        if (
+          response.status === 409 &&
+          body.error?.details?.code === "QUOTE_CHANGED"
+        ) {
+          sessionStorage.removeItem(`summary-pending-${userId}`);
+          setIntent(null);
+          setConfig(
+            await fetch("/api/v1/tools/text-summary", {
+              cache: "no-store",
+            }).then(readJson),
+          );
+        }
         if ([400, 401, 402, 403, 413, 429, 503].includes(response.status)) {
           sessionStorage.removeItem(`summary-pending-${userId}`);
           setIntent(null);

@@ -1,0 +1,17 @@
+{
+  "at": "2026-11-02T02:33:18.198Z",
+  "passed": [
+    "per-user rolling minute / UTC day caps; accepted failures count; same-request retries count once; rejected requests create no hold",
+    "different users serialize site daily/monthly reservations; exact-budget boundary; replay bypasses exhausted budget without another reservation; queued failure releases",
+    "persisted one-time dispatch; post-dispatch failure returns user credits but retains unknown supplier budget across day/month boundaries",
+    "privileged reason/evidence-based terminal cost review; eight concurrent retries audit once; UUID mutation/member denied; credits untouched",
+    "model defaults/sort/enable and new credit prices audited; historical snapshot survives change/disable; stale UI quote refused before charging",
+    "immutable configuration command, optimistic version conflict, reason/schema and current-role guards",
+    "separate process cannot reuse dispatched permit; token-derived cost remains labelled estimate; over-estimate anomalies retained and terminal duplicate is inert",
+    "cost reservation or finalization persistence failure rolls back task, credit hold and ledger atomically",
+    "zero monthly budget and active-review refusal; actual admin API/auth/CSRF/strict schema/stale quote/revoked-role guards; no credential projection"
+  ],
+  "groups": 9,
+  "providerCalls": 0,
+  "financialFixturesRemoved": true
+}

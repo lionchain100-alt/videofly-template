@@ -395,6 +395,50 @@
       "changeImpact": "additive",
       "changeApproval": null,
       "deploymentApproval": null
+    },
+    {
+      "id": "CAP-013",
+      "name": "Versioned model/price policy, user call limits and auditable estimated-cost budgets",
+      "lifecycle": "qa-passed",
+      "availability": "enabled",
+      "protection": "release-critical",
+      "contractVersion": "1.0.0",
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "/zh/admin/ai",
+        "/api/v1/admin/ai",
+        "/api/v1/tools/text-summary",
+        "/api/v1/tools/video"
+      ],
+      "ownerModules": [
+        "src/services/ai-governance.ts",
+        "src/ai/governance-contract.ts",
+        "src/components/admin/ai-governance-console.tsx"
+      ],
+      "dependencies": [
+        "CAP-001",
+        "CAP-003",
+        "CAP-004",
+        "CAP-005",
+        "CAP-007",
+        "CAP-008",
+        "CAP-012"
+      ],
+      "testIds": [
+        "REGRESSION-CAP-013"
+      ],
+      "fixtures": [
+        "scripts/test-ai-governance.ts",
+        "scripts/test-ai-governance-browser.mjs",
+        "scripts/test-text-tasks.ts",
+        "scripts/test-video-jobs.mjs"
+      ],
+      "ownerGate": "Owner requested AUD-007 local model/limit/budget integration and explicitly accepted 5 new tasks/minute/user,50/day/user,USD10/day/site,USD100/month/site. No new actual model generation, production activation or payment-platform acceptance is implied.",
+      "changeImpact": "additive",
+      "changeApproval": null,
+      "deploymentApproval": null
     }
   ]
 }

@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import {
   boolean,
+  bigint,
   index,
   integer,
   jsonb,
@@ -921,3 +922,88 @@ export const VideoStatus = {
   FAILED: "FAILED",
 } as const;
 export type VideoStatus = (typeof VideoStatus)[keyof typeof VideoStatus];
+// AUD-007 raw-SQL services use these same tables; schema ownership remains explicit.
+export const aiPolicyVersions = pgTable(
+  "ai_policy_versions",
+  {
+    id: text("id").primaryKey(),
+    siteId: text("site_id").notNull(),
+    revision: integer("revision").notNull(),
+    config: jsonb("config").notNull(),
+    actorId: text("actor_id").references(() => users.id),
+    reason: text("reason").notNull(),
+    requestId: text("request_id").notNull().unique(),
+    requestHash: text("request_hash").notNull(),
+    origin: text("origin").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (t) => ({ revisionUnique: unique().on(t.siteId, t.revision) }),
+);
+export const aiPolicyCurrent = pgTable("ai_policy_current", {
+  siteId: text("site_id").primaryKey(),
+  versionId: text("version_id")
+    .notNull()
+    .references(() => aiPolicyVersions.id),
+});
+export const aiCostUsage = pgTable("ai_cost_usage", {
+  taskId: text("task_id")
+    .primaryKey()
+    .references(() => tasks.id, { onDelete: "cascade" }),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
+  siteId: text("site_id").notNull(),
+  policyVersion: text("policy_version").notNull(),
+  profileSnapshot: jsonb("profile_snapshot").notNull(),
+  estimateMicros: bigint("estimate_micros", { mode: "number" }).notNull(),
+  chargedMicros: bigint("charged_micros", { mode: "number" }).notNull(),
+  usageMicros: bigint("usage_micros", { mode: "number" }),
+  confirmedMicros: bigint("confirmed_micros", { mode: "number" }),
+  status: text("status").notNull(),
+  anomaly: text("anomaly"),
+  dispatchedAt: timestamp("dispatched_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+});
+export const aiCostReviews = pgTable("ai_cost_reviews", {
+  id: text("id").primaryKey(),
+  requestId: text("request_id").notNull().unique(),
+  requestHash: text("request_hash").notNull(),
+  taskId: text("task_id")
+    .notNull()
+    .references(() => tasks.id, { onDelete: "cascade" }),
+  actorId: text("actor_id")
+    .notNull()
+    .references(() => users.id),
+  amountMicros: bigint("amount_micros", { mode: "number" }).notNull(),
+  evidenceReference: text("evidence_reference").notNull(),
+  reason: text("reason").notNull(),
+  previousCost: jsonb("previous_cost").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+});
+export const aiGovernanceIncidents = pgTable(
+  "ai_governance_incidents",
+  {
+    id: text("id").primaryKey(),
+    siteId: text("site_id").notNull(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    requestId: text("request_id").notNull(),
+    code: text("code").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (t) => ({
+    incidentUnique: unique().on(t.siteId, t.userId, t.requestId, t.code),
+  }),
+);

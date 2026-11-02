@@ -136,6 +136,7 @@ const { assetPath, safeVideoResponse, publicAddress } = await import(
   "../src/services/video-assets.ts"
 );
 const { db } = await import("../src/db/index.ts");
+const {aiPolicyFixture}=await import('./ai-policy-fixture.ts');const policyFixture=await aiPolicyFixture(sql);
 async function balance() {
   return (
     await sql`select coalesce(sum(remaining_credits),0)::int as available,coalesce(sum(frozen_credits),0)::int as frozen from credit_packages where user_id=${uid} and status='ACTIVE' and(expired_at is null or expired_at>now() at time zone 'UTC')`
@@ -353,6 +354,7 @@ try {
     await tx`delete from "user" where id=${uid}`;
   });
   for (const id of createdIds) await unlink(assetPath(id)).catch(() => {});
+  await policyFixture.restore();
   await sql.end();
   await db.$client.end({ timeout: 3 });
   await new Promise((r) => server.close(r));

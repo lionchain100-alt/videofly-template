@@ -34,6 +34,12 @@ import {
 } from "@/tools/text-summary/contract";
 import type { z } from "zod";
 import { assertToolEnabled } from "@/config/site-server";
+import {
+  planAiTask,
+  reserveAiCost,
+  finishAiCost,
+  recordAiDenial,
+} from "./ai-governance";
 
 type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
 type Task = typeof tasks.$inferSelect;
@@ -77,6 +83,8 @@ export async function submitSummary(
         throw e;
       }
     },
+    undefined,
+    submission.policyRevision,
   );
 }
 export async function reserveToolTask(
@@ -91,117 +99,134 @@ export async function reserveToolTask(
     executionConfig: unknown;
   },
   onCreated?: (tx: Tx, id: string) => Promise<void>,
+  expectedRevision?: number,
 ) {
   const hash = snapshotHash(input);
   if (toolId === "text-summary" || toolId === "video-generation")
     await assertToolEnabled(toolId);
-  return db.transaction(async (tx) => {
-    const [owner] = await tx
-      .select()
-      .from(users)
-      .where(eq(users.id, userId))
-      .for("update");
-    if (!owner || owner.disabled)
-      throw new ApiError("账号不可用，请重新登录", 401);
-    const [existing] = await tx
-      .select()
-      .from(tasks)
-      .where(and(eq(tasks.userId, userId), eq(tasks.requestId, requestId)))
-      .limit(1);
-    if (existing) {
-      if (existing.inputHash !== hash || existing.toolId !== toolId)
-        throw new ApiError("同一请求编号不可更改输入", 409);
-      return { id: existing.id, replayed: true };
-    }
-    const { assertRefundUsageAllowed } = await import("./refunds");
-    await assertRefundUsageAllowed(tx, userId);
-    const config = resolveConfig();
-    const [active] = await tx
-      .select({ value: count() })
-      .from(tasks)
-      .where(
-        and(
-          eq(tasks.userId, userId),
-          inArray(tasks.status, ["QUEUED", "RUNNING"]),
-        ),
+  return db
+    .transaction(async (tx) => {
+      const [owner] = await tx
+        .select()
+        .from(users)
+        .where(eq(users.id, userId))
+        .for("update");
+      if (!owner || owner.disabled)
+        throw new ApiError("账号不可用，请重新登录", 401);
+      const [existing] = await tx
+        .select()
+        .from(tasks)
+        .where(and(eq(tasks.userId, userId), eq(tasks.requestId, requestId)))
+        .limit(1);
+      if (existing) {
+        if (existing.inputHash !== hash || existing.toolId !== toolId)
+          throw new ApiError("同一请求编号不可更改输入", 409);
+        return { id: existing.id, replayed: true };
+      }
+      const { assertRefundUsageAllowed } = await import("./refunds");
+      await assertRefundUsageAllowed(tx, userId);
+      const { config, usage } = await planAiTask(
+        tx,
+        userId,
+        toolId,
+        input,
+        resolveConfig(),
+        expectedRevision,
       );
-    if (active.value >= 3)
-      throw new ApiError("最多同时执行 3 个工具任务，请等待现有任务完成", 429);
-    const packages = await tx
-      .select()
-      .from(creditPackages)
-      .where(
-        and(
-          eq(creditPackages.userId, userId),
-          eq(creditPackages.status, "ACTIVE"),
-          gt(creditPackages.remainingCredits, 0),
-          or(
-            isNull(creditPackages.expiredAt),
-            gt(creditPackages.expiredAt, new Date()),
+      const [active] = await tx
+        .select({ value: count() })
+        .from(tasks)
+        .where(
+          and(
+            eq(tasks.userId, userId),
+            inArray(tasks.status, ["QUEUED", "RUNNING"]),
           ),
-        ),
-      )
-      .orderBy(
-        sql`${creditPackages.expiredAt} is null`,
-        asc(creditPackages.expiredAt),
-        asc(creditPackages.id),
-      )
-      .for("update");
-    if (packages.reduce((n, p) => n + p.remainingCredits, 0) < config.credits)
-      throw new ApiError("积分不足，请先补充积分", 402);
-    const id = randomUUID();
-    const allocation: Allocation[] = [];
-    await tx.insert(tasks).values({
-      id,
-      userId,
-      requestId: requestId,
-      inputHash: hash,
-      toolId,
-      input: input,
-      provider: config.provider,
-      model: config.model,
-      executionConfig: config.executionConfig,
-      credits: config.credits,
-      queueDeadline: new Date(Date.now() + 10 * 60 * 1000),
-    });
-    let remaining = config.credits;
-    for (const pkg of packages) {
-      if (remaining === 0) break;
-      const credits = Math.min(remaining, pkg.remainingCredits);
-      remaining -= credits;
-      allocation.push({ packageId: pkg.id, credits });
-      await tx
-        .update(creditPackages)
-        .set({
-          remainingCredits: sql`${creditPackages.remainingCredits}-${credits}`,
-          frozenCredits: sql`${creditPackages.frozenCredits}+${credits}`,
-          updatedAt: new Date(),
+        );
+      if (active.value >= 3)
+        throw new ApiError(
+          "最多同时执行 3 个工具任务，请等待现有任务完成",
+          429,
+        );
+      const packages = await tx
+        .select()
+        .from(creditPackages)
+        .where(
+          and(
+            eq(creditPackages.userId, userId),
+            eq(creditPackages.status, "ACTIVE"),
+            gt(creditPackages.remainingCredits, 0),
+            or(
+              isNull(creditPackages.expiredAt),
+              gt(creditPackages.expiredAt, new Date()),
+            ),
+          ),
+        )
+        .orderBy(
+          sql`${creditPackages.expiredAt} is null`,
+          asc(creditPackages.expiredAt),
+          asc(creditPackages.id),
+        )
+        .for("update");
+      if (packages.reduce((n, p) => n + p.remainingCredits, 0) < config.credits)
+        throw new ApiError("积分不足，请先补充积分", 402);
+      const id = randomUUID();
+      const allocation: Allocation[] = [];
+      await tx.insert(tasks).values({
+        id,
+        userId,
+        requestId: requestId,
+        inputHash: hash,
+        toolId,
+        input: input,
+        provider: config.provider,
+        model: config.model,
+        executionConfig: config.executionConfig,
+        credits: config.credits,
+        queueDeadline: new Date(Date.now() + 10 * 60 * 1000),
+      });
+      await reserveAiCost(tx, id, userId, usage);
+      let remaining = config.credits;
+      for (const pkg of packages) {
+        if (remaining === 0) break;
+        const credits = Math.min(remaining, pkg.remainingCredits);
+        remaining -= credits;
+        allocation.push({ packageId: pkg.id, credits });
+        await tx
+          .update(creditPackages)
+          .set({
+            remainingCredits: sql`${creditPackages.remainingCredits}-${credits}`,
+            frozenCredits: sql`${creditPackages.frozenCredits}+${credits}`,
+            updatedAt: new Date(),
+          })
+          .where(eq(creditPackages.id, pkg.id));
+      }
+      const [hold] = await tx
+        .insert(creditHolds)
+        .values({
+          userId,
+          taskId: id,
+          credits: config.credits,
+          packageAllocation: allocation,
+          status: "HOLDING",
         })
-        .where(eq(creditPackages.id, pkg.id));
-    }
-    const [hold] = await tx
-      .insert(creditHolds)
-      .values({
+        .returning();
+      await tx.insert(creditTransactions).values({
+        transNo: `TXN_${randomUUID()}`,
         userId,
         taskId: id,
-        credits: config.credits,
-        packageAllocation: allocation,
-        status: "HOLDING",
-      })
-      .returning();
-    await tx.insert(creditTransactions).values({
-      transNo: `TXN_${randomUUID()}`,
-      userId,
-      taskId: id,
-      transType: "TASK_HOLD",
-      credits: -config.credits,
-      balanceAfter: await available(tx, userId),
-      holdId: hold.id,
-      remark: `${toolId === "text-summary" ? "文本摘要" : "视频生成"}冻结 ${config.credits} 积分；成功后结算，失败释放`,
+        transType: "TASK_HOLD",
+        credits: -config.credits,
+        balanceAfter: await available(tx, userId),
+        holdId: hold.id,
+        remark: `${toolId === "text-summary" ? "文本摘要" : "视频生成"}冻结 ${config.credits} 积分；成功后结算，失败释放`,
+      });
+      if (onCreated) await onCreated(tx, id);
+      return { id, replayed: false };
+    })
+    .catch(async (error) => {
+      await recordAiDenial(userId, requestId, error);
+      throw error;
     });
-    if (onCreated) await onCreated(tx, id);
-    return { id, replayed: false };
-  });
 }
 export async function getSummaryTask(
   userId: string,
@@ -374,6 +399,7 @@ export async function finishTask(
         finishedAt: now,
       })
       .where(eq(taskAttempts.taskId, id));
+    await finishAiCost(tx, id, success, outcome.usage);
     if (finalize) await finalize(tx, task);
     const { recoverRefundDebtForUser } = await import("./refunds");
     await recoverRefundDebtForUser(tx, task.userId);

@@ -1,0 +1,111 @@
+{
+  "testedAt": "2026-11-02T02:48:17.805Z",
+  "task": "AUD-007",
+  "scope": "Local model capability/price policy, call limits and estimated cost budget; no new actual model or payment-provider acceptance",
+  "retainedSuites": 10,
+  "originalBusinessSuites": 9,
+  "governanceGroups": 9,
+  "browserGroups": 3,
+  "siteIsolationGroups": 6,
+  "storageGroups": 9,
+  "privateStorageApiGroups": 4,
+  "typecheck": true,
+  "productionBuild": true,
+  "productionIsolation": true,
+  "readiness": {
+    "status": "ready",
+    "checks": {
+      "database": true,
+      "storage": true,
+      "workers": true
+    },
+    "checkedAt": "2026-11-02T02:48:17.794Z"
+  },
+  "sites": [
+    {
+      "site": "laconic",
+      "counts": {
+        "users": 2,
+        "tasks": 5,
+        "assets": 1,
+        "orders": 3,
+        "refunds": 3,
+        "migrations": 14
+      },
+      "adminCredits": {
+        "available": 190,
+        "frozen": 0,
+        "refund_reserved": 0
+      }
+    },
+    {
+      "site": "aurora-notes",
+      "counts": {
+        "users": 2,
+        "tasks": 0,
+        "assets": 0,
+        "orders": 0,
+        "refunds": 0,
+        "migrations": 8
+      },
+      "adminCredits": {
+        "available": 102,
+        "frozen": 0,
+        "refund_reserved": 0
+      }
+    }
+  ],
+  "policyState": {
+    "revision": 1,
+    "versions": 1,
+    "costs": 0,
+    "reviews": 0,
+    "incidents": 0,
+    "limits": {
+      "perMinute": 5,
+      "perDay": 50,
+      "dailyUSD": 10,
+      "monthlyUSD": 100
+    },
+    "originalTaskCreditPrices": [
+      1,
+      10
+    ]
+  },
+  "finalBusinessBackup": "E:\\codex项目\\Laconic Reel\\videofly-template\\.local\\backups\\1793587044037-24778d1a",
+  "finalBusinessRestore": {
+    "database": "laconic_local_restore_aud007_verified",
+    "assetDirectory": "E:\\codex项目\\Laconic Reel\\videofly-template\\.local\\restores\\laconic_local_restore_aud007_verified\\assets",
+    "siteId": "laconic",
+    "sourceDigestVerified": true,
+    "filesVerified": 1,
+    "workersStarted": false,
+    "financialDataUnchanged": true,
+    "storageRouting": "portable-local",
+    "requiresOriginalSecrets": true
+  },
+  "newModelCalls": 0,
+  "newPaymentCalls": 0,
+  "realR2Regression": true,
+  "recoveryTag": "aud-007-local-20261102",
+  "beforeTag": "aud-007-before-20261102",
+  "evidence": [
+    "aud-007-governance-results.json",
+    "aud-007-browser-results.json",
+    "aud-007-isolation-results.json",
+    "aud-007-storage-results.json",
+    "aud-007-storage-api-results.json",
+    "aud-007-billing-results.json",
+    "aud-007-refund-results.json",
+    "aud-007-payment-ops-results.json",
+    "aud-007-production-results.json",
+    "aud-007-runtime-results.json"
+  ],
+  "boundaries": [
+    "USD estimates and token-derived expenses are not authoritative provider bills or account hard caps",
+    "Unknown dispatched costs carry across periods; only terminal tasks can receive audited operator statement confirmation",
+    "Legacy task costs are not fabricated; prior order/credit/task snapshots remain immutable",
+    "9:16 and additional models retain explicit unverified live-acceptance boundaries",
+    "No automatic provider statement import/price synchronization or production activation; payment acceptance remains deferred"
+  ]
+}

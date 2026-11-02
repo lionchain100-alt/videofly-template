@@ -1,5 +1,16 @@
 import { randomUUID } from "node:crypto";
-import { and, asc, desc, eq, gt, inArray, isNull, lte, or, sql } from "drizzle-orm";
+import {
+  and,
+  asc,
+  desc,
+  eq,
+  gt,
+  inArray,
+  isNull,
+  lte,
+  or,
+  sql,
+} from "drizzle-orm";
 import {
   db,
   tasks,
@@ -22,11 +33,17 @@ import {
 import { storeVideo } from "./video-assets";
 import { ApiError } from "@/lib/api/error";
 import type { VideoInput, LiveVideoTask } from "@/tools/video/contract";
+import { beginAiDispatch } from "./ai-governance";
 
 type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
 type Task = typeof tasks.$inferSelect;
 type Job = typeof videoJobs.$inferSelect;
-export async function submitVideo(userId: string, requestId: string, input: VideoInput) {
+export async function submitVideo(
+  userId: string,
+  requestId: string,
+  input: VideoInput,
+  policyRevision?: number,
+) {
   return reserveToolTask(
     userId,
     requestId,
@@ -48,9 +65,14 @@ export async function submitVideo(userId: string, requestId: string, input: Vide
         deadlineAt: new Date(Date.now() + 2 * 60 * 60 * 1000),
       });
     },
+    policyRevision,
   );
 }
-function present(task: Task, job: Job, creditStatus: string | null): LiveVideoTask {
+function present(
+  task: Task,
+  job: Job,
+  creditStatus: string | null,
+): LiveVideoTask {
   return {
     id: task.id,
     requestId: task.requestId,
@@ -62,7 +84,10 @@ function present(task: Task, job: Job, creditStatus: string | null): LiveVideoTa
     errorCode: task.errorCode,
     errorMessage: task.errorMessage,
     lastError: job.lastError,
-    videoUrl: task.status === "SUCCEEDED" ? `/api/v1/tools/video/tasks/${task.id}/file` : null,
+    videoUrl:
+      task.status === "SUCCEEDED"
+        ? `/api/v1/tools/video/tasks/${task.id}/file`
+        : null,
     createdAt: task.createdAt.toISOString(),
     providerTaskId: job.providerTaskId,
     model: task.model,
@@ -74,7 +99,13 @@ export async function getVideoTask(userId: string, id: string) {
     .from(tasks)
     .innerJoin(videoJobs, eq(videoJobs.taskId, tasks.id))
     .leftJoin(creditHolds, eq(creditHolds.taskId, tasks.id))
-    .where(and(eq(tasks.id, id), eq(tasks.userId, userId), eq(tasks.toolId, "video-generation")))
+    .where(
+      and(
+        eq(tasks.id, id),
+        eq(tasks.userId, userId),
+        eq(tasks.toolId, "video-generation"),
+      ),
+    )
     .limit(1);
   return row ? present(row.task, row.job, row.creditStatus) : null;
 }
@@ -94,12 +125,27 @@ async function owned(
   token: string,
   action: (tx: Tx, task: Task, job: Job) => Promise<void>,
 ) {
-  const [hint] = await db.select({ userId: tasks.userId }).from(tasks).where(eq(tasks.id, id));
+  const [hint] = await db
+    .select({ userId: tasks.userId })
+    .from(tasks)
+    .where(eq(tasks.id, id));
   if (!hint) return false;
   return db.transaction(async (tx) => {
-    await tx.select({ id: users.id }).from(users).where(eq(users.id, hint.userId)).for("update");
-    const [task] = await tx.select().from(tasks).where(eq(tasks.id, id)).for("update");
-    const [job] = await tx.select().from(videoJobs).where(eq(videoJobs.taskId, id)).for("update");
+    await tx
+      .select({ id: users.id })
+      .from(users)
+      .where(eq(users.id, hint.userId))
+      .for("update");
+    const [task] = await tx
+      .select()
+      .from(tasks)
+      .where(eq(tasks.id, id))
+      .for("update");
+    const [job] = await tx
+      .select()
+      .from(videoJobs)
+      .where(eq(videoJobs.taskId, id))
+      .for("update");
     if (
       !task ||
       !job ||
@@ -136,10 +182,16 @@ async function finishVideo(
 ) {
   return finishTask(task.id, token, outcome, async (tx) => {
     if (asset)
-      await tx.insert(taskAssets).values({ taskId: task.id, userId: task.userId, ...asset });
+      await tx
+        .insert(taskAssets)
+        .values({ taskId: task.id, userId: task.userId, ...asset });
     await tx
       .update(videoJobs)
-      .set({ stage: "DONE", leaseUntil: null, lastError: outcome.errorMessage || null })
+      .set({
+        stage: "DONE",
+        leaseUntil: null,
+        lastError: outcome.errorMessage || null,
+      })
       .where(eq(videoJobs.taskId, task.id));
   });
 }
@@ -151,7 +203,12 @@ export async function claimVideoJob() {
     .where(
       and(
         inArray(tasks.status, ["QUEUED", "RUNNING"]),
-        inArray(videoJobs.stage, ["QUEUED", "SUBMITTING", "POLLING", "STORING"]),
+        inArray(videoJobs.stage, [
+          "QUEUED",
+          "SUBMITTING",
+          "POLLING",
+          "STORING",
+        ]),
         lte(videoJobs.nextRunAt, new Date()),
         or(isNull(videoJobs.leaseUntil), lte(videoJobs.leaseUntil, new Date())),
       ),
@@ -166,7 +223,11 @@ export async function claimVideoJob() {
         .where(eq(users.id, hint.userId))
         .for("update", { skipLocked: true });
       if (!owner) return null;
-      const [task] = await tx.select().from(tasks).where(eq(tasks.id, hint.id)).for("update");
+      const [task] = await tx
+        .select()
+        .from(tasks)
+        .where(eq(tasks.id, hint.id))
+        .for("update");
       const [job] = await tx
         .select()
         .from(videoJobs)
@@ -206,7 +267,12 @@ export async function claimVideoJob() {
         .insert(taskAttempts)
         .values({ id: randomUUID(), taskId: task.id, status: "RUNNING" })
         .onConflictDoNothing();
-      return { task: updatedTask, job: updatedJob, previousStage: job.stage, token };
+      return {
+        task: updatedTask,
+        job: updatedJob,
+        previousStage: job.stage,
+        token,
+      };
     });
     if (claimed) return claimed;
   }
@@ -271,7 +337,9 @@ export async function processVideoJob(
           .set({
             storageAttempts: attempt,
             leaseUntil: null,
-            nextRunAt: new Date(Date.now() + Math.min(300, 2 ** attempt) * 1000),
+            nextRunAt: new Date(
+              Date.now() + Math.min(300, 2 ** attempt) * 1000,
+            ),
             lastError: "本地保存暂未成功，正在重试保存；不会重新生成。",
           })
           .where(eq(videoJobs.taskId, task.id));
@@ -281,8 +349,14 @@ export async function processVideoJob(
   let config: ReturnType<typeof videoConfig>;
   try {
     config = videoConfig();
-    if (snapshotHash(videoSnapshot(config)) !== snapshotHash(task.executionConfig))
-      throw new VideoProviderError("CONFIG_CHANGED", true, "供应商配置已变更。");
+    if (
+      snapshotHash(videoSnapshot(config)) !== snapshotHash(task.executionConfig)
+    )
+      throw new VideoProviderError(
+        "CONFIG_CHANGED",
+        true,
+        "供应商配置已变更。",
+      );
   } catch (e) {
     if (previousStage === "QUEUED")
       return finishVideo(task, token, {
@@ -297,6 +371,13 @@ export async function processVideoJob(
     );
   }
   if (previousStage === "QUEUED") {
+    if (!(await beginAiDispatch(task.id, token)))
+      return park(
+        task.id,
+        token,
+        "DISPATCH_UNCERTAIN",
+        "调用许可已使用或租约失效，未重复提交；请核实原任务。",
+      );
     let externalId: string;
     try {
       externalId = await submitKieVideo(task.input as VideoInput, config);
@@ -347,7 +428,12 @@ export async function processVideoJob(
   }
   try {
     if (!job.providerTaskId)
-      return park(task.id, token, "MISSING_TASK_ID", "供应商任务编号缺失，请核实。积分保留冻结。");
+      return park(
+        task.id,
+        token,
+        "MISSING_TASK_ID",
+        "供应商任务编号缺失，请核实。积分保留冻结。",
+      );
     const result = await queryKieVideo(job.providerTaskId, config);
     if (result.state === "failed")
       return finishVideo(task, token, {
@@ -381,7 +467,8 @@ export async function processVideoJob(
           pollAttempts: job.pollAttempts + 1,
           nextRunAt: new Date(Date.now() + 30000),
           leaseUntil: null,
-          lastError: "暂时无法确认供应商状态，稍后自动重查；不会重新生成或提前退分。",
+          lastError:
+            "暂时无法确认供应商状态，稍后自动重查；不会重新生成或提前退分。",
         })
         .where(eq(videoJobs.taskId, task.id));
     });
