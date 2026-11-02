@@ -491,11 +491,11 @@
     },
     {
       "id": "CAP-015",
-      "name": "Clean independent-site initialization, incremental CI quality gates and static production preflight",
+      "name": "Clean independent-site initialization, zero-diagnostic CI quality gates and static production preflight",
       "lifecycle": "qa-passed",
       "availability": "enabled",
       "protection": "release-critical",
-      "contractVersion": "1.0.0",
+      "contractVersion": "1.0.1",
       "spec": [
         "docs/project-state/contract.md"
       ],
@@ -526,10 +526,12 @@
         "scripts/test-release-gates.mjs",
         "scripts/test-production-config.ts",
         "scripts/check-initialized-site.mjs",
-        ".github/workflows/quality.yml"
+        ".github/workflows/quality.yml",
+        "scripts/test-email-render.tsx",
+        "scripts/tsconfig.email.json"
       ],
-      "ownerGate": "Owner requested AUD-009 local initialization/CI/production configuration checks, preserving business flows. Actual remote CI results, fixed HTTPS deployment and platform acceptance remain separate gates.",
-      "changeImpact": "additive",
+      "ownerGate": "Owner authorized AUD-010 to clear historical lint debt and the remaining low dependency advisory without business regression. Source lint now requires zero diagnostics, all dependency severities are audited, and real platform/deployment gates remain deferred.",
+      "changeImpact": "compatible",
       "changeApproval": null,
       "deploymentApproval": null
     }

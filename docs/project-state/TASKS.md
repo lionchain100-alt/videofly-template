@@ -10,10 +10,10 @@ Last reconciled: 2026-11-02
 ## Active milestone
 
 Milestone: Local V1.2 core with four-channel billing/refunds; current full audit records remaining implementation and deferred real-provider gates.
-Active task: CI-001
+Active task: IDLE-000
 
-Definition of Ready: AUD-009 recorded; Owner requested historical lint/dependency cleanup preserving existing business flows.
-Definition of Done: actual265lint fixes, zero waivers/raw source/repository diagnostics, zero dependency advisories with narrow version scope; mail/security/retained/browser/storage/isolation/type/build gates, unchanged financial snapshot and source recovery.
+Definition of Ready: AUD-010 passed; Owner authorized remote CI and supplied access through the existing GitHub account/fork.
+Definition of Done: actual same-commit source/quality success, fixed install/lint/types/Linux standalone output, 15 migrations/two initializations/ten business suites/auth checks, Actions evidence and unchanged local instances.
 
 ## Backlog
 
@@ -21,7 +21,7 @@ Definition of Done: actual265lint fixes, zero waivers/raw source/repository diag
 
 - [x] AUD-009 Local clean latest-template initialization, CI automatic quality workflow and static production configuration checks. Depends on: AUD-008. Acceptance: new Cedar Tools, frozen install/15 migrations/two initializations, factory/CI/configuration guards, retained ten suites/UI/storage/two-peer isolation/production build and recovery; aud-009-results.json and parent AUD-009-INITIALIZATION-CI-PREFLIGHT-GUIDE.md. Actual hosted CI/deployment/platform acceptance are not claimed.
 
-- [ ] CI-001 Obtain actual GitHub-hosted source/integration job results, including Linux standalone build, after authorized remote submission. Depends on: remote repository submission. Acceptance: retained workflow run URL and successful job logs; local equivalents are not substituted.
+- [x] CI-001 Actual GitHub-hosted source and integration jobs passed on lionchain100-alt/videofly-template, branch ci/ci-001-20261102. Depends on: AUD-010 and owned fork authorization. Acceptance: real Actions run41407071964 / d49248c, both jobs successful; fixed install/lint/types/Linux build/migrations/two initializations/ten business suites/auth passed. Evidence ci-001-results.json and parent CI-001-GITHUB-ACTIONS-GUIDE.md. Explicit standalone output guard and final evidence commit also run remotely; latest run is linked by the recovery index. No merge/deployment/platform acceptance.
 
 - [ ] REL-001 Fixed HTTPS pre-release deployment, genuine OAuth/email/verified Owner, production DB/private storage/Worker supervision, offsite restore/rollback and per-channel release acceptance. Depends on: Owner resumes deployment and supplies owned domain/hosting/account configuration; CI-001. Acceptance: real environment evidence and separate platform receipts. Local AUD-009 scope is complete.
 

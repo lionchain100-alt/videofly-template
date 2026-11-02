@@ -530,7 +530,7 @@
         "scripts/test-email-render.tsx",
         "scripts/tsconfig.email.json"
       ],
-      "ownerGate": "Owner authorized AUD-010 to clear historical lint debt and the remaining low dependency advisory without business regression. Source lint now requires zero diagnostics, all dependency severities are audited, and real platform/deployment gates remain deferred.",
+      "ownerGate": "Owner authorized AUD-010 to clear historical lint debt and the remaining low dependency advisory without business regression. Source lint now requires zero diagnostics, all dependency severities are audited, and real platform/deployment gates remain deferred. CI-001 hosted source and quality jobs now passed on the owned fork; real deployment/platform acceptance remains deferred.",
       "changeImpact": "compatible",
       "changeApproval": null,
       "deploymentApproval": null
