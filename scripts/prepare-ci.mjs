@@ -40,8 +40,12 @@ const env = {
   LOCAL_ADMIN_EMAIL: "admin@laconic.local", LOCAL_ADMIN_PASSWORD: secret(),
   LOCAL_MEMBER_EMAIL: "member@laconic.local", LOCAL_MEMBER_PASSWORD: secret(),
   ASSET_STORAGE_BACKEND: "local", BACKUP_ENCRYPTION_KEY: secret(),
-  TEXT_AI_PROVIDER: "deepseek", TEXT_AI_MODEL: "deepseek-flash", TEXT_AI_BASE_URL: "https://api.deepseek.com", TEXT_AI_ENABLED: "false", TEXT_SUMMARY_CREDITS: "1",
-  VIDEO_AI_PROVIDER: "kie", VIDEO_AI_MODEL: "wan/2-7-text-to-video", VIDEO_AI_ENABLED: "false", VIDEO_GENERATION_CREDITS: "10",
+  // Exercise config/credit/budget paths with dummy loopback executors. No real
+  // credentials or background provider workers exist in this disposable job.
+  TEXT_AI_PROVIDER: "deepseek", TEXT_AI_MODEL: "deepseek-flash", TEXT_AI_BASE_URL: "http://127.0.0.1:9", TEXT_AI_ENABLED: "true", TEXT_SUMMARY_CREDITS: "1",
+  TEXT_AI_API_KEY: "ci-fixture-no-provider-account", TEXT_AI_ALLOW_LOCAL_TEST: "true",
+  VIDEO_AI_PROVIDER: "kie", VIDEO_AI_MODEL: "wan/2-7-text-to-video", VIDEO_AI_ENABLED: "true", VIDEO_GENERATION_CREDITS: "10",
+  VIDEO_AI_BASE_URL: "http://127.0.0.1:9", VIDEO_ALLOW_LOCAL_TEST: "true", KIE_API_KEY: "ci-fixture-no-provider-account",
   PAYPAL_ENABLED: "false", WAFFO_ENABLED: "false", STRIPE_ENABLED: "false", CREEM_ENABLED: "false",
   AUTH_GOOGLE_ENABLED: "false", AUTH_EMAIL_ENABLED: "false",
 };
