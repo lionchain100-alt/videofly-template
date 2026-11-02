@@ -17,7 +17,7 @@ export function BuyCreditsButton({ locale }: BuyCreditsButtonProps) {
 
   return (
     <Link href={localePath(locale, `/buy-credits`)}>
-      <button className="w-full py-3 px-4 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors">
+      <button type="button" className="w-full py-3 px-4 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors">
         {t("buyCredits")}
       </button>
     </Link>

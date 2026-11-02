@@ -36,21 +36,21 @@ export class Storage {
     body: Buffer;
     contentType?: string;
   }): Promise<{ url: string; key: string }> {
-    params = {
+    const uploadParams = {
       ...params,
       key: `${siteManifest.isolation.fileNamespace}/${params.key}`,
     };
     const response = await this.client.putObject(
-      params.key,
-      params.body,
-      params.contentType || "application/octet-stream",
+      uploadParams.key,
+      uploadParams.body,
+      uploadParams.contentType || "application/octet-stream",
     );
 
     if (!response.ok) {
       throw new Error(`Failed to upload file: ${response.statusText}`);
     }
 
-    return { url: this.getPublicUrl(params.key), key: params.key };
+    return { url: this.getPublicUrl(uploadParams.key), key: uploadParams.key };
   }
 
   /**

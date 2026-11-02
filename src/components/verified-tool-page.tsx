@@ -3,16 +3,16 @@ import { readUIConfig, studioEnabled } from "@/ui-studio/server";
 import { buildAlternates } from "@/lib/seo";
 import type { Locale } from "@/config/i18n-config";
 export async function toolMetadata(locale: Locale, tool: "text" | "video") {
-  const { config } = await readUIConfig(),
-    name =
+  const { config } = await readUIConfig();
+  const name =
       tool === "text"
         ? locale === "zh"
           ? "文本摘要"
           : "Text summary"
         : locale === "zh"
           ? "文生视频"
-          : "Text to video",
-    description =
+          : "Text to video";
+  const description =
       tool === "text"
         ? locale === "zh"
           ? "将原文整理为摘要，保存任务与结果。"

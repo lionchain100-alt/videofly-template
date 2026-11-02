@@ -16,8 +16,8 @@ const [id = "aurora-notes", portString = "3002", dbPortString = "55433"] =
   process.argv.slice(2).filter((v) => v !== "--");
 if (!/^[a-z][a-z0-9-]{2,30}$/.test(id))
   throw new Error("Use a lowercase site ID, 3–31 characters");
-const port = Number(portString),
-  databasePort = Number(dbPortString);
+const port = Number(portString);
+const databasePort = Number(dbPortString);
 if (
   ![port, databasePort].every(
     (v) => Number.isInteger(v) && v >= 1024 && v <= 65535,
@@ -35,8 +35,8 @@ if (
   id === original.id
 )
   throw new Error("New site must have a different ID and ports");
-const workspace = path.resolve(source, ".."),
-  destination = path.join(workspace, "sites", id);
+const workspace = path.resolve(source, "..");
+const destination = path.join(workspace, "sites", id);
 for (const entry of await readdir(path.join(workspace, "sites"), {
   withFileTypes: true,
 }).catch((e) => {
@@ -108,8 +108,8 @@ for (const f of allowed) {
   await mkdir(path.dirname(target), { recursive: true });
   await copyFile(path.join(source, f), target);
 }
-const site = structuredClone(original),
-  databaseName = id.replaceAll("-", "_") + "_local";
+const site = structuredClone(original);
+const databaseName = id.replaceAll("-", "_") + "_local";
 site.id = id;
 site.origin = `http://localhost:${port}`;
 site.languages = { default: "zh", enabled: ["zh"] };
@@ -150,8 +150,8 @@ await writeFile(
   path.join(destination, "src/config/site.json"),
   JSON.stringify(site, null, 2) + "\n",
 );
-const secret = () => randomBytes(32).toString("hex"),
-  dbPassword = secret();
+const secret = () => randomBytes(32).toString("hex");
+const dbPassword = secret();
 const env = {
   ASSET_STORAGE_BACKEND:"local",
   BACKUP_ENCRYPTION_KEY:secret(),

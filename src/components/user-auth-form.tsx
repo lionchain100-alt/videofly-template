@@ -78,11 +78,11 @@ export function UserAuthForm({
   return (
     <div className={cn("grid gap-6", className)} {...props}>
       {!providers.google && !providers.email && (
-        <p role="status">
+        <output className="block">
           {lang === "zh"
             ? "登录服务尚未配置，请联系站点管理员。"
             : "Sign-in is not configured. Please contact the site administrator."}
-        </p>
+        </output>
       )}
       {providers.email && (
         <form onSubmit={handleSubmit(onSubmit)}>

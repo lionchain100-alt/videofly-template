@@ -66,8 +66,8 @@ export async function legacyCreem(request: Request, action: string) {
       const body = z
           .object({ subscriptionId: z.string() })
           .passthrough()
-          .parse(await request.json()),
-        sub = subs.find((s) => s.externalId === body.subscriptionId);
+          .parse(await request.json());
+      const sub = subs.find((s) => s.externalId === body.subscriptionId);
       if (!sub)
         return Response.json({ message: "订阅不存在" }, { status: 404 });
       return Response.json({
@@ -75,8 +75,8 @@ export async function legacyCreem(request: Request, action: string) {
       });
     }
     if (action === "create-portal") {
-      const c = creemConfig(),
-        sub = subs.find(
+      const c = creemConfig();
+      const sub = subs.find(
           (s) => s.accountId === c.accountId && s.environment === c.environment,
         );
       if (!sub)

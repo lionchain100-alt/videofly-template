@@ -14,15 +14,15 @@ async function main() {
   close = async () => {
     await db.$client.end({ timeout: 5 });
   };
-  const apply = process.argv.includes("--apply"),
-    root = path.dirname(assetPath("00000000-0000-0000-0000-000000000000")),
-    now = Date.now(),
-    actions = [];
+  const apply = process.argv.includes("--apply");
+  const root = path.dirname(assetPath("00000000-0000-0000-0000-000000000000"));
+  const now = Date.now();
+  const actions = [];
   const absolute = await realpath(root);
   for (const name of await readdir(root)) {
     if (!/^[0-9a-f-]{36}\.[0-9a-f-]{36}\.tmp$/.test(name)) continue;
-    const file = path.join(root, name),
-      s = await lstat(file);
+    const file = path.join(root, name);
+    const s = await lstat(file);
     if (s.isSymbolicLink() || !s.isFile() || now - s.mtimeMs < 3600000)
       continue;
     const resolved = await realpath(file);

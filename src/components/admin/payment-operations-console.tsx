@@ -30,17 +30,17 @@ const actions: Record<string, string> = {
   REVIEW_EVENT: "记录人工审核确认",
 };
 export function PaymentOperationsConsole({ locale }: { locale: string }) {
-  const [view, setView] = useState<keyof typeof views>("orders"),
-    [q, setQ] = useState(""),
-    [provider, setProvider] = useState(""),
-    [exceptions, setExceptions] = useState(true),
-    [page, setPage] = useState(1),
-    [data, setData] = useState<{ rows: Row[]; hasNext: boolean } | null>(null),
-    [selected, setSelected] = useState<Partial<Intent> | null>(null),
-    [reason, setReason] = useState(""),
-    [intent, setIntent] = useState<Intent | null>(null),
-    [message, setMessage] = useState(""),
-    [busy, setBusy] = useState(false);
+  const [view, setView] = useState<keyof typeof views>("orders");
+  const [q, setQ] = useState("");
+  const [provider, setProvider] = useState("");
+  const [exceptions, setExceptions] = useState(true);
+  const [page, setPage] = useState(1);
+  const [data, setData] = useState<{ rows: Row[]; hasNext: boolean } | null>(null);
+  const [selected, setSelected] = useState<Partial<Intent> | null>(null);
+  const [reason, setReason] = useState("");
+  const [intent, setIntent] = useState<Intent | null>(null);
+  const [message, setMessage] = useState("");
+  const [busy, setBusy] = useState(false);
   const key = "payment-operation-intent";
   const loadVersion = useRef(0);
   const refresh = useCallback(async () => {
@@ -54,8 +54,8 @@ export function PaymentOperationsConsole({ locale }: { locale: string }) {
     });
     const r = await fetch("/api/v1/admin/payment-ops?" + params, {
         cache: "no-store",
-      }),
-      b = await r.json();
+      });
+    const b = await r.json();
     if (!r.ok) throw Error(b.error?.message || "查询失败");
     if (version === loadVersion.current) setData(b.data);
   }, [view, q, provider, exceptions, page]);
@@ -103,8 +103,8 @@ export function PaymentOperationsConsole({ locale }: { locale: string }) {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(intent),
-        }),
-        b = await r.json();
+        });
+      const b = await r.json();
       if (!r.ok) throw Error(b.error?.message || "结果未确认，请重试同一编号");
       const op = b.data;
       setMessage(

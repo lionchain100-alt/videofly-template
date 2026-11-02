@@ -12,10 +12,12 @@ Last reconciled: 2026-11-02
 Milestone: Local V1.2 core with four-channel billing/refunds; current full audit records remaining implementation and deferred real-provider gates.
 Active task: IDLE-000
 
-Definition of Ready: AUD-008 recorded; Owner authorized AUD-009 local clean initialization, CI and production configuration gates, deferring actual deployment/platform acceptance.
-Definition of Done: independent fresh install/15 migrations/idempotent seed and isolation; CI workflow and local quality/configuration gates; retained business/UI/storage/build checks, unchanged financial snapshot and source recovery.
+Definition of Ready: AUD-009 recorded; Owner requested historical lint/dependency cleanup preserving existing business flows.
+Definition of Done: actual265lint fixes, zero waivers/raw source/repository diagnostics, zero dependency advisories with narrow version scope; mail/security/retained/browser/storage/isolation/type/build gates, unchanged financial snapshot and source recovery.
 
 ## Backlog
+
+- [x] AUD-010 Clear265 historical lint diagnostics and1low dependency advisory. Depends on: AUD-009. Acceptance: unchanged rules/exclusions, empty/refused waivers, scoped448/root460 zero checks, narrow renderer override/all advisories0,14mail variants/intercepted SDK, ten business suites/UI/storage/isolation/production and unchanged snapshots/recovery; aud-010-results.json and parent AUD-010-LINT-SECURITY-GUIDE.md. Rehearsal site sources and deferred deployment/platform gates retained.
 
 - [x] AUD-009 Local clean latest-template initialization, CI automatic quality workflow and static production configuration checks. Depends on: AUD-008. Acceptance: new Cedar Tools, frozen install/15 migrations/two initializations, factory/CI/configuration guards, retained ten suites/UI/storage/two-peer isolation/production build and recovery; aud-009-results.json and parent AUD-009-INITIALIZATION-CI-PREFLIGHT-GUIDE.md. Actual hosted CI/deployment/platform acceptance are not claimed.
 

@@ -11,8 +11,8 @@
 
 import dotenv from "dotenv";
 import { s3mini } from "s3mini";
-import { readFileSync } from "fs";
-import { resolve } from "path";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 
 // 加载环境变量
 const envPath = resolve(process.cwd(), ".env.local");

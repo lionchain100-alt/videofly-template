@@ -20,6 +20,11 @@ async function main() {
     ready: false,
     secureOrigin: false,
   });
+  // Keep redirect rejection identical while avoiding invisible regex literals.
+  for (let code = 0; code <= 32; code++)
+    assert.equal(safeLoginReturn(`/safe${String.fromCharCode(code)}path`, "/fallback"), "/fallback");
+  for (const value of ["/safe\u007fpath", "/安全路径", "/safe%20path"])
+    assert.equal(safeLoginReturn(value, "/fallback"), value);
   assert(productionAuthConfig(base).ready);
   assert(
     !productionAuthConfig({
@@ -45,16 +50,16 @@ async function main() {
   assert.equal(safeLoginReturn("/%2foutside.invalid", "/"), "/");
   assert.equal(safeLoginReturn("/\\outside.invalid", "/"), "/");
   assert.equal(safeLoginReturn("/zh/text-summary", "/"), "/zh/text-summary");
-  const { db } = await import("../src/db"),
-    { users } = await import("../src/db/schema"),
-    { sql } = await import("drizzle-orm"),
-    { initializeOwner } = await import("../src/services/owner-initialization");
+  const { db } = await import("../src/db");
+  const { users } = await import("../src/db/schema");
+  const { sql } = await import("drizzle-orm");
+  const { initializeOwner } = await import("../src/services/owner-initialization");
   const u = new URL(process.env.DATABASE_URL!);
   assert.equal(u.hostname, "127.0.0.1");
   assert.equal(u.pathname, "/laconic_local");
-  const rollback = Error("ROLLBACK_OWNER_FIXTURE"),
-    id = randomUUID(),
-    email = id + "@example.invalid";
+  const rollback = Error("ROLLBACK_OWNER_FIXTURE");
+  const id = randomUUID();
+  const email = id + "@example.invalid";
   try {
     await assert.rejects(
       db.transaction(async (tx) => {

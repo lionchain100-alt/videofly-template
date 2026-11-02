@@ -14,19 +14,19 @@ type RuntimeState = {
   }[];
 };
 export function RuntimeConsole() {
-  const [data, setData] = useState<RuntimeState>(),
-    [error, setError] = useState("");
+  const [data, setData] = useState<RuntimeState>();
+  const [error, setError] = useState("");
   useEffect(() => {
-    let stopped = false,
-      timer: ReturnType<typeof setTimeout>;
+    let stopped = false;
+    let timer: ReturnType<typeof setTimeout>;
     const controller = new AbortController();
     async function check() {
       try {
         const r = await fetch("/api/v1/admin/runtime", {
             cache: "no-store",
             signal: controller.signal,
-          }),
-          b = await r.json();
+          });
+        const b = await r.json();
         if (!r.ok) throw Error("Status unavailable");
         if (!stopped) {
           setData(b.data);

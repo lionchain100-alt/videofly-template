@@ -2,14 +2,14 @@ import assert from "node:assert/strict";
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { parse } from "dotenv";
-const require = createRequire(import.meta.url),
-  { chromium } = require(
+const require = createRequire(import.meta.url);
+const { chromium } = require(
     process.env.PLAYWRIGHT_MODULE_PATH ||
       "C:/Users/Administrator/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright",
   );
 // Browser plugin not available; use installed local Playwright without a package change.
-const base = "http://localhost:3000",
-  env = parse(await readFile(".env.local", "utf8"));
+const base = "http://localhost:3000";
+const env = parse(await readFile(".env.local", "utf8"));
 assert.equal(env.STRIPE_ENABLED, "false");
 assert.equal(env.CREEM_ENABLED, "false");
 const browser = await chromium.launch({
@@ -17,13 +17,13 @@ const browser = await chromium.launch({
     executablePath:
       process.env.CHROME_EXECUTABLE_PATH ||
       "C:/Program Files/Google/Chrome/Application/chrome.exe",
-  }),
-  context = await browser.newContext({
+  });
+const context = await browser.newContext({
     viewport: { width: 1440, height: 1000 },
-  }),
-  page = await context.newPage(),
-  errors = [],
-  passed = [];
+  });
+const page = await context.newPage();
+const errors = [];
+const passed = [];
 page.on("pageerror", (e) => errors.push(e.message));
 const post = (path, body, origin = base) =>
   context.request.post(base + path, {
@@ -150,8 +150,8 @@ try {
   let checkoutPosts = 0;
   await page.route("**/api/v1/payments", async (route) => {
     if (route.request().method() === "GET") {
-      const r = await route.fetch(),
-        data = await r.json();
+      const r = await route.fetch();
+      const data = await r.json();
       data.data.subscriptions = data.data.subscriptions.map((p) => ({
         ...p,
         providers: ["stripe"],

@@ -51,9 +51,9 @@ export async function receiveSubscriptionEvent(event: VerifiedEvent) {
   const product = externalBillingProduct(fact.provider, fact.productId);
   if (!product || product.kind !== "SUBSCRIPTION")
     throw new ApiError("订阅产品未映射", 409);
-  const start = date(fact.periodStart),
-    end = date(fact.periodEnd),
-    observed = date(fact.observedAt);
+  const start = date(fact.periodStart);
+  const end = date(fact.periodEnd);
+  const observed = date(fact.observedAt);
   if (
     end <= start ||
     !fact.externalId ||
@@ -193,9 +193,9 @@ export async function receiveSubscriptionEvent(event: VerifiedEvent) {
         .returning();
     }
     if (fact.payment) {
-      const paid = fact.payment,
-        ps = date(paid.periodStart),
-        pe = date(paid.periodEnd);
+      const paid = fact.payment;
+      const ps = date(paid.periodStart);
+      const pe = date(paid.periodEnd);
       if (
         !paid.id ||
         paid.amount !== product.amount ||
@@ -338,8 +338,8 @@ export async function receiveSubscriptionEvent(event: VerifiedEvent) {
       .select({ end: sql<Date | null>`max(${billingCycles.periodEnd})` })
       .from(billingCycles)
       .where(eq(billingCycles.subscriptionId, existing.id));
-    const covered = coverage.end && new Date(coverage.end) > new Date(),
-      access =
+    const covered = coverage.end && new Date(coverage.end) > new Date();
+    const access =
         !!covered &&
         ["active", "trialing", "scheduled_cancel", "past_due"].includes(
           existing.status,

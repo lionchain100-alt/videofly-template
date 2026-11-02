@@ -15,9 +15,9 @@ const pass = (m) => {
   console.log(`PASS ${m}`);
 };
 async function siteAt(root) {
-  const raw = await readFile(path.join(root, "src/config/site.json"), "utf8"),
-    site = JSON.parse(raw),
-    env = parse(await readFile(path.join(root, ".env.local"), "utf8"));
+  const raw = await readFile(path.join(root, "src/config/site.json"), "utf8");
+  const site = JSON.parse(raw);
+  const env = parse(await readFile(path.join(root, ".env.local"), "utf8"));
   assert.equal(site.origin, env.NEXT_PUBLIC_APP_URL);
   const url = new URL(env.DATABASE_URL);
   assert.equal(url.hostname, "127.0.0.1");
@@ -56,8 +56,8 @@ async function request(s, route, body, { method, headers, cookie } = {}) {
         }),
     );
     for (const value of response.headers.getSetCookie()) {
-      const first = value.split(";")[0],
-        i = first.indexOf("=");
+      const first = value.split(";")[0];
+      const i = first.indexOf("=");
       jar.set(first.slice(0, i), first.slice(i + 1));
     }
     s.cookie = Array.from(jar, ([k, v]) => `${k}=${v}`).join("; ");
@@ -75,17 +75,17 @@ async function snapshot(s) {
   )[0];
 }
 async function writeManifest(s, value) {
-  const target = path.join(s.root, "src/config/site.json"),
-    temp = target + ".test.tmp";
+  const target = path.join(s.root, "src/config/site.json");
+  const temp = target + ".test.tmp";
   await writeFile(
     temp,
     typeof value === "string" ? value : JSON.stringify(value, null, 2) + "\n",
   );
   await rename(temp, target);
 }
-const uid = randomUUID(),
-  taskId = randomUUID(),
-  files = [];
+const uid = randomUUID();
+const taskId = randomUUID();
+const files = [];
 const before = await Promise.all([a, b].map(snapshot));
 try {
   assert.notEqual(a.env.BETTER_AUTH_SECRET, b.env.BETTER_AUTH_SECRET);
@@ -146,8 +146,8 @@ try {
     assert.equal((await request(s, "/api/v1/credit/balance")).status, 200);
   }
   before[1] = await snapshot(b); // The first-ever local login may receive the existing daily 2-credit bonus.
-  const cookieA = a.cookie,
-    cookieB = b.cookie;
+  const cookieA = a.cookie;
+  const cookieB = b.cookie;
   assert.equal(
     (await request(b, "/api/v1/credit/balance", undefined, { cookie: cookieA }))
       .status,

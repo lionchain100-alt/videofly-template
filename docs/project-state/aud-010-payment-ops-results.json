@@ -1,0 +1,27 @@
+{
+  "at": "2026-11-02T06:41:11.385Z",
+  "passed": [
+    "Admin/current-role and reason guards; immutable UUID, concurrent request/lease and different-UUID replay/reconciliation issue one package and one receipt",
+    "All four providers can repair a processed-but-unfulfilled saved paid fact through the original frozen snapshot without duplicate credits",
+    "Authoritative read-only PayPal/Stripe/Creem lookup can compensate missing callbacks; APPROVED PayPal is never captured and grants nothing",
+    "Waffo status/priceSnapshot alone cannot mint; a later preverified real-receipt fixture can recover once; mismatched fact scope is refused",
+    "Unrecognized/dispute/reversal events enter review; reasoned acknowledgment is audited and changes no money or credits",
+    "Refund-event replay and refund recheck never POST another cash refund; repeated operations reclaim only 100 original credits",
+    "Financial rollback leaves a reasoned audit plus retriable event error/attempt metadata; subsequent evidence-backed compensation succeeds once",
+    "Audit intent is durable before side effects; finalization crash/expired lease recovery is idempotent; revoked queued actor cannot execute money operations",
+    "A separately started process resumes a durable queued audit intent and fulfills the preverified receipt once without provider HTTP",
+    "Subscription replay retains the original paid-period ledger/expiry and grants once; missing paid-period evidence never becomes a manual credit grant",
+    "If durable audit insertion fails, no operation intent or financial side effect is created",
+    "Order/user/receipt/event/refund/audit search, provider filtering and bound SQL search do not expose arbitrary payloads or bypass query scope"
+  ],
+  "providerHttp": [
+    "POST /v1/oauth2/[redacted-object]",
+    "GET /v2/checkout/orders/[redacted-object]",
+    "GET /v1/[redacted-object]",
+    "POST /v1/oauth2/[redacted-object]",
+    "GET /v2/checkout/orders/[redacted-object]",
+    "POST /v1/[redacted-object]"
+  ],
+  "newRealProviderCalls": 0,
+  "fixtures": "Isolated preverified normalization/receipt fixtures, not real platform acceptance"
+}

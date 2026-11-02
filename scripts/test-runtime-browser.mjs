@@ -7,8 +7,8 @@ const { chromium } = require(
   process.env.PLAYWRIGHT_MODULE_PATH ||
     "C:/Users/Administrator/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright",
 );
-const env = parse(await readFile(".env.local", "utf8")),
-  base = "http://localhost:3000";
+const env = parse(await readFile(".env.local", "utf8"));
+const base = "http://localhost:3000";
 assert.equal(env.NEXT_PUBLIC_APP_URL, base);
 const browser = await chromium.launch({
   headless: true,
@@ -17,9 +17,9 @@ const browser = await chromium.launch({
     "C:/Program Files/Google/Chrome/Application/chrome.exe",
 });
 try {
-  const context = await browser.newContext(),
-    page = await context.newPage(),
-    errors = [];
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
   const login = await context.request.post(base + "/api/auth/sign-in/email", {
     headers: { Origin: base },

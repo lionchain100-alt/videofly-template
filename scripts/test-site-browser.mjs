@@ -9,22 +9,22 @@ const require = createRequire(import.meta.url);
 const {
   chromium,
 } = require("C:/Users/Administrator/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright");
-const root = fileURLToPath(new URL("../", import.meta.url)),
-  second = path.resolve(root, "../sites/aurora-notes");
-const configFile = path.join(second, "src/config/site.json"),
-  raw = await readFile(configFile, "utf8");
-const mainFile = path.join(root, "src/config/site.json"),
-  mainRaw = await readFile(mainFile, "utf8");
+const root = fileURLToPath(new URL("../", import.meta.url));
+const second = path.resolve(root, "../sites/aurora-notes");
+const configFile = path.join(second, "src/config/site.json");
+const raw = await readFile(configFile, "utf8");
+const mainFile = path.join(root, "src/config/site.json");
+const mainRaw = await readFile(mainFile, "utf8");
 const browser = await chromium.launch({
   headless: true,
   executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 });
 const context = await browser.newContext({
     viewport: { width: 1440, height: 1000 },
-  }),
-  page = await context.newPage(),
-  errors = [],
-  passed = [];
+  });
+const page = await context.newPage();
+const errors = [];
+const passed = [];
 page.on("pageerror", (e) => errors.push(e.message));
 const evidence = path.join(root, ".local/aud003-screenshots");
 await mkdir(evidence, { recursive: true });

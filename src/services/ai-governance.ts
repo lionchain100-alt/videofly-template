@@ -24,8 +24,8 @@ export async function bootstrapAiPolicy() {
       sql`select site_id from ai_policy_current where site_id=${site}`,
     );
     if (present.length) return;
-    const id = randomUUID(),
-      config = initialPolicy();
+    const id = randomUUID();
+    const config = initialPolicy();
     await tx.execute(
       sql`insert into ai_policy_versions(id,site_id,revision,config,reason,request_id,request_hash,origin)values(${id},${site},1,${JSON.stringify(config)}::jsonb,'AUD-007 local defaults; Owner approved 5/min,50/day,USD10/day,USD100/month',${randomUUID()},${snapshotHash(config)},'BOOTSTRAP')`,
     );
@@ -52,8 +52,8 @@ async function admin(tx: Tx, id: string) {
   if (!rows.length) throw new ApiError("仅有效管理员可以操作", 403);
 }
 export async function saveAiPolicy(actorId: string, body: unknown) {
-  const command = changePolicySchema.parse(body),
-    fingerprint = snapshotHash(command);
+  const command = changePolicySchema.parse(body);
+  const fingerprint = snapshotHash(command);
   return db.transaction(async (tx) => {
     await admin(tx, actorId);
     const current = await currentAiPolicy(tx, true);
@@ -96,8 +96,8 @@ export async function saveAiPolicy(actorId: string, body: unknown) {
           400,
         );
     }
-    const id = randomUUID(),
-      revision = current.revision + 1;
+    const id = randomUUID();
+    const revision = current.revision + 1;
     await tx.execute(
       sql`insert into ai_policy_versions(id,site_id,revision,config,actor_id,reason,request_id,request_hash,origin)values(${id},${site},${revision},${JSON.stringify(command.config)}::jsonb,${actorId},${command.reason},${command.requestId},${fingerprint},'ADMIN')`,
     );
@@ -132,8 +132,8 @@ export async function planAiTask(
 ) {
   if (!["text-summary", "video-generation"].includes(toolId))
     return { config: raw, usage: null };
-  const policy = await currentAiPolicy(tx, true),
-    p = policy.config.profiles.find(
+  const policy = await currentAiPolicy(tx, true);
+  const p = policy.config.profiles.find(
       (p) =>
         p.id === policy.config.defaults[toolId as keyof AiPolicy["defaults"]],
     )!;
@@ -254,8 +254,8 @@ export async function finishAiCost(
   );
   if (!r || !["RESERVED", "DISPATCHED", "UNCERTAIN"].includes(String(r.status)))
     return;
-  const estimate = Number(r.estimate_micros),
-    p = r.profile_snapshot as AiProfile;
+  const estimate = Number(r.estimate_micros);
+  const p = r.profile_snapshot as AiProfile;
   if (!success) {
     await tx.execute(
       sql`update ai_cost_usage set status=${r.status === "RESERVED" ? "RELEASED" : "UNCERTAIN"},charged_micros=${r.status === "RESERVED" ? 0 : estimate},anomaly=${r.status === "RESERVED" ? null : "PROVIDER_COST_UNKNOWN"},updated_at=now()where task_id=${id}`,
@@ -277,8 +277,8 @@ export async function finishAiCost(
     if (Number.isSafeInteger(v) && v >= 0 && v < 1e12) cost = v;
   }
   // Never free a conservative reservation solely because reported token usage is lower.
-  const charged = Math.max(estimate, cost || 0),
-    anomaly =
+  const charged = Math.max(estimate, cost || 0);
+  const anomaly =
       cost !== null && cost > estimate
         ? "ESTIMATE_EXCEEDED"
         : p.toolId === "text-summary" && cost === null
@@ -289,8 +289,8 @@ export async function finishAiCost(
   );
 }
 export async function reviewAiCost(actorId: string, body: unknown) {
-  const c = costReviewSchema.parse(body),
-    fingerprint = snapshotHash(c);
+  const c = costReviewSchema.parse(body);
+  const fingerprint = snapshotHash(c);
   return db.transaction(async (tx) => {
     const [hint] = await tx.execute(
       sql`select user_id from tasks where id=${c.taskId}`,
@@ -299,8 +299,8 @@ export async function reviewAiCost(actorId: string, body: unknown) {
     // Match the user -> task -> cost order. Never wait on a policy lock after a task lock.
     const people = await tx.execute(
         sql`select id,"isAdmin","emailVerified",disabled from "user" where id in(${actorId},${hint.user_id}) order by id for update`,
-      ),
-      actor = people.find((p) => p.id === actorId);
+      );
+    const actor = people.find((p) => p.id === actorId);
     if (!actor || !actor.isAdmin || !actor.emailVerified || actor.disabled)
       throw new ApiError("仅有效管理员可以操作", 403);
     const [task] = await tx.execute(
@@ -337,9 +337,9 @@ export async function publicGovernedConfig(
   toolId: "text-summary" | "video-generation",
   base: any,
 ) {
-  const manifest = await readSiteManifest(),
-    policy = await currentAiPolicy(),
-    profile = policy.config.profiles.find(
+  const manifest = await readSiteManifest();
+  const policy = await currentAiPolicy();
+  const profile = policy.config.profiles.find(
       (p) => p.id === policy.config.defaults[toolId],
     )!;
   return {

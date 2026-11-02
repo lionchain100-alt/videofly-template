@@ -15,10 +15,10 @@ export function privateS3Config() {
     process.env.ASSET_S3_ALLOW_LOCAL_TEST === "true" &&
     endpoint.hostname === "127.0.0.1" &&
     endpoint.protocol === "http:";
-  const bucket = process.env.ASSET_S3_BUCKET,
-    accessKeyId = process.env.ASSET_S3_ACCESS_KEY_ID,
-    secretAccessKey = process.env.ASSET_S3_SECRET_ACCESS_KEY,
-    region = process.env.ASSET_S3_REGION || "auto";
+  const bucket = process.env.ASSET_S3_BUCKET;
+  const accessKeyId = process.env.ASSET_S3_ACCESS_KEY_ID;
+  const secretAccessKey = process.env.ASSET_S3_SECRET_ACCESS_KEY;
+  const region = process.env.ASSET_S3_REGION || "auto";
   if (
     !process.env.ASSET_S3_ENDPOINT ||
     !bucket ||
@@ -62,7 +62,8 @@ function keyAllowed(key: string) {
   if (
     !key.startsWith(prefix + "/") ||
     key.split("/").some((p) => !p || p === "." || p === "..") ||
-    /[\\?#\x00-\x1f]/.test(key)
+    /[\\?#]/.test(key) ||
+    Array.from(key).some((character) => character.charCodeAt(0) < 32)
   )
     throw Error("Asset namespace mismatch");
 }
@@ -77,8 +78,8 @@ export async function privateObject(key: string, start?: number, end?: number) {
     );
     if (!response.body) return response;
     const reader = response.body.getReader();
-    let timer: ReturnType<typeof setTimeout>,
-      size = 0;
+    let timer: ReturnType<typeof setTimeout>;
+    let size = 0;
     const body = new ReadableStream<Uint8Array>({
       start(controller) {
         timer = setTimeout(() => {
@@ -135,10 +136,10 @@ export async function putPrivateFile(
   sha256: string,
 ) {
   if (!/^[0-9a-f-]{36}$/.test(taskId)) throw Error("Invalid asset id");
-  const c = privateS3Config(),
-    client = await privateS3(),
-    key = `${c.prefix}/videos/${taskId}.mp4`,
-    size = (await stat(file)).size;
+  const c = privateS3Config();
+  const client = await privateS3();
+  const key = `${c.prefix}/videos/${taskId}.mp4`;
+  const size = (await stat(file)).size;
   if (size <= 0 || size > 200 * 1024 * 1024) throw Error("Invalid asset size");
   if (await client.objectExists(key)) {
     const old = await objectHash(key);

@@ -10,11 +10,11 @@ const { chromium } = require(
   process.env.PLAYWRIGHT_MODULE_PATH ||
     "C:/Users/Administrator/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright",
 );
-const env = parse(await readFile(".env.local", "utf8")),
-  fixtures = JSON.parse(
+const env = parse(await readFile(".env.local", "utf8"));
+const fixtures = JSON.parse(
     await readFile(".local/refund-browser-fixtures.json", "utf8"),
-  ),
-  base = "http://localhost:3000";
+  );
+const base = "http://localhost:3000";
 const browser = await chromium.launch({
   headless: true,
   executablePath:
@@ -23,10 +23,10 @@ const browser = await chromium.launch({
 });
 const context = await browser.newContext({
     viewport: { width: 1440, height: 1000 },
-  }),
-  page = await context.newPage(),
-  errors = [],
-  passed = [];
+  });
+const page = await context.newPage();
+const errors = [];
+const passed = [];
 page.on("pageerror", (e) => errors.push(e.message));
 const post = (path, data, origin = base) =>
   context.request.post(base + path, { data, headers: { Origin: origin } });

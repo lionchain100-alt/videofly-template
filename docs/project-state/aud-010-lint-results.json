@@ -1,0 +1,39 @@
+{
+  "testedAt": "2026-11-02T06:54:47.031Z",
+  "beforeDiagnostics": 265,
+  "beforeRules": {
+    "lint/style/useNumberNamespace": 2,
+    "lint/suspicious/noGlobalIsNan": 1,
+    "lint/style/useSingleVarDeclarator": 176,
+    "lint/style/useNodejsImportProtocol": 3,
+    "lint/complexity/noBannedTypes": 1,
+    "lint/performance/noDelete": 1,
+    "lint/a11y/useButtonType": 52,
+    "lint/a11y/useSemanticElements": 6,
+    "lint/complexity/useLiteralKeys": 1,
+    "lint/style/useConst": 2,
+    "lint/style/noUselessElse": 3,
+    "lint/style/noInferrableTypes": 2,
+    "lint/complexity/useOptionalChain": 1,
+    "lint/suspicious/noControlCharactersInRegex": 3,
+    "lint/suspicious/noImplicitAnyLet": 2,
+    "lint/style/noParameterAssign": 2,
+    "lint/suspicious/noAssignInExpressions": 2,
+    "lint/suspicious/noShadowRestrictedNames": 1,
+    "lint/a11y/noLabelWithoutControl": 4
+  },
+  "afterErrors": 0,
+  "afterWarnings": 0,
+  "scope": "src/scripts under unchanged biome.json",
+  "rulesAndExclusionsUnchanged": true,
+  "historicalWaiverEntries": 0,
+  "waiversMayGrow": false,
+  "mechanicalDeclarationFixes": 176,
+  "explicitButtonTypes": {
+    "button": 50,
+    "submit": 2
+  },
+  "semanticStatusOutputs": 6,
+  "nativeFieldsetLegends": 4,
+  "gateInjectedParserErrorRejected": true
+}

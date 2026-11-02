@@ -21,10 +21,12 @@ export function productionAuthConfig(
   return { google, email, ready: google || email, secureOrigin: secure };
 }
 export function safeLoginReturn(value: string | null, fallback: string) {
-  return value &&
-    value.startsWith("/") &&
+  const unsafeCharacter = Array.from(value || "").some(
+    (character) => character === "\\" || character.charCodeAt(0) <= 32,
+  );
+  return value?.startsWith("/") &&
     !value.startsWith("//") &&
-    !/[\\\x00-\x20]/.test(value) &&
+    !unsafeCharacter &&
     !/%(?:2f|5c|0[0-9a-f]|1[0-9a-f])/i.test(value)
     ? value
     : fallback;

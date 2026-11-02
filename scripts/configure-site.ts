@@ -3,9 +3,9 @@ import { randomBytes } from "node:crypto";
 import { siteManifestSchema } from "../src/config/site-manifest";
 async function main() {
   const args = process.argv.slice(2).filter((v) => v !== "--");
-  const file = "src/config/site.json",
-    raw = await readFile(file, "utf8"),
-    site = siteManifestSchema.parse(JSON.parse(raw));
+  const file = "src/config/site.json";
+  const raw = await readFile(file, "utf8");
+  const site = siteManifestSchema.parse(JSON.parse(raw));
   if (!args.length) {
     console.log(
       'Usage: site:configure --brand "Name" --locales en,zh --default-locale en --tool video-generation=off',
@@ -40,8 +40,8 @@ async function main() {
         throw new Error(`Unknown option ${args[i]}`);
     }
   }
-  const valid = siteManifestSchema.parse(site),
-    temporary = `${file}.${randomBytes(6).toString("hex")}.tmp`;
+  const valid = siteManifestSchema.parse(site);
+  const temporary = `${file}.${randomBytes(6).toString("hex")}.tmp`;
   try {
     await writeFile("src/config/site.previous.json", raw, { mode: 0o600 });
     await writeFile(temporary, JSON.stringify(valid, null, 2) + "\n", {

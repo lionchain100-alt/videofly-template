@@ -12,18 +12,18 @@ async function main() {
   assert.equal(url.hostname, "127.0.0.1");
   assert.equal(url.port, "55432");
   assert.equal(url.pathname, "/laconic_local");
-  const q = postgres(url.href, { ssl: false, max: 6, onnotice: () => {} }),
-    admin = randomUUID(),
-    a = randomUUID(),
-    b = randomUUID(),
-    password = "Fixture-" + randomUUID(),
-    email = "aud007-" + admin + "@example.invalid",
-    passed: string[] = [],
-    trigger = "aud007_" + randomUUID().replaceAll("-", "");
+  const q = postgres(url.href, { ssl: false, max: 6, onnotice: () => {} });
+  const admin = randomUUID();
+  const a = randomUUID();
+  const b = randomUUID();
+  const password = "Fixture-" + randomUUID();
+  const email = "aud007-" + admin + "@example.invalid";
+  const passed: string[] = [];
+  const trigger = "aud007_" + randomUUID().replaceAll("-", "");
   const { aiPolicyFixture } = await import("./ai-policy-fixture");
   const fixture = await aiPolicyFixture(q);
-  const { db } = await import("../src/db"),
-    {
+  const { db } = await import("../src/db");
+  const {
       currentAiPolicy,
       saveAiPolicy,
       reviewAiCost,
@@ -31,12 +31,12 @@ async function main() {
       budgetTotals,
       noteAiProviderReceipt,
       publicGovernedConfig,
-    } = await import("../src/services/ai-governance"),
-    { submitSummary, claimTask, finishTask } = await import(
+    } = await import("../src/services/ai-governance");
+  const { submitSummary, claimTask, finishTask } = await import(
       "../src/services/tasks"
-    ),
-    { submitVideo, claimVideoJob } = await import("../src/services/video-jobs"),
-    { textProviderConfig, textTaskConfig } = await import(
+    );
+  const { submitVideo, claimVideoJob } = await import("../src/services/video-jobs");
+  const { textProviderConfig, textTaskConfig } = await import(
       "../src/ai/text-provider"
     );
   const pass = (s: string) => {
@@ -56,8 +56,8 @@ async function main() {
     aspectRatio: "16:9" as const,
   });
   async function change(fn: (p: any) => void) {
-    const current = await currentAiPolicy(),
-      p = structuredClone(current.config);
+    const current = await currentAiPolicy();
+    const p = structuredClone(current.config);
     fn(p);
     return saveAiPolicy(admin, {
       requestId: randomUUID(),
@@ -79,8 +79,8 @@ async function main() {
       }),
     );
   }
-  let adCookie = "",
-    memberCookie = "";
+  let adCookie = "";
+  let memberCookie = "";
   const base = "http://localhost:3000";
   async function request(
     route: string,
@@ -108,8 +108,8 @@ async function main() {
       p.perMinute = 2;
       p.perDay = 3;
     });
-    const first = text("rate-one"),
-      dupes = await Promise.all(
+    const first = text("rate-one");
+    const dupes = await Promise.all(
         Array.from({ length: 8 }, () => submitSummary(a, first)),
       );
     assert.equal(new Set(dupes.map((x) => x.id)).size, 1);
@@ -159,8 +159,8 @@ async function main() {
     pass(
       "different users serialize site daily/monthly reservations; exact-budget boundary; replay bypasses exhausted budget without another reservation; queued failure releases",
     );
-    const uncertain = await submitVideo(a, randomUUID(), video()),
-      claimed = await claimVideoJob();
+    const uncertain = await submitVideo(a, randomUUID(), video());
+    const claimed = await claimVideoJob();
     assert.equal(claimed!.task.id, uncertain.id);
     assert(await beginAiDispatch(uncertain.id, claimed!.token));
     assert.equal(await beginAiDispatch(uncertain.id, claimed!.token), false);
@@ -224,9 +224,9 @@ async function main() {
       p.dailyMicros = 1e9;
       p.monthlyMicros = 1e9;
     });
-    const before = await currentAiPolicy(),
-      oldInput = text("old-price"),
-      old = await submitSummary(a, {
+    const before = await currentAiPolicy();
+    const oldInput = text("old-price");
+    const old = await submitSummary(a, {
         ...oldInput,
         policyRevision: before.revision,
       });
@@ -299,8 +299,8 @@ async function main() {
     pass(
       "model defaults/sort/enable and new credit prices audited; historical snapshot survives change/disable; stale UI quote refused before charging",
     );
-    const current = await currentAiPolicy(),
-      cmd = {
+    const current = await currentAiPolicy();
+    const cmd = {
         requestId: randomUUID(),
         expectedRevision: current.revision,
         reason: "AUD-007 idempotent configuration audit fixture",
@@ -329,8 +329,8 @@ async function main() {
     pass(
       "immutable configuration command, optimistic version conflict, reason/schema and current-role guards",
     );
-    const metered = await submitSummary(a, text("metered-overrun")),
-      running = await claimTask();
+    const metered = await submitSummary(a, text("metered-overrun"));
+    const running = await claimTask();
     assert.equal(running!.id, metered.id);
     assert(await beginAiDispatch(metered.id, running!.leaseToken));
     await promisify(execFile)(
@@ -368,8 +368,8 @@ async function main() {
     await q.unsafe(
       `create trigger ${trigger} before insert on ai_cost_usage for each row execute function ${trigger}()`,
     );
-    const priorBalance = await balances(b),
-      priorCount = (
+    const priorBalance = await balances(b);
+    const priorCount = (
         await q`select count(*)::int as n from tasks where user_id=${b}`
       )[0].n;
     await assert.rejects(submitSummary(b, text("rollback-cost-insert")));
@@ -379,8 +379,8 @@ async function main() {
       (await q`select count(*)::int as n from tasks where user_id=${b}`)[0].n,
       priorCount,
     );
-    const rollback = await submitSummary(b, text("rollback-finish")),
-      job = await claimTask();
+    const rollback = await submitSummary(b, text("rollback-finish"));
+    const job = await claimTask();
     assert.equal(job!.id, rollback.id);
     assert(await beginAiDispatch(rollback.id, job!.leaseToken));
     await q.unsafe(
@@ -440,8 +440,8 @@ async function main() {
     assert.equal((await request("/api/v1/admin/ai")).status, 401);
     assert.equal((await request("/api/v1/admin/ai", memberCookie)).status, 403);
     assert.equal((await request("/api/v1/admin/ai", adCookie)).status, 200);
-    const configNow = await currentAiPolicy(),
-      post = {
+    const configNow = await currentAiPolicy();
+    const post = {
         action: "policy",
         requestId: randomUUID(),
         expectedRevision: configNow.revision,

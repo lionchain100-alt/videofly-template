@@ -1,21 +1,21 @@
 import assert from "node:assert/strict";
 import { createRequire } from "node:module";
 import { writeFile } from "node:fs/promises";
-const require = createRequire(import.meta.url),
-  {
+const require = createRequire(import.meta.url);
+const {
     chromium,
-  } = require("C:/Users/Administrator/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright"),
-  { defaultConfig, readableAccent, contrastText } = await import(
+  } = require("C:/Users/Administrator/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright");
+const { defaultConfig, readableAccent, contrastText } = await import(
     "../src/ui-presets/config.ts"
   );
 const browser = await chromium.launch({
     headless: true,
     executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
-  }),
-  page = await browser.newPage({ viewport: { width: 1440, height: 1000 } }),
-  apiCalls = [],
-  errors = [],
-  cases = [];
+  });
+const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+const apiCalls = [];
+const errors = [];
+const cases = [];
 page.on("request", (r) => {
   if (new URL(r.url()).pathname.startsWith("/api/v1/")) apiCalls.push(r.url());
 });
@@ -23,11 +23,11 @@ page.on("pageerror", (e) => errors.push(e.message));
 const luminance = (hex) => {
     const rgb = hex
       .match(/[a-f0-9]{2}/gi)
-      .map((x) => parseInt(x, 16) / 255)
+      .map((x) => Number.parseInt(x, 16) / 255)
       .map((x) => (x <= 0.04045 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4));
     return rgb[0] * 0.2126 + rgb[1] * 0.7152 + rgb[2] * 0.0722;
-  },
-  ratio = (a, b) =>
+  };
+const ratio = (a, b) =>
     (Math.max(luminance(a), luminance(b)) + 0.05) /
     (Math.min(luminance(a), luminance(b)) + 0.05);
 try {

@@ -103,14 +103,14 @@ export function SiteRenderer({
   const languagePath = (language: string) =>
     localePath(language, pathname.replace(/^\/(en|zh)(?=\/|$)/, "") || "/");
   useEffect(() => {
-    const escape = (e: KeyboardEvent) => {
+    const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape" && mobileNav) {
         setMobileNav(false);
         menuRef.current?.focus();
       }
     };
-    document.addEventListener("keydown", escape);
-    return () => document.removeEventListener("keydown", escape);
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
   }, [mobileNav]);
   useEffect(() => {
     if (modal) {
@@ -435,9 +435,9 @@ export function SiteRenderer({
     );
   }
   const workspace = !toolEnabled(tool) ? (
-    <section role="status">
+    <output className="block">
       {t("本站暂未开放工具", "No tools are currently enabled")}
-    </section>
+    </output>
   ) : !preview ? (
     tool === "text" ? (
       <SummaryWorkspace
@@ -1109,8 +1109,8 @@ export function SiteRenderer({
                 'button:not(:disabled),a[href],input:not(:disabled),select:not(:disabled),textarea:not(:disabled),[tabindex="0"]',
               ),
             ].filter((n) => n.getClientRects().length > 0);
-            const first = nodes[0],
-              last = nodes.at(-1);
+            const first = nodes[0];
+            const last = nodes.at(-1);
             if (
               first &&
               last &&

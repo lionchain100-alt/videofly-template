@@ -26,6 +26,7 @@ overrides:
   engine.io: 6.6.10
   glob@13: 14.0.2
   minimatch@10: 11.0.1
+  '@react-email/components>@react-email/render': 2.2.0
 
 importers:
 
@@ -2226,13 +2227,6 @@ packages:
     peerDependencies:
       react: ^18.0 || ^19.0 || ^19.0.0-rc
 
-  '@react-email/render@2.0.6':
-    resolution: {integrity: sha512-xOzaYkH3jLZKqN5MqrTXYnmqBYUnZSVbkxdb5PGGmDcK6sKDVMliaDiSwfXajRC9JtSHTcGc2tmGLHWuCgVpog==}
-    engines: {node: '>=20.0.0'}
-    peerDependencies:
-      react: ^18.0 || ^19.0 || ^19.0.0-rc
-      react-dom: ^18.0 || ^19.0 || ^19.0.0-rc
-
   '@react-email/render@2.2.0':
     resolution: {integrity: sha512-WCtHV8ww0OYajz+idpx1jQNlO3RrvcjTihlEWozgLQZlM/1QveLU5ZdVyLTmm6WWY0wohGV0cIx9CB0HpfLJcw==}
     engines: {node: '>=20.19.0'}
@@ -3234,10 +3228,6 @@ packages:
     resolution: {integrity: sha512-uqbvqLUMrc6p0MO+WBRtTxY55hmyh94WRwI5a++PZe54X+bfVh59FSN7uWCBCW1CCVjzjnrwzfI8zidE2obMMw==}
     engines: {node: '>=16.9.0'}
 
-  deepmerge@4.3.1:
-    resolution: {integrity: sha512-3sUqbMEc77XqpdNO7FRyRog+eW3ph+GYCbj+rK+uYyRMuwsVy0rMiVtPn+QJlKFvWP/1PYpapqYn0Me2knFn+A==}
-    engines: {node: '>=0.10.0'}
-
   defu@6.1.7:
     resolution: {integrity: sha512-7z22QmUWiQ/2d0KkdYmANbRUVABpZ9SNYyH5vx6PZ+nE5bcC0l7uFvEfHlyld/HcGBFTL536ClDt3DEcSlEJAQ==}
 
@@ -3634,10 +3624,6 @@ packages:
   html-to-text@10.0.1:
     resolution: {integrity: sha512-GiVhRI1BatGARSCmlXWNCjDT0cWrwBWoeduLoV0WSKAgaV/wa+hUWy5LiQLUs4UwiUrE52ZCMfBGiKD87TDPrg==}
     engines: {node: '>=20.19.0'}
-
-  html-to-text@9.0.5:
-    resolution: {integrity: sha512-qY60FjREgVZL03vJU6IfMV4GDjGBIoOyvuFdpBDIX9yTlDw0TjxVBQp+P8NvpdIXNJvfWBTNul7fsAQJq2FNpg==}
-    engines: {node: '>=14'}
 
   html5parser@3.0.0:
     resolution: {integrity: sha512-iNpSopa+4YHX50UOk825tBy7MghmXHo/ZpLskBYN0kAr1xhH8GlIMk5bLRXcZlfP3AnLUcSuFMu8C4MdOUxA8A==}
@@ -6526,7 +6512,7 @@ snapshots:
       '@react-email/link': 0.0.13(react@19.2.9)
       '@react-email/markdown': 0.0.18(react@19.2.9)
       '@react-email/preview': 0.0.14(react@19.2.9)
-      '@react-email/render': 2.0.6(react-dom@19.2.9(react@19.2.9))(react@19.2.9)
+      '@react-email/render': 2.2.0(react-dom@19.2.9(react@19.2.9))(react@19.2.9)
       '@react-email/row': 0.0.13(react@19.2.9)
       '@react-email/section': 0.0.17(react@19.2.9)
       '@react-email/tailwind': 2.0.7(@react-email/body@0.3.0(react@19.2.9))(@react-email/button@0.2.1(react@19.2.9))(@react-email/code-block@0.2.1(react@19.2.9))(@react-email/code-inline@0.0.6(react@19.2.9))(@react-email/container@0.0.16(react@19.2.9))(@react-email/heading@0.0.16(react@19.2.9))(@react-email/hr@0.0.12(react@19.2.9))(@react-email/img@0.0.12(react@19.2.9))(@react-email/link@0.0.13(react@19.2.9))(@react-email/preview@0.0.14(react@19.2.9))(@react-email/text@0.1.6(react@19.2.9))(react@19.2.9)
@@ -6575,13 +6561,6 @@ snapshots:
   '@react-email/preview@0.0.14(react@19.2.9)':
     dependencies:
       react: 19.2.9
-
-  '@react-email/render@2.0.6(react-dom@19.2.9(react@19.2.9))(react@19.2.9)':
-    dependencies:
-      html-to-text: 9.0.5
-      prettier: 3.8.0
-      react: 19.2.9
-      react-dom: 19.2.9(react@19.2.9)
 
   '@react-email/render@2.2.0(react-dom@19.2.9(react@19.2.9))(react@19.2.9)':
     dependencies:
@@ -7539,8 +7518,6 @@ snapshots:
 
   deepmerge-ts@8.0.2: {}
 
-  deepmerge@4.3.1: {}
-
   defu@6.1.7: {}
 
   delaunator@5.0.1:
@@ -7908,14 +7885,6 @@ snapshots:
       dom-serializer: 2.0.0
       htmlparser2: 10.1.0
       selderee: 0.12.0
-
-  html-to-text@9.0.5:
-    dependencies:
-      '@selderee/plugin-htmlparser2': 0.11.0
-      deepmerge: 4.3.1
-      dom-serializer: 2.0.0
-      htmlparser2: 8.0.2
-      selderee: 0.11.0
 
   html5parser@3.0.0: {}
 

@@ -1,9 +1,9 @@
 import { config } from "dotenv";
 config({ path: ".env.local", quiet: true });
 async function main() {
-  const args = process.argv.slice(2),
-    get = (k: string) => args[args.indexOf(k) + 1],
-    apply = args.includes("--apply");
+  const args = process.argv.slice(2);
+  const get = (k: string) => args[args.indexOf(k) + 1];
+  const apply = args.includes("--apply");
   if (!args.includes("--email") || !args.includes("--reason"))
     throw Error(
       "Usage: initialize-owner.ts --email <verified account> --reason <12-300 chars> [--apply --site <site id>]",
@@ -13,8 +13,8 @@ async function main() {
     throw Error("Explicit matching --site is required");
   const { bootstrapOwner } = await import(
       "../src/services/owner-initialization"
-    ),
-    { db } = await import("../src/db");
+    );
+  const { db } = await import("../src/db");
   try {
     console.log(await bootstrapOwner(get("--email"), get("--reason"), apply));
   } finally {

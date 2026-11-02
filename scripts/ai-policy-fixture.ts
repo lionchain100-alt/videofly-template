@@ -19,8 +19,8 @@ export async function aiPolicyFixture(
   const [active] =
     await q`select count(*)::int as n from worker_heartbeats where status='RUNNING' and heartbeat_at>now()-interval '30 seconds'`;
   if (active.n) throw Error("Stop all managed Workers before policy fixtures");
-  const id = randomUUID(),
-    site = siteManifest.id;
+  const id = randomUUID();
+  const site = siteManifest.id;
   const prior = await q.begin(async (rawTx) => {
     const tx = rawTx as unknown as typeof q;
     await tx`select site_id from ai_policy_current where site_id=${site} for update`;

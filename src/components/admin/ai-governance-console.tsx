@@ -3,12 +3,12 @@ import { useEffect, useState, useRef } from "react";
 import type { AiPolicy, AiProfile } from "@/ai/governance-contract";
 const usd = (n: unknown) => "$" + (Number(n || 0) / 1e6).toFixed(6);
 export function AiGovernanceConsole() {
-  const [data, setData] = useState<any>(),
-    [draft, setDraft] = useState<AiPolicy>(),
-    [reason, setReason] = useState(""),
-    [message, setMessage] = useState(""),
-    [busy, setBusy] = useState(false),
-    [review, setReview] = useState({
+  const [data, setData] = useState<any>();
+  const [draft, setDraft] = useState<AiPolicy>();
+  const [reason, setReason] = useState("");
+  const [message, setMessage] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [review, setReview] = useState({
       taskId: "",
       usd: "0",
       evidenceReference: "",
@@ -18,8 +18,8 @@ export function AiGovernanceConsole() {
     undefined,
   );
   async function reload(signal?: AbortSignal) {
-    const r = await fetch("/api/v1/admin/ai", { cache: "no-store", signal }),
-      b = await r.json();
+    const r = await fetch("/api/v1/admin/ai", { cache: "no-store", signal });
+    const b = await r.json();
     if (!r.ok) throw Error(b.error?.message || "读取失败");
     setData(b.data);
     setDraft(b.data.policy.config);
@@ -41,8 +41,8 @@ export function AiGovernanceConsole() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ...command, requestId: pending.current.id }),
-        }),
-        b = await r.json();
+        });
+      const b = await r.json();
       if (!r.ok) throw Error(b.error?.message || "保存失败");
       pending.current = undefined;
       await reload();
@@ -67,7 +67,7 @@ export function AiGovernanceConsole() {
     );
   }
   if (!draft || !data)
-    return <div role="status">{message || "正在读取模型策略…"}</div>;
+    return <output className="block">{message || "正在读取模型策略…"}</output>;
   return (
     <div className="space-y-6 max-w-5xl">
       <h1 className="text-2xl font-semibold">模型与费用控制</h1>
@@ -75,9 +75,9 @@ export function AiGovernanceConsole() {
         预算按 UTC
         日／月计算，包含未决调用的保留额度。积分售价与供应商成本分别记录；修改只影响新任务。
       </p>
-      <p role="status" className="break-words">
+      <output className="block break-words">
         {message}
-      </p>
+      </output>
       <div className="flex flex-wrap gap-4 rounded-xl border p-4">
         <span>
           今日占用 {usd(data.totals.daily)} / {usd(draft.dailyMicros)}
@@ -281,7 +281,7 @@ export function AiGovernanceConsole() {
             onChange={(e) => setReason(e.target.value)}
           />
         </label>
-        <button
+        <button type="submit"
           className="rounded bg-primary text-primary-foreground px-4 py-2"
           disabled={busy}
         >
@@ -382,7 +382,7 @@ export function AiGovernanceConsole() {
             </label>
           ),
         )}
-        <button className="border rounded p-2" disabled={busy}>
+        <button type="submit" className="border rounded p-2" disabled={busy}>
           确认费用并记审计
         </button>
       </form>

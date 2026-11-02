@@ -66,24 +66,24 @@ async function main() {
   );
   const { getStripe } = await import("../src/payment");
   const stripe = getStripe() as any;
-  const ids = [randomUUID(), randomUUID()],
-    prefix = "AUD004_" + randomUUID().slice(0, 8),
-    passed: string[] = [];
+  const ids = [randomUUID(), randomUUID()];
+  const prefix = "AUD004_" + randomUUID().slice(0, 8);
+  const passed: string[] = [];
   const pass = (s: string) => {
     passed.push(s);
     console.log("PASS " + s);
   };
-  const stripeSessions = new Map<string, any>(),
-    stripeSubs = new Map<string, any>(),
-    invoices = new Map<string, any>(),
-    creemCheckouts = new Map<string, any>(),
-    creemSubs = new Map<string, any>(),
-    transactions = new Map<string, any>();
-  const creates = { stripe: 0, creem: 0 },
-    fetchOriginal = globalThis.fetch;
-  let counter = 0,
-    lostStripe = false,
-    lostCreem = false;
+  const stripeSessions = new Map<string, any>();
+  const stripeSubs = new Map<string, any>();
+  const invoices = new Map<string, any>();
+  const creemCheckouts = new Map<string, any>();
+  const creemSubs = new Map<string, any>();
+  const transactions = new Map<string, any>();
+  const creates = { stripe: 0, creem: 0 };
+  const fetchOriginal = globalThis.fetch;
+  let counter = 0;
+  let lostStripe = false;
+  let lostCreem = false;
   const clone = (v: any) => JSON.parse(JSON.stringify(v));
   stripe.rawRequest = async (method: string, path: string) => {
     assert.equal(path, "/v1/account");
@@ -141,8 +141,8 @@ async function main() {
         "Unexpected external HTTP in billing fixture: " +
           new URL(href).hostname,
       );
-    const u = new URL(href),
-      body = init.body ? JSON.parse(init.body) : {};
+    const u = new URL(href);
+    const body = init.body ? JSON.parse(init.body) : {};
     let response: any;
     if (u.pathname === "/v1/products") {
       const id = u.searchParams.get("product_id");
@@ -213,8 +213,8 @@ async function main() {
         livemode: false,
         created: Math.floor(Date.now() / 1000),
         data: { object },
-      }),
-      signature = stripe.webhooks.generateTestHeaderString({
+      });
+    const signature = stripe.webhooks.generateTestHeaderString({
         payload,
         secret: process.env.STRIPE_WEBHOOK_SECRET,
       });
@@ -235,8 +235,8 @@ async function main() {
         eventType: type,
         created_at: Date.now(),
         object,
-      }),
-      signature = createHmac("sha256", process.env.CREEM_WEBHOOK_SECRET!)
+      });
+    const signature = createHmac("sha256", process.env.CREEM_WEBHOOK_SECRET!)
         .update(payload)
         .digest("hex");
     return verifyCreem(
@@ -272,7 +272,8 @@ async function main() {
       );
       assert.equal(new Set(reserved.map((r) => r.id)).size, 1);
       const order = reserved[0];
-      provider === "stripe" ? (lostStripe = true) : (lostCreem = true);
+      if (provider === "stripe") lostStripe = true;
+      else lostCreem = true;
       await forceDue(order.id);
       await processOrder(order.id);
       await forceDue(order.id);
@@ -394,8 +395,8 @@ async function main() {
         "{}",
       ),
     );
-    const now = Date.now(),
-      periods = [
+    const now = Date.now();
+    const periods = [
         {
           start: new Date(now - 1000).toISOString(),
           end: new Date(now + 30 * 86400000).toISOString(),
@@ -406,8 +407,8 @@ async function main() {
         },
       ];
     for (const provider of ["stripe", "creem"] as const) {
-      const product = subscriptionCatalog[0],
-        order = await reserveOrder(ids[0], {
+      const product = subscriptionCatalog[0];
+      const order = await reserveOrder(ids[0], {
           requestId: randomUUID(),
           provider,
           productId: product.id,
@@ -417,8 +418,8 @@ async function main() {
       const ext =
           provider === "stripe"
             ? "sub_stripe_" + randomUUID()
-            : "sub_creem_" + randomUUID(),
-        customer =
+            : "sub_creem_" + randomUUID();
+      const customer =
           provider === "stripe"
             ? "cus_" + randomUUID()
             : "cust_" + randomUUID();
@@ -527,8 +528,8 @@ async function main() {
           invoices.set(invoice.id, invoice);
           event = await stripeEvent("invoice.paid", invoice);
         } else {
-          const sub = creemSubs.get(ext),
-            id = "tran_" + randomUUID();
+          const sub = creemSubs.get(ext);
+          const id = "tran_" + randomUUID();
           sub.current_period_start_date = p.start;
           sub.current_period_end_date = p.end;
           sub.last_transaction_id = id;
@@ -611,9 +612,9 @@ async function main() {
       );
     }
     // Atomic rollback after a cycle's credit insert, then durable recovery without a second paid checkout.
-    const fault = "aud004_" + randomUUID().slice(0, 8),
-      fid = prefix + "_fault",
-      subId = "sub_fault_" + randomUUID();
+    const fault = "aud004_" + randomUUID().slice(0, 8);
+    const fid = prefix + "_fault";
+    const subId = "sub_fault_" + randomUUID();
     const failure: any = {
       id: fid,
       type: "subscription.paid",
@@ -676,8 +677,8 @@ async function main() {
       "subscription fulfillment rollback is atomic; persisted normalized receipt recovers once without a paid HTTP retry",
     );
     // Old Creem first-period grant is adopted; the following period can still earn new credits.
-    const legacyId = "sub_legacy_" + randomUUID(),
-      legacyPay = "tran_legacy_" + randomUUID();
+    const legacyId = "sub_legacy_" + randomUUID();
+    const legacyPay = "tran_legacy_" + randomUUID();
     const [pkg] = await db
       .insert(creditPackages)
       .values({
@@ -833,9 +834,9 @@ async function main() {
     pass(
       "wrong environment/account/user/currency, another receipt for one cycle and overlapping periods never grant credits",
     );
-    const expEnd = new Date(now - 86400000).toISOString(),
-      expStart = new Date(now - 31 * 86400000).toISOString(),
-      expired: any = {
+    const expEnd = new Date(now - 86400000).toISOString();
+    const expStart = new Date(now - 31 * 86400000).toISOString();
+    const expired: any = {
         ...failure,
         id: prefix + "_expired",
         subscription: {

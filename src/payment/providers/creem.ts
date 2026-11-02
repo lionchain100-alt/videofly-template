@@ -10,9 +10,9 @@ import type {
   VerifiedEvent,
 } from "./types";
 export function creemConfig() {
-  const key = process.env.CREEM_API_KEY?.trim(),
-    accountId = process.env.CREEM_ACCOUNT_SCOPE?.trim(),
-    environment = process.env.CREEM_ENVIRONMENT || "test";
+  const key = process.env.CREEM_API_KEY?.trim();
+  const accountId = process.env.CREEM_ACCOUNT_SCOPE?.trim();
+  const environment = process.env.CREEM_ENVIRONMENT || "test";
   if (
     process.env.CREEM_ENABLED !== "true" ||
     !key ||
@@ -104,8 +104,8 @@ export async function createCreemCheckout(
 export async function creemPayment(
   checkoutId: string,
 ): Promise<PaymentFact | undefined> {
-  const c = creemConfig(),
-    checkout = await creemRequest(
+  const c = creemConfig();
+  const checkout = await creemRequest(
       `/v1/checkouts?checkout_id=${encodeURIComponent(checkoutId)}`,
     );
   mode(checkout);
@@ -114,8 +114,8 @@ export async function creemPayment(
   if (!order || typeof order !== "object" || order.status !== "paid") return;
   mode(order);
   const product = externalBillingProduct("creem", id(checkout.product));
-  const ref = checkout.request_id,
-    internalId = checkout.metadata?.orderId;
+  const ref = checkout.request_id;
+  const internalId = checkout.metadata?.orderId;
   if (
     !product ||
     product.kind !== "PURCHASE" ||
@@ -144,13 +144,13 @@ export async function creemSubscription(
   observedAt = new Date().toISOString(),
   paidTransactionId?: string,
 ): Promise<SubscriptionFact> {
-  const c = creemConfig(),
-    s = await creemRequest(
+  const c = creemConfig();
+  const s = await creemRequest(
       `/v1/subscriptions?subscription_id=${encodeURIComponent(subscriptionId)}`,
     );
   mode(s);
-  const externalProduct = id(s.product),
-    product = externalBillingProduct("creem", externalProduct);
+  const externalProduct = id(s.product);
+  const product = externalBillingProduct("creem", externalProduct);
   if (
     !product ||
     product.kind !== "SUBSCRIPTION" ||
@@ -202,11 +202,11 @@ export async function verifyCreem(
   request: Request,
   raw: string,
 ): Promise<VerifiedEvent> {
-  const c = creemConfig(),
-    secret = process.env.CREEM_WEBHOOK_SECRET;
+  const c = creemConfig();
+  const secret = process.env.CREEM_WEBHOOK_SECRET;
   if (!secret) throw new ApiError("Creem Webhook 尚未配置", 503);
-  const signature = request.headers.get("creem-signature") || "",
-    expected = createHmac("sha256", secret).update(raw).digest();
+  const signature = request.headers.get("creem-signature") || "";
+  const expected = createHmac("sha256", secret).update(raw).digest();
   if (
     !/^[a-f0-9]{64}$/i.test(signature) ||
     !timingSafeEqual(Buffer.from(signature, "hex"), expected)

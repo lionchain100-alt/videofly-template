@@ -1,0 +1,11 @@
+{
+  "at": "2026-11-02T06:51:18.416Z",
+  "checks": [
+    "real R2 authenticated video proxy: anonymous/other user denied; Range/HEAD/download/416 passed",
+    "retained local video remains accessible with R2 enabled",
+    "real R2 image upload/read: session/owner/origin/MIME/private URL controls passed",
+    "runtime API admin guard; no-worker readiness 503 while liveness 200; public response contains no internals"
+  ],
+  "modelCalls": 0,
+  "paymentCalls": 0
+}

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type Stripe from "stripe";
 import { createHash } from "node:crypto";
 import { ApiError } from "@/lib/api/error";
 import { getStripe } from "@/payment";
@@ -11,9 +12,9 @@ import type {
   SubscriptionFact,
 } from "./types";
 export function stripeConfig() {
-  const key = process.env.STRIPE_API_KEY?.trim(),
-    accountId = process.env.STRIPE_ACCOUNT_ID?.trim(),
-    environment = process.env.STRIPE_ENVIRONMENT || "test";
+  const key = process.env.STRIPE_API_KEY?.trim();
+  const accountId = process.env.STRIPE_ACCOUNT_ID?.trim();
+  const environment = process.env.STRIPE_ENVIRONMENT || "test";
   if (
     process.env.STRIPE_ENABLED !== "true" ||
     !key ||
@@ -79,8 +80,8 @@ export async function createStripeCheckout(
 export async function stripePayment(
   sessionId: string,
 ): Promise<PaymentFact | undefined> {
-  const c = await account(),
-    session = await getStripe().checkout.sessions.retrieve(sessionId, {
+  const c = await account();
+  const session = await getStripe().checkout.sessions.retrieve(sessionId, {
       expand: ["payment_intent"],
     });
   if (
@@ -121,8 +122,8 @@ export async function stripeSubscription(
   observedAt = new Date().toISOString(),
   invoice?: Record<string, any>,
 ): Promise<SubscriptionFact> {
-  const c = await account(),
-    s = record.parse(await getStripe().subscriptions.retrieve(id));
+  const c = await account();
+  const s = record.parse(await getStripe().subscriptions.retrieve(id));
   const item = s.items?.data?.[0];
   if (
     !item ||
@@ -135,8 +136,8 @@ export async function stripeSubscription(
   const product = externalBillingProduct("stripe", priceId);
   if (!product || product.kind !== "SUBSCRIPTION")
     throw new ApiError("Stripe 订阅产品未映射", 409);
-  const start = item.current_period_start ?? s.current_period_start,
-    end = item.current_period_end ?? s.current_period_end;
+  const start = item.current_period_start ?? s.current_period_start;
+  const end = item.current_period_end ?? s.current_period_end;
   const fact: SubscriptionFact = {
     provider: "stripe",
     environment: c.environment,
@@ -192,10 +193,10 @@ export async function verifyStripe(
   request: Request,
   raw: string,
 ): Promise<VerifiedEvent> {
-  const c = stripeConfig(),
-    secret = process.env.STRIPE_WEBHOOK_SECRET;
+  const c = stripeConfig();
+  const secret = process.env.STRIPE_WEBHOOK_SECRET;
   if (!secret) throw new ApiError("Stripe Webhook 尚未配置", 503);
-  let event;
+  let event: Stripe.Event;
   try {
     event = getStripe().webhooks.constructEvent(
       raw,
@@ -210,8 +211,8 @@ export async function verifyStripe(
     (event.account && event.account !== c.accountId)
   )
     throw new ApiError("Stripe 回调账户或环境不匹配", 400);
-  const object = record.parse(event.data.object),
-    result: VerifiedEvent = {
+  const object = record.parse(event.data.object);
+  const result: VerifiedEvent = {
       id: event.id,
       type: event.type,
       provider: "stripe",

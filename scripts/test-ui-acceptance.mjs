@@ -7,25 +7,25 @@ import { createRequire } from "node:module";
 import { createServer } from "node:http";
 import postgres from "postgres";
 import { hashPassword } from "better-auth/crypto";
-const require = createRequire(import.meta.url),
-  {
+const require = createRequire(import.meta.url);
+const {
     chromium,
   } = require("C:/Users/Administrator/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright");
 const u = new URL(process.env.DATABASE_URL);
 assert.equal(u.hostname, "127.0.0.1");
 assert.equal(u.port, "55432");
 assert.equal(u.pathname, "/laconic_local");
-const q = postgres(u.href, { ssl: false, max: 4, onnotice: () => {} }),
-  uid = randomUUID(),
-  email = `aud008-${uid}@example.invalid`,
-  password = "Fixture-" + randomUUID(),
-  original = await readFile("src/config/site.json"),
-  prev = await readFile("src/config/site.previous.json").catch(() => null),
-  site = JSON.parse(original),
-  evidence = "../.qa-aud008",
-  cases = [],
-  errors = [],
-  ids = [];
+const q = postgres(u.href, { ssl: false, max: 4, onnotice: () => {} });
+const uid = randomUUID();
+const email = `aud008-${uid}@example.invalid`;
+const password = "Fixture-" + randomUUID();
+const original = await readFile("src/config/site.json");
+const prev = await readFile("src/config/site.previous.json").catch(() => null);
+const site = JSON.parse(original);
+const evidence = "../.qa-aud008";
+const cases = [];
+const errors = [];
+const ids = [];
 assert.equal(
   (
     await q`select count(*)::int as n from worker_heartbeats where status='RUNNING'and heartbeat_at>now()-interval '30 seconds'`
@@ -36,15 +36,15 @@ assert.equal(
 await mkdir(evidence, { recursive: true });
 process.env.ASSET_STORAGE_BACKEND = "local";
 process.env.VIDEO_ALLOW_LOCAL_TEST = "true";
-const { db } = await import("../src/db/index.ts"),
-  { claimTask, finishTask } = await import("../src/services/tasks.ts"),
-  { beginAiDispatch } = await import("../src/services/ai-governance.ts"),
-  { claimVideoJob, processVideoJob } = await import(
+const { db } = await import("../src/db/index.ts");
+const { claimTask, finishTask } = await import("../src/services/tasks.ts");
+const { beginAiDispatch } = await import("../src/services/ai-governance.ts");
+const { claimVideoJob, processVideoJob } = await import(
     "../src/services/video-jobs.ts"
-  ),
-  { assetPath } = await import("../src/services/video-assets.ts");
-const media = await readFile("scripts/fixtures/blue-1s.mp4"),
-  server = createServer((req, res) => {
+  );
+const { assetPath } = await import("../src/services/video-assets.ts");
+const media = await readFile("scripts/fixtures/blue-1s.mp4");
+const server = createServer((req, res) => {
     res.writeHead(200, {
       "Content-Type": "video/mp4",
       "Content-Length": media.length,
@@ -53,8 +53,8 @@ const media = await readFile("scripts/fixtures/blue-1s.mp4"),
   });
 await new Promise((r) => server.listen(0, "127.0.0.1", r));
 const savedFetch = globalThis.fetch;
-let submits = 0,
-  providerPrompt = "";
+let submits = 0;
+let providerPrompt = "";
 globalThis.fetch = async (input, init) => {
   const url = new URL(String(input));
   if (url.origin === "https://api.kie.ai") {
@@ -83,7 +83,8 @@ globalThis.fetch = async (input, init) => {
     throw Error("External requests blocked in fixture");
   return savedFetch(input, init);
 };
-let browser, page;
+let browser;
+let page;
 async function apply(preset, mode) {
   site.ui.presetId = preset;
   site.ui.theme.mode = mode;
@@ -187,7 +188,7 @@ try {
     { headers: { Origin: "http://localhost:3000" }, data: { email, password } },
   );
   assert.equal(login.status(), 200);
-  let studio = await (
+  const studio = await (
     await context.request.get("http://localhost:3000/api/ui-studio/config")
   ).json();
   const changed = await context.request.put(
@@ -213,8 +214,8 @@ try {
     await visit();
     await open(tool);
     const input =
-        tool === "text" ? "#live-summary-input" : "#live-video-prompt",
-      value =
+        tool === "text" ? "#live-summary-input" : "#live-video-prompt";
+    const value =
         tool === "text"
           ? "AUD008 same source text across three UI presets and both languages. No real model call."
           : "AUD008 same video prompt across layouts, with isolated provider output.";

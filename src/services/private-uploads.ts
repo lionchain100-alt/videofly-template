@@ -42,11 +42,11 @@ export async function saveUpload(userId: string, file: File) {
   const bytes = Buffer.from(await file.arrayBuffer());
   if (sniff(bytes) !== file.type)
     throw new ApiError("图片内容与类型声明不匹配", 400);
-  const id = randomUUID(),
-    backend = assetBackend(),
-    scope = backend === "s3" ? privateS3Config().scope : null,
-    localKey = `uploads/${id}.${uploadTypes[file.type]}`,
-    key =
+  const id = randomUUID();
+  const backend = assetBackend();
+  const scope = backend === "s3" ? privateS3Config().scope : null;
+  const localKey = `uploads/${id}.${uploadTypes[file.type]}`;
+  const key =
       backend === "s3" ? `${privateS3Config().prefix}/${localKey}` : localKey;
   await db.transaction(async (tx) => {
     await tx

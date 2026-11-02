@@ -30,7 +30,7 @@
     "test:admin-dashboard": "node --import tsx scripts/test-admin-dashboard.ts",
     "worker:payments": "node --import tsx scripts/payment-worker.ts",
     "test:retained": "node scripts/test-retained-capabilities.mjs",
-    "audit:security": "corepack pnpm audit --audit-level=moderate",
+    "audit:security": "corepack pnpm audit --audit-level=low",
     "site:check": "node --import tsx scripts/check-site.ts",
     "site:create": "node scripts/create-local-site.mjs",
     "site:configure": "node --import tsx scripts/configure-site.ts",
@@ -58,13 +58,14 @@
     "test:seo-routes": "node scripts/test-seo-routes.mjs",
     "owner:initialize": "node --import tsx scripts/initialize-owner.ts",
     "test:ui-offline": "node scripts/test-preview-offline.mjs",
-    "lint:raw": "biome check .",
+    "lint:raw": "biome check --vcs-enabled=true --vcs-use-ignore-file=true .",
     "production:check": "node --import tsx scripts/check-production.ts",
     "test:production-config": "node --import tsx scripts/test-production-config.ts",
     "site:verify-empty": "node scripts/check-initialized-site.mjs",
     "test:release-gates": "node scripts/test-release-gates.mjs",
     "test:site-factory": "node scripts/test-site-factory.mjs",
-    "capability:check": "node scripts/check-capabilities.mjs"
+    "capability:check": "node scripts/check-capabilities.mjs",
+    "test:email-render": "tsx --tsconfig scripts/tsconfig.email.json scripts/test-email-render.tsx"
   },
   "dependencies": {
     "@creem_io/better-auth": "2.0.4",
@@ -201,7 +202,8 @@
       "socket.io-parser": "4.2.7",
       "engine.io": "6.6.10",
       "glob@13": "14.0.2",
-      "minimatch@10": "11.0.1"
+      "minimatch@10": "11.0.1",
+      "@react-email/components>@react-email/render": "2.2.0"
     }
   }
 }

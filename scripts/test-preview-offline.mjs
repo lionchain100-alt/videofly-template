@@ -18,8 +18,8 @@ const log = createWriteStream(".local/aud008-offline.log");
 child.stdout.pipe(log);
 child.stderr.pipe(log);
 try {
-  let html = "",
-    ok = false;
+  let html = "";
+  let ok = false;
   for (let i = 0; i < 40; i++) {
     try {
       const r = await fetch("http://localhost:3000/ui-preview", {

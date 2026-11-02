@@ -30,9 +30,9 @@ import {
   storedAssetSize,
   storedAssetBody,
 } from "../src/services/video-assets";
-const root = process.cwd(),
-  site = siteManifest,
-  url = new URL(process.env.DATABASE_URL || "");
+const root = process.cwd();
+const site = siteManifest;
+const url = new URL(process.env.DATABASE_URL || "");
 function guard() {
   if (
     url.hostname !== "127.0.0.1" ||
@@ -165,9 +165,9 @@ async function encrypt(
   input: NodeJS.ReadableStream,
   destination: string,
 ): Promise<Entry> {
-  const iv = randomBytes(12),
-    cipher = createCipheriv("aes-256-gcm", key(), iv),
-    h = createHash("sha256");
+  const iv = randomBytes(12);
+  const cipher = createCipheriv("aes-256-gcm", key(), iv);
+  const h = createHash("sha256");
   let bytes = 0;
   const hash = new Transform({
     transform(chunk, _enc, cb) {
@@ -197,11 +197,9 @@ function signature(manifest: any) {
     .digest("hex");
 }
 async function load(bundle: string) {
-  const m = JSON.parse(
+  const { signature: sig, ...m } = JSON.parse(
       await readFile(path.join(bundle, "manifest.json"), "utf8"),
-    ),
-    sig = m.signature;
-  delete m.signature;
+    );
   const expected = signature(m);
   if (
     typeof sig !== "string" ||
@@ -234,15 +232,15 @@ export async function createBackup() {
   const db = dbFor(url);
   try {
     await ensureStopped(db);
-    const id = `${Date.now()}-${randomBytes(4).toString("hex")}`,
-      folder = path.join(root, ".local/backups", id);
+    const id = `${Date.now()}-${randomBytes(4).toString("hex")}`;
+    const folder = path.join(root, ".local/backups", id);
     await mkdir(folder, { recursive: false }).catch(async (e) => {
       if (e.code !== "ENOENT") throw e;
       await mkdir(path.dirname(folder), { recursive: true });
       await mkdir(folder);
     });
-    const before = await digestDb(db),
-      entries: Entry[] = [];
+    const before = await digestDb(db);
+    const entries: Entry[] = [];
     const pg = command(
       "pg_dump",
       ["--format=custom", "--no-owner", "--no-privileges"],
@@ -380,8 +378,8 @@ export async function restoreBackup(bundle: string, target?: string) {
         "--single-transaction",
       ],
       targetUrl,
-    ),
-    de = decrypt(
+    );
+  const de = decrypt(
       bundle,
       m.entries.find((e: Entry) => e.file === "database.enc"),
     );
@@ -399,8 +397,8 @@ export async function restoreBackup(bundle: string, target?: string) {
       if (!e.taskId) continue;
       if (!/^[0-9a-f-]{36}$/.test(e.taskId))
         throw Error("Invalid backup asset id");
-      const stream = decrypt(bundle, e),
-        file = path.join(files, `${e.taskId}.mp4`);
+      const stream = decrypt(bundle, e);
+      const file = path.join(files, `${e.taskId}.mp4`);
       await pipeline(
         stream.input,
         stream.decrypt,
@@ -417,8 +415,8 @@ export async function restoreBackup(bundle: string, target?: string) {
         !e.localKey.startsWith(`uploads/${e.uploadId}.`)
       )
         throw Error("Invalid upload recovery key");
-      const stream = decrypt(bundle, e),
-        file = path.join(files, e.localKey);
+      const stream = decrypt(bundle, e);
+      const file = path.join(files, e.localKey);
       await mkdir(path.dirname(file), { recursive: true });
       await pipeline(
         stream.input,

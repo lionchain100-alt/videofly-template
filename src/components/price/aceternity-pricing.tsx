@@ -258,7 +258,7 @@ interface TabButtonProps {
 
 function TabButton({ active, children, onClick, showBadge }: TabButtonProps) {
   return (
-    <button
+    <button type="button"
       onClick={onClick}
       className={cn(
         "relative rounded-md px-6 py-2.5 text-sm font-medium transition-all duration-200",

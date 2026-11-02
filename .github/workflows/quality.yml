@@ -23,9 +23,11 @@ jobs:
       - run: corepack pnpm install --frozen-lockfile
       - run: node scripts/prepare-ci.mjs --build-only
       - run: corepack pnpm lint
+      - run: corepack pnpm lint:raw
       - run: corepack pnpm capability:check
       - run: corepack pnpm typecheck
       - run: corepack pnpm test:production-config
+      - run: corepack pnpm test:email-render
       - run: corepack pnpm test:release-gates
       - run: corepack pnpm test:site-factory
       - run: corepack pnpm audit:security

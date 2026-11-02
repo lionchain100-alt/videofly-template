@@ -21,11 +21,11 @@ async function main() {
   assert.equal(url.hostname, "127.0.0.1");
   assert.equal(url.port, "55432");
   assert.equal(url.pathname, "/laconic_local");
-  const q = postgres(url.href, { ssl: false, max: 2, onnotice: () => {} }),
-    owner = randomUUID(),
-    task = randomUUID(),
-    checks: string[] = [],
-    objects = new Map<string, Buffer>();
+  const q = postgres(url.href, { ssl: false, max: 2, onnotice: () => {} });
+  const owner = randomUUID();
+  const task = randomUUID();
+  const checks: string[] = [];
+  const objects = new Map<string, Buffer>();
   const listening = await new Promise<boolean>((r) => {
     const s = net.connect({ host: "127.0.0.1", port: 3000 });
     s.once("connect", () => {
@@ -46,23 +46,23 @@ async function main() {
     await q.end();
     throw Error("Stop Workers before fixtures");
   }
-  const originalEnv = { ...process.env },
-    access = "AUD006_FIXTURE_ACCESS",
-    secret = "AUD006_FIXTURE_SECRET";
-  let failPut = false,
-    deny = false,
-    puts = 0;
-  const hash = (x: any) => createHash("sha256").update(x).digest("hex"),
-    hmac = (k: any, x: string) => createHmac("sha256", k).update(x).digest();
+  const originalEnv = { ...process.env };
+  const access = "AUD006_FIXTURE_ACCESS";
+  const secret = "AUD006_FIXTURE_SECRET";
+  let failPut = false;
+  let deny = false;
+  let puts = 0;
+  const hash = (x: any) => createHash("sha256").update(x).digest("hex");
+  const hmac = (k: any, x: string) => createHmac("sha256", k).update(x).digest();
   const server = createServer(async (req, res) => {
     try {
       if (deny) {
         res.writeHead(503).end();
         return;
       }
-      const u = new URL(req.url!, "http://" + req.headers.host),
-        auth = String(req.headers.authorization || ""),
-        m =
+      const u = new URL(req.url!, "http://" + req.headers.host);
+      const auth = String(req.headers.authorization || "");
+      const m =
           /Credential=([^/]+)\/([^,]+), SignedHeaders=([^,]+), Signature=([a-f0-9]+)/.exec(
             auth,
           );
@@ -136,8 +136,8 @@ async function main() {
       }
       const r = /^bytes=(\d+)-(\d+)$/.exec(String(req.headers.range || ""));
       if (r) {
-        const start = Number(r[1]),
-          end = Number(r[2]);
+        const start = Number(r[1]);
+        const end = Number(r[2]);
         res
           .writeHead(206, {
             "Content-Length": end - start + 1,
@@ -159,16 +159,16 @@ async function main() {
     ASSET_S3_ACCESS_KEY_ID: access,
     ASSET_S3_SECRET_ACCESS_KEY: secret,
   });
-  const { db } = await import("../src/db"),
-    { privateS3Config, putPrivateFile, objectHash, privateObject } =
-      await import("../src/services/private-storage"),
-    { assetPath, storedAssetSize, storedAssetBody } = await import(
+  const { db } = await import("../src/db");
+  const { privateS3Config, putPrivateFile, objectHash, privateObject } =
+      await import("../src/services/private-storage");
+  const { assetPath, storedAssetSize, storedAssetBody } = await import(
       "../src/services/video-assets"
-    ),
-    { saveUpload, uploadBody } = await import(
+    );
+  const { saveUpload, uploadBody } = await import(
       "../src/services/private-uploads"
-    ),
-    { startHeartbeat, runtimeHealth } = await import(
+    );
+  const { startHeartbeat, runtimeHealth } = await import(
       "../src/services/runtime-health"
     );
   let upload: any;
@@ -204,6 +204,10 @@ async function main() {
       storedAssetSize({ ...a, storageKey: "foreign/private/x" }),
     );
     await assert.rejects(privateObject("../outside"));
+    for (let code = 0; code < 32; code++)
+      await assert.rejects(privateObject(`${meta.storageKey}${String.fromCharCode(code)}`), /Asset namespace mismatch/);
+    for (const character of ["\\", "?", "#"])
+      await assert.rejects(privateObject(`${meta.storageKey}${character}`), /Asset namespace mismatch/);
     checks.push("private Range; bucket scope and namespace denied");
     failPut = true;
     await assert.rejects(
@@ -219,7 +223,7 @@ async function main() {
       owner,
       new File([png], "pixel.png", { type: "image/png" }),
     );
-    let [row] =
+    const [row] =
       await q`select id,storage_backend as "storageBackend",storage_scope as "storageScope",storage_key as "storageKey",mime,byte_length as "byteLength" from private_uploads where id=${upload.id}`;
     assert.deepEqual(
       Buffer.from(await (await uploadBody(row as any)).arrayBuffer()),
@@ -241,8 +245,8 @@ async function main() {
     for (const kind of ["text", "video", "payments"] as const)
       beats.push(await startHeartbeat(kind));
     assert.equal((await runtimeHealth(true)).ready, true);
-    const manifestFile = "src/config/site.json",
-      manifestBytes = await readFile(manifestFile);
+    const manifestFile = "src/config/site.json";
+    const manifestBytes = await readFile(manifestFile);
     await beats[1].stop();
     try {
       const manifest = JSON.parse(manifestBytes.toString());
@@ -334,8 +338,8 @@ async function main() {
       restoreBackup(bundle, `laconic_local_restore_wrong_${Date.now()}`),
     );
     process.env.BACKUP_ENCRYPTION_KEY = key;
-    const mf = path.join(bundle, "manifest.json"),
-      original = await readFile(mf);
+    const mf = path.join(bundle, "manifest.json");
+    const original = await readFile(mf);
     try {
       const m = JSON.parse(original.toString());
       m.site.id = "foreign-site";
@@ -346,9 +350,9 @@ async function main() {
     } finally {
       await writeFile(mf, original);
     }
-    const manifest = JSON.parse(original.toString()),
-      payload = path.join(bundle, manifest.entries[0].file),
-      cipher = await readFile(payload);
+    const manifest = JSON.parse(original.toString());
+    const payload = path.join(bundle, manifest.entries[0].file);
+    const cipher = await readFile(payload);
     try {
       const corrupted = Buffer.from(cipher);
       corrupted[0] ^= 1;

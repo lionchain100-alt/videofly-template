@@ -1,0 +1,10 @@
+{
+  "at": "2026-11-02T06:56:32.781Z",
+  "databaseUrlAbsent": true,
+  "postgresUrlAbsent": true,
+  "previewServerRendering200": true,
+  "studioConfiguration200": true,
+  "privateLoopbackHostHeader": true,
+  "businessApiCalls": 0,
+  "scope": "No-database SSR/config proof; browser simulation/keyboard proof is recorded separately"
+}

@@ -70,18 +70,18 @@ async function main() {
   const { verifyCreem } = await import("../src/payment/providers/creem");
   const { getStripe } = await import("../src/payment");
   const stripe = getStripe() as any;
-  const ids: string[] = [],
-    passed: string[] = [],
-    receipts = new Map<string, any>(),
-    intents = new Map<string, any>(),
-    txs = new Map<string, any>(),
-    invoices = new Map<string, string>();
+  const ids: string[] = [];
+  const passed: string[] = [];
+  const receipts = new Map<string, any>();
+  const intents = new Map<string, any>();
+  const txs = new Map<string, any>();
+  const invoices = new Map<string, string>();
   const originalFetch = globalThis.fetch;
-  let stripeCreates = 0,
-    creemCreates = 0,
-    lose = false,
-    state = "succeeded",
-    callbackRace: (() => Promise<void>) | undefined;
+  let stripeCreates = 0;
+  let creemCreates = 0;
+  let lose = false;
+  let state = "succeeded";
+  let callbackRace: (() => Promise<void>) | undefined;
   const pass = (s: string) => {
     passed.push(s);
     console.log("PASS " + s);
@@ -179,16 +179,16 @@ async function main() {
     invoice = false,
     legacyOrder = false,
   ) {
-    const uid = await user(),
-      order = await reserveOrder(uid, {
+    const uid = await user();
+    const order = await reserveOrder(uid, {
         requestId: randomUUID(),
         provider,
         productId: "starter",
       });
-    const unique = randomUUID().replaceAll("-", ""),
-      pi = "pi_" + unique,
-      txid = "tran_" + unique,
-      ord = "ord_" + unique;
+    const unique = randomUUID().replaceAll("-", "");
+    const pi = "pi_" + unique;
+    const txid = "tran_" + unique;
+    const ord = "ord_" + unique;
     const paymentId =
       provider === "stripe"
         ? invoice
@@ -323,11 +323,11 @@ async function main() {
       executionConfig: {},
     }));
   try {
-    const actor = await user(true),
-      member = await user();
+    const actor = await user(true);
+    const member = await user();
     for (const provider of ["stripe", "creem"] as const) {
-      const o = await paid(provider),
-        input = request(o.id);
+      const o = await paid(provider);
+      const input = request(o.id);
       await assert.rejects(
         () => createRefund(member, input),
         (e: any) => e.status === 403,
@@ -410,8 +410,8 @@ async function main() {
         100,
       );
       state = "failed";
-      const failure = await paid(provider),
-        fr = await createRefund(actor, request(failure.id));
+      const failure = await paid(provider);
+      const fr = await createRefund(actor, request(failure.id));
       await processRefund(fr.id);
       const fv = await refundView(failure.id);
       assert.equal(fv.refunds[0].status, "FAILED");
@@ -431,9 +431,9 @@ async function main() {
         `${provider}: asynchronous pending completion and explicit cash failure release/settle the source hold once`,
       );
 
-      const frozen = await paid(provider),
-        task = await reserve(frozen.uid),
-        countBefore = provider === "stripe" ? stripeCreates : creemCreates;
+      const frozen = await paid(provider);
+      const task = await reserve(frozen.uid);
+      const countBefore = provider === "stripe" ? stripeCreates : creemCreates;
       const blocked = await createRefund(actor, request(frozen.id));
       assert.equal(blocked.status, "BLOCKED");
       await processRefund(blocked.id);
@@ -480,8 +480,8 @@ async function main() {
         20,
       );
 
-      const consumed = await paid(provider),
-        ct = await reserve(consumed.uid, 40);
+      const consumed = await paid(provider);
+      const ct = await reserve(consumed.uid, 40);
       await db
         .update(tasks)
         .set({ status: "RUNNING" })
@@ -509,8 +509,8 @@ async function main() {
         (await refundView(consumed.id)).order.refundCreditsWaived,
         40,
       );
-      const running = await paid(provider),
-        rt = await reserve(running.uid, 20);
+      const running = await paid(provider);
+      const rt = await reserve(running.uid, 20);
       await db
         .update(tasks)
         .set({ status: "RUNNING" })
@@ -524,8 +524,8 @@ async function main() {
       assert.equal(rv.pkg!.frozenCredits, 0);
       assert.equal(rv.pkg!.remainingCredits, 0);
       assert.equal(rv.order.refundCreditShortfall, 20);
-      const expired = await paid(provider),
-        ep = await refundView(expired.id);
+      const expired = await paid(provider);
+      const ep = await refundView(expired.id);
       await db
         .update(creditPackages)
         .set({ expiredAt: new Date(Date.now() - 1000) })
@@ -538,8 +538,8 @@ async function main() {
         `${provider}: frozen/consumed blocks before HTTP; external cash refund reclaims only source, gates new tasks, failed-task release pays debt; audited waiver is idempotent`,
       );
 
-      const rollback = await paid(provider),
-        rr = await createRefund(actor, request(rollback.id));
+      const rollback = await paid(provider);
+      const rr = await createRefund(actor, request(rollback.id));
       externalSuccess(rollback, rr.id);
       const rev = await event(rollback);
       const trigger = "refund4_" + randomUUID().replaceAll("-", "");
@@ -583,8 +583,8 @@ async function main() {
       (await refundView(partial.id)).pkg!.refundReclaimedCredits,
       100,
     );
-    const invoice = await paid("stripe", true),
-      ir = await createRefund(actor, request(invoice.id));
+    const invoice = await paid("stripe", true);
+    const ir = await createRefund(actor, request(invoice.id));
     await processRefund(ir.id);
     await receivePaymentEvent(await event(invoice));
     assert.equal(
@@ -620,8 +620,8 @@ async function main() {
     await processRefund(tr.id);
     assert.equal(creemCreates, calls);
     assert.equal((await refundView(tax.id)).refunds[0].status, "REVIEW");
-    const scoped = await paid("stripe"),
-      sr = await createRefund(actor, request(scoped.id));
+    const scoped = await paid("stripe");
+    const sr = await createRefund(actor, request(scoped.id));
     process.env.STRIPE_ACCOUNT_ID = "acct_changed";
     await processRefund(sr.id);
     process.env.STRIPE_ACCOUNT_ID = "acct_refund_fixture";
@@ -663,8 +663,8 @@ async function main() {
     );
 
     if (process.argv.includes("--browser")) {
-      const stripeUi = await paid("stripe"),
-        creemUi = await paid("creem");
+      const stripeUi = await paid("stripe");
+      const creemUi = await paid("creem");
       writeFileSync(
         ".local/refund-browser-fixtures.json",
         JSON.stringify({

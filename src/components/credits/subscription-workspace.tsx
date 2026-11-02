@@ -21,14 +21,14 @@ type Subscription = {
   hasAccess: boolean;
 };
 export function SubscriptionWorkspace() {
-  const [plans, setPlans] = useState<Plan[]>([]),
-    [providers, setProviders] = useState<{ id: Provider; enabled: boolean }[]>(
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [providers, setProviders] = useState<{ id: Provider; enabled: boolean }[]>(
       [],
-    ),
-    [subs, setSubs] = useState<Subscription[]>([]),
-    [provider, setProvider] = useState<Provider>("creem"),
-    [message, setMessage] = useState(""),
-    [busy, setBusy] = useState(false);
+    );
+  const [subs, setSubs] = useState<Subscription[]>([]);
+  const [provider, setProvider] = useState<Provider>("creem");
+  const [message, setMessage] = useState("");
+  const [busy, setBusy] = useState(false);
   const [intent, setIntent] = useState<{
     requestId: string;
     provider: Provider;
@@ -79,8 +79,8 @@ export function SubscriptionWorkspace() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(request),
-        }),
-        body = await response.json();
+        });
+      const body = await response.json();
       if (!response.ok) {
         if ([400, 401, 403, 409, 429, 503].includes(response.status)) {
           sessionStorage.removeItem("billing-subscription-intent-v1");
@@ -109,8 +109,8 @@ export function SubscriptionWorkspace() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ id, action }),
-        }),
-        body = await r.json();
+        });
+      const body = await r.json();
       if (!r.ok) throw Error(body.error?.message || "订阅操作失败");
       setSubs(body.data);
       setMessage(
@@ -148,7 +148,7 @@ export function SubscriptionWorkspace() {
       {intent && (
         <p className="mb-4 text-sm">
           已有未确认请求。
-          <button
+          <button type="button"
             onClick={() => {
               sessionStorage.removeItem("billing-subscription-intent-v1");
               setIntent(null);
@@ -167,7 +167,7 @@ export function SubscriptionWorkspace() {
               ${(plan.amount / 100).toFixed(2)} /{" "}
               {plan.period === "year" ? "年" : "月"} · {plan.credits} 积分
             </p>
-            <button
+            <button type="button"
               className="mt-4 rounded bg-primary px-4 py-2 text-primary-foreground disabled:opacity-50"
               disabled={
                 busy ||
@@ -182,12 +182,12 @@ export function SubscriptionWorkspace() {
         ))}
       </div>
       {message && (
-        <p role="status" className="mt-4">
+        <output className="block mt-4">
           {message}
-        </p>
+        </output>
       )}
       <h3 className="mt-8 text-lg font-semibold">我的订阅</h3>
-      <button className="my-3 text-sm underline" onClick={() => void refresh()}>
+      <button type="button" className="my-3 text-sm underline" onClick={() => void refresh()}>
         刷新订阅状态
       </button>
       {!subs.length && (
@@ -212,7 +212,7 @@ export function SubscriptionWorkspace() {
             sub.status,
           ) &&
             !(sub.provider === "stripe" && sub.status === "paused") && (
-              <button
+              <button type="button"
                 disabled={busy}
                 className="mt-2 underline"
                 onClick={() =>

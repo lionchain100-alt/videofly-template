@@ -104,8 +104,8 @@ function savedEvent(row: typeof paymentEvents.$inferSelect): VerifiedEvent {
       throw new ApiError("保存事件的内外账户或环境不一致，禁止重放", 409);
   return event;
 }
-export async function paymentOperation(actor: string, input: Input) {
-  input = paymentOperationSchema.parse(input);
+export async function paymentOperation(actor: string, rawInput: Input) {
+  const input = paymentOperationSchema.parse(rawInput);
   const hash = createHash("sha256")
     .update(JSON.stringify({ actor, ...input }))
     .digest("hex");
@@ -304,9 +304,9 @@ export async function processPaymentOperation(id?: string) {
     return r;
   });
   if (!op) return false;
-  let code = "COMPLETED",
-    message = "处理完成",
-    status = "SUCCEEDED";
+  let code = "COMPLETED";
+  let message = "处理完成";
+  let status = "SUCCEEDED";
   try {
     await db.transaction((tx) => authorize(tx, op.actorUserId));
     const input = paymentOperationSchema.parse(op.target);
@@ -386,9 +386,9 @@ export async function listPaymentOperations(
   input: z.infer<typeof paymentOpsQuerySchema>,
 ) {
   const { view, q, provider, exceptions, page } = input;
-  const like = `%${q.replace(/[\\%_]/g, "\\$&")}%`,
-    p = provider || null,
-    ex = exceptions === "1";
+  const like = `%${q.replace(/[\\%_]/g, "\\$&")}%`;
+  const p = provider || null;
+  const ex = exceptions === "1";
   // SQL parameters are bound; only fixed view branches choose table/query structure.
   let rows: Record<string, any>[];
   if (view === "orders")

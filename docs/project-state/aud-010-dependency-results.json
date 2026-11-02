@@ -1,0 +1,28 @@
+{
+  "testedAt": "2026-11-02T06:54:47.032Z",
+  "before": {
+    "info": 0,
+    "low": 1,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0
+  },
+  "after": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0
+  },
+  "advisory": "https://github.com/advisories/GHSA-gcqx-w48m-w2h4",
+  "scopedOverride": "@react-email/components>@react-email/render=2.2.0",
+  "removedPackages": [
+    "@react-email/render@2.0.6",
+    "html-to-text@9.0.5",
+    "deepmerge@4.3.1"
+  ],
+  "allOtherPackageVersionsAndDirectResolutionsUnchanged": true,
+  "frozenInstall": true,
+  "auditIgnoresAdded": false,
+  "ciAuditThreshold": "low"
+}

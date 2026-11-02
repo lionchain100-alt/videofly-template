@@ -488,6 +488,50 @@
       "changeImpact": "additive",
       "changeApproval": null,
       "deploymentApproval": null
+    },
+    {
+      "id": "CAP-015",
+      "name": "Clean independent-site initialization, incremental CI quality gates and static production preflight",
+      "lifecycle": "qa-passed",
+      "availability": "enabled",
+      "protection": "release-critical",
+      "contractVersion": "1.0.0",
+      "spec": [
+        "docs/project-state/contract.md"
+      ],
+      "surfaces": [
+        "site:create",
+        "production:check",
+        ".github/workflows/quality.yml"
+      ],
+      "ownerModules": [
+        "scripts/create-local-site.mjs",
+        "scripts/instance-state.mjs",
+        "scripts/lint-gate.mjs",
+        "src/config/production-check.ts",
+        "scripts/prepare-ci.mjs"
+      ],
+      "dependencies": [
+        "CAP-001",
+        "CAP-008",
+        "CAP-009",
+        "CAP-012",
+        "CAP-014"
+      ],
+      "testIds": [
+        "REGRESSION-CAP-015"
+      ],
+      "fixtures": [
+        "scripts/test-site-factory.mjs",
+        "scripts/test-release-gates.mjs",
+        "scripts/test-production-config.ts",
+        "scripts/check-initialized-site.mjs",
+        ".github/workflows/quality.yml"
+      ],
+      "ownerGate": "Owner requested AUD-009 local initialization/CI/production configuration checks, preserving business flows. Actual remote CI results, fixed HTTPS deployment and platform acceptance remain separate gates.",
+      "changeImpact": "additive",
+      "changeApproval": null,
+      "deploymentApproval": null
     }
   ]
 }

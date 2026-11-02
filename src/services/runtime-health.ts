@@ -9,12 +9,12 @@ import { mkdir, writeFile, unlink } from "node:fs/promises";
 import path from "node:path";
 export type WorkerKind = "text" | "video" | "payments";
 export async function startHeartbeat(kind: WorkerKind) {
-  const instanceId = randomUUID(),
-    siteId = siteManifest.id;
-  let stopped = false,
-    progressAt = new Date(),
-    lastError: string | null = null,
-    inflight = Promise.resolve();
+  const instanceId = randomUUID();
+  const siteId = siteManifest.id;
+  let stopped = false;
+  let progressAt = new Date();
+  let lastError: string | null = null;
+  let inflight = Promise.resolve();
   const beat = () => {
     inflight = inflight
       .then(async () => {
@@ -80,8 +80,8 @@ export async function startHeartbeat(kind: WorkerKind) {
 let cached: { at: number; value: any } | undefined;
 let pending: Promise<any> | undefined;
 async function inspect() {
-  let database = false,
-    storage = false;
+  let database = false;
+  let storage = false;
   let rows: (typeof workerHeartbeats.$inferSelect)[] = [];
   try {
     await db.execute(sql`select 1`);
@@ -104,13 +104,13 @@ async function inspect() {
       }
     } else storage = await privateStorageReady();
   } catch {}
-  const manifest = await readSiteManifest(),
-    required: WorkerKind[] = ["payments"];
+  const manifest = await readSiteManifest();
+  const required: WorkerKind[] = ["payments"];
   if (manifest.tools["text-summary"]) required.push("text");
   if (manifest.tools["video-generation"]) required.push("video");
-  const now = Date.now(),
-    ttl = 30000,
-    progressTTL = 180000;
+  const now = Date.now();
+  const ttl = 30000;
+  const progressTTL = 180000;
   const workers = required.map((kind) => {
     const active = rows
       .filter(

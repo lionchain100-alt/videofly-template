@@ -17,12 +17,12 @@ const q = postgres(process.env.DATABASE_URL, {
     ssl: false,
     max: 3,
     onnotice: () => {},
-  }),
-  fixture = await aiPolicyFixture(q),
-  uid = randomUUID(),
-  email = "aud007-browser-" + uid + "@example.invalid",
-  password = "Fixture-" + randomUUID(),
-  base = "http://localhost:3000";
+  });
+const fixture = await aiPolicyFixture(q);
+const uid = randomUUID();
+const email = "aud007-browser-" + uid + "@example.invalid";
+const password = "Fixture-" + randomUUID();
+const base = "http://localhost:3000";
 const { submitSummary, claimTask, finishTask } = await import(
   "../src/services/tasks.ts"
 );
@@ -40,8 +40,8 @@ try {
         language: "en",
         length: "short",
       },
-    }),
-    job = await claimTask();
+    });
+  const job = await claimTask();
   assert.equal(job.id, submitted.id);
   assert(await beginAiDispatch(job.id, job.leaseToken));
   assert(
@@ -58,8 +58,8 @@ try {
   });
   const context = await browser.newContext({
       viewport: { width: 1440, height: 1100 },
-    }),
-    page = await context.newPage();
+    });
+  const page = await context.newPage();
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
   const login = await context.request.post(base + "/api/auth/sign-in/email", {

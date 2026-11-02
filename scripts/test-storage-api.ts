@@ -16,11 +16,11 @@ async function main() {
     "s3",
     "Explicitly configured private test bucket required",
   );
-  const db = postgres(u.href, { ssl: false, max: 2, onnotice: () => {} }),
-    base = "http://localhost:3000",
-    task = randomUUID(),
-    checks: string[] = [],
-    uploads: string[] = [];
+  const db = postgres(u.href, { ssl: false, max: 2, onnotice: () => {} });
+  const base = "http://localhost:3000";
+  const task = randomUUID();
+  const checks: string[] = [];
+  const uploads: string[] = [];
   let key = "";
   async function login(email: string, password: string) {
     const r = await fetch(base + "/api/auth/sign-in/email", {
@@ -37,8 +37,8 @@ async function main() {
   const admin = await login(
       process.env.LOCAL_ADMIN_EMAIL!,
       process.env.LOCAL_ADMIN_PASSWORD!,
-    ),
-    member = await login(
+    );
+  const member = await login(
       "member@laconic.local",
       process.env.LOCAL_MEMBER_PASSWORD!,
     );

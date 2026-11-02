@@ -3,9 +3,9 @@ import { readFile, writeFile } from "node:fs/promises";
 import { config } from "dotenv";
 async function main() {
   config({ path: ".env.local", quiet: true });
-  const file = "src/config/site.json",
-    raw = await readFile(file, "utf8"),
-    site = JSON.parse(raw);
+  const file = "src/config/site.json";
+  const raw = await readFile(file, "utf8");
+  const site = JSON.parse(raw);
   if (site.origin !== "http://localhost:3000")
     throw new Error("Run the policy fixture in the dedicated main local site");
   let calls = 0;
@@ -51,7 +51,7 @@ async function main() {
     });
     let key = "";
     (
-      storage as unknown as { client: { putObject: Function } }
+      storage as unknown as { client: { putObject: (key: string) => Promise<{ ok: boolean }> } }
     ).client.putObject = async (value: string) => {
       key = value;
       return { ok: true };

@@ -1,35 +1,34 @@
 # Project Status
 
 Last updated: 2026-11-02
-Current stage: AUD-009 local initialization/CI/preflight QA passed
+Current stage: AUD-010 zero lint and zero known dependency advisories QA passed
 Active task: IDLE-000
 Canonical specification: docs/project-state/contract.md
 Current registry: None required
 Capability registry: docs/project-state/capabilities.json
-Source recovery point: local tag aud-009-local-20261102; before aud-009-before-20261102; parent index .recovery/aud-009-current-after.json. Prior indexes retained. Archives exclude credentials, databases and generated assets.
-Current usage: parent AUD-009-INITIALIZATION-CI-PREFLIGHT-GUIDE.md; current evidence docs/project-state/aud-009-results.json. Dated V1.2 review keeps historical matrix with successor notes.
+Source recovery point: tag aud-010-local-20261102; before aud-010-before-20261102; parent index .recovery/aud-010-current-after.json. Prior recovery indexes retained; archives exclude env/keys/DB/generated assets.
+Current usage: parent AUD-010-LINT-SECURITY-GUIDE.md. Evidence docs/project-state/aud-010-results.json. Previous AUD-009 guide remains initialization/CI usage history.
 
 ## Critical Resume State
 
 ### Active objective
-No active implementation. AUD-009 explicitly requested local scope passed; actual remote CI, deployment and platform acceptance remain pending and separate.
+No active implementation. AUD-010 source lint/dependency cleanup and local regression passed; deployment/platform acceptance remains separate.
 
 ### Verified completed
-- Latest independent Cedar Tools at3003/DB55434: source-only copy, own frozen install,15 migration checksums, policy/seed twice,100 initial test credits once,102 after first-login gift;2users/0tasks/assets/orders/refunds, no provider keys. Separate instance STATUS/TASKS/LEDGER mapping. Main plus old/new peer Cookie/DB/credential/credit/file/tool/UI isolation passed.
-- Fixed source factory catch-all login route omission, non-site directory handling, provider environment/default flags and per-brand initial mark. New site creation and CI bootstrap reject existing environments/destinations; no source data/keys are copied.
-- Added read-only SHA-pinned GitHub Actions source and ephemeral-Postgres jobs, fixed Node/pnpm/frozen install, incremental lint with265 explicit inherited diagnostics/no new diagnostics, capability protection, type/configuration/security/build and retained integration gates. Actual hosted run was not performed; no remote push. Latest audit0critical/high/moderate and1low deepmerge.
-- Static secret-free production preflight and positive/negative guards passed; current localhost configuration intentionally rejected16/28 rather than activated. Windows no-DB production build/types and runtime production privacy passed. Linux standalone remains hosted-CI pending.
-- Ten retained suites,36 live UI cases,12 preview keyboard/contrast combinations, SEO/offline/auth/Owner,12 peer-isolation groups, actual private R2 API/nine storage/recovery groups and desktop/mobile runtime checks passed. PowerShell5/7 timestamp-safe managed stop/start verified. Main and Cedar Web/Workers restored, readiness200.
-- Main retains2users/5tasks/1legacyasset/3orders/3refunds,190available/0frozen/0refund reserve,15migrations, policy1 and approved5/minute,50/day,USD10/day,USD100/month,1/10credit prices; no test costs/reviews/incidents/Owner promotions. Aurora remains AUD-003/eight migrations/102credits with source unchanged. Genuine encrypted backup restored to laconic_local_restore_aud009_verified; full tables and1file verified without main replacement. No new paid-model/payment/refund calls.
+- 265original source diagnostics fixed under unchanged Biome rules/exclusions/hash.448src/scripts files and460Git-aware root files pass with0diagnostics. Baseline is empty and nonempty waivers are refused; no suppression added. Button submit semantics/status layout/fieldsets, ASCII redirect/storage guards and declaration order verified.
+- Scoped component renderer2.2.0 override removes old renderer/html-to-text/deepmerge nodes; all other package/direct resolutions unchanged and frozen install passed. Current audit0info/low/moderate/high/critical. CI includes root/source zero checks, low-threshold audit and14variant/intercepted SDK email tests.
+- Ten retained suites, admin model3browser groups,36UI cases/12preview combinations, auth/Owner/SEO/offline,12peer-isolation groups, actual private R2 API/nine storage-recovery groups, legacy upload interface/old backup signature, no-DB build/types/production guards and final live admin desktop/mobile/runtime passed. No new paid-model/payment/refund/email calls.
+- Main retains2users/5tasks/1asset/3orders/3refunds,190available/0frozen/reserve,15migrations, policy1 and approved5/minute,50/day,USD10/day,USD100/month and1/10prices. No test costs/reviews/incidents/Owner promotions. Genuine encrypted backup restored to laconic_local_restore_aud010_verified; full tables/1file verified, main not overwritten.
+- Main Web/three Workers healthy at3000/readiness200. Production test environment initially affected one combined dev restart; explicit NODE_ENV=development restart and real login/admin/runtime checks passed. No application-policy relaxation. Aurora3002 remains AUD-003/eight migrations; Cedar3003 remains AUD-009/fifteen migrations; both102credits/empty business/source unchanged.
 
 ### Pending or needs review
-- CI-001: actual GitHub-hosted run and Linux standalone evidence after remote submission. Local workflow validation/equivalents do not substitute.
-- REL-001: owned fixed HTTPS deployment, production DB/TLS/private bucket, actual OAuth/verified sender email and first verified Owner, Worker supervision/alerts, offsite recovery and release rollback.
-- BILL-001: actual Stripe/Creem checkout/refund/two paid periods/fixed signed callbacks; both remain false. Per-channel production-money and Waffo authoritative statement gates remain separate.
-- Historical lint debt265 and1low dependency advisory are documented. Additional model/9:16/device/browser/accessibility/provider bill reconciliation gates retained from AUD-007/008. Source archives are not business-data backups; keep original env and backup key independently.
+- CI-001 actual hosted GitHub/Linux standalone results after remote submission; local validation does not substitute.
+- REL-001 owned HTTPS/production DB/private bucket/OAuth/email/verified Owner/Worker supervision/offsite recovery and rollback.
+- BILL-001 actual Stripe/Creem and per-channel payment/refund/subscription receipt acceptance after deployment; new-provider flags remain false.
+- Rehearsal sites retain independent previous source/dependency versions rather than receiving this patch automatically. Main-template zero audit is not a claim that these historic copies were upgraded. Additional model/device/accessibility/billing-reconciliation gates remain from prior audits. Keep each instance env/config and backup keys independently.
 
 ### Blockers
-None for completed local scope. Later real release requires owned domain/hosting and corresponding account/provider configuration; no invented keys or external acceptance.
+None for completed local scope. No additional API configuration needed. Real release/account-backed gates require later Owner scope and corresponding domain/accounts.
 
 ### Exact next action
-Open http://localhost:3000 or new http://localhost:3003 and read parent AUD-009-INITIALIZATION-CI-PREFLIGHT-GUIDE.md. Credentials stay in each site's own .env.local. When Owner resumes release work, execute CI-001 before REL-001/BILL-001.
+Open http://localhost:3000/zh/admin and read parent AUD-010-LINT-SECURITY-GUIDE.md. Run pnpm lint, lint:raw, audit:security and test:email-render from main template as needed. When resumed, obtain CI-001 before REL-001/BILL-001. Local debug startup uses NODE_ENV=development.

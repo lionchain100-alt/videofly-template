@@ -33,8 +33,8 @@ export async function POST(request: Request) {
         method: "POST",
         headers: { "Content-Type": request.headers.get("content-type")! },
         body: Buffer.concat(chunks),
-      }).formData(),
-      file = form.get("file");
+      }).formData();
+    const file = form.get("file");
     if (!(file instanceof File)) throw new ApiError("缺少图片", 400);
     const saved = await saveUpload(user.id, file);
     return apiSuccess({

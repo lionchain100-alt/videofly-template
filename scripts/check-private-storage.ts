@@ -10,10 +10,10 @@ import {
   objectHash,
 } from "../src/services/private-storage";
 async function main() {
-  const c = privateS3Config(),
-    s = await privateS3(),
-    key = `${c.prefix}/probes/${randomUUID()}.bin`,
-    bytes = Buffer.from("AUD006 private object round trip " + randomUUID());
+  const c = privateS3Config();
+  const s = await privateS3();
+  const key = `${c.prefix}/probes/${randomUUID()}.bin`;
+  const bytes = Buffer.from("AUD006 private object round trip " + randomUUID());
   const checks: string[] = [];
   assert(await s.bucketExists());
   checks.push("authenticated bucket HEAD");

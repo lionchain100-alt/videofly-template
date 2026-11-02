@@ -79,10 +79,10 @@ async function main() {
   } = await import("../src/services/payment-operations");
   const { getStripe } = await import("../src/payment");
   const stripe = getStripe() as any;
-  const ids: string[] = [],
-    passed: string[] = [],
-    http: string[] = [],
-    queries = new Map<string, any>();
+  const ids: string[] = [];
+  const passed: string[] = [];
+  const http: string[] = [];
+  const queries = new Map<string, any>();
   let approved = false;
   const original = globalThis.fetch;
   stripe._requestSender._request = () => {
@@ -142,8 +142,8 @@ async function main() {
   async function order(
     provider: "paypal" | "waffo" | "stripe" | "creem" = "waffo",
   ) {
-    const uid = await user(),
-      o = await reserveOrder(uid, {
+    const uid = await user();
+    const o = await reserveOrder(uid, {
         requestId: randomUUID(),
         provider,
         productId: "starter",
@@ -233,8 +233,8 @@ async function main() {
     ).length;
   }
   try {
-    const admin = await user(true),
-      member = await user();
+    const admin = await user(true);
+    const member = await user();
     const one = await order();
     await saved(one);
     const input = {
@@ -554,9 +554,9 @@ async function main() {
 
     const crash = await order();
     await saved(crash);
-    const ci = reconcile(crash.o.id),
-      co = await paymentOperation(admin, ci),
-      ct = "opsfinal_" + randomUUID().replaceAll("-", "");
+    const ci = reconcile(crash.o.id);
+    const co = await paymentOperation(admin, ci);
+    const ct = "opsfinal_" + randomUUID().replaceAll("-", "");
     await db.execute(
       sql.raw(
         `CREATE FUNCTION ${ct}() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW.id='${co.id}' AND NEW.status='SUCCEEDED' THEN RAISE EXCEPTION 'fixture finalize crash'; END IF; RETURN NEW; END $$`,
@@ -582,8 +582,8 @@ async function main() {
     await processPaymentOperation(co.id);
     assert.equal((await getPaymentOperation(ci.requestId)).status, "SUCCEEDED");
     assert.equal(await receiptCount(crash.o.id), 1);
-    const revoked = await user(true),
-      rv = await order();
+    const revoked = await user(true);
+    const rv = await order();
     await saved(rv);
     const rvo = await paymentOperation(revoked, reconcile(rv.o.id));
     await db.update(users).set({ disabled: true }).where(eq(users.id, revoked));
@@ -594,8 +594,8 @@ async function main() {
     );
     const resumed = await order();
     await saved(resumed);
-    const ri = reconcile(resumed.o.id),
-      rop = await paymentOperation(admin, ri);
+    const ri = reconcile(resumed.o.id);
+    const rop = await paymentOperation(admin, ri);
     execFileSync(
       process.execPath,
       [
@@ -619,19 +619,19 @@ async function main() {
     const product = subscriptionCatalog.find(
       (p) => p.mapping === "SUB_BASIC_MONTHLY",
     )!;
-    const su = await user(),
-      so = await reserveOrder(su, {
+    const su = await user();
+    const so = await reserveOrder(su, {
         requestId: randomUUID(),
         provider: "stripe",
         productId: product.id,
-      }),
-      sext = "cs_test_" + randomUUID();
+      });
+    const sext = "cs_test_" + randomUUID();
     await db
       .update(paymentOrders)
       .set({ externalId: sext, status: "PENDING" })
       .where(eq(paymentOrders.id, so.id));
-    const start = new Date(Date.now() - 3600000).toISOString(),
-      end = new Date(Date.now() + 86400000).toISOString();
+    const start = new Date(Date.now() - 3600000).toISOString();
+    const end = new Date(Date.now() + 86400000).toISOString();
     const sub = {
       id: "evt_sub_" + randomUUID(),
       type: "subscription.paid",
@@ -770,8 +770,8 @@ async function main() {
           exceptions: "0",
           page: 1,
         }),
-      ),
-      page2 = await listPaymentOperations(
+      );
+    const page2 = await listPaymentOperations(
         paymentOpsQuerySchema.parse({
           view: "orders",
           q: "AUD005-",

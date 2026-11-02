@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { writeFile } from "node:fs/promises";
-const base = "http://localhost:3000",
-  results = [];
+const base = "http://localhost:3000";
+const results = [];
 for (const locale of ["", "/zh"]) {
   for (const path of [
     "",
@@ -11,8 +11,8 @@ for (const locale of ["", "/zh"]) {
     "/privacy-policy",
     "/terms-of-service",
   ]) {
-    const r = await fetch(base + locale + path),
-      html = await r.text();
+    const r = await fetch(base + locale + path);
+    const html = await r.text();
     assert.equal(r.status, 200);
     assert(html.includes("Laconic"));
     assert(html.includes(`rel="canonical" href="${base}${locale}${path}`));
@@ -26,8 +26,8 @@ for (const locale of ["", "/zh"]) {
     "/wan-2-6",
     "/seedance-1-5",
   ]) {
-    const r = await fetch(base + locale + path),
-      html = await r.text();
+    const r = await fetch(base + locale + path);
+    const html = await r.text();
     assert.equal(r.status, 200);
     assert(r.headers.get("x-robots-tag")?.includes("noindex"));
     assert(html.includes("Legacy interface") || html.includes("旧版界面"));

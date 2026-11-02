@@ -9,8 +9,8 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const user = await requireAuth(request),
-      { id } = await params;
+    const user = await requireAuth(request);
+    const { id } = await params;
     const [asset] = await db
       .select()
       .from(privateUploads)

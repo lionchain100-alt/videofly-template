@@ -17,8 +17,8 @@ export async function GET(request: Request) {
 }
 export async function POST(request: Request) {
   try {
-    const actor = await requireAdminMutation(request),
-      reader = request.body?.getReader();
+    const actor = await requireAdminMutation(request);
+    const reader = request.body?.getReader();
     if (!reader) return apiError("缺少配置", 400);
     let size = 0;
     const chunks = [];
