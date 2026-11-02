@@ -10,7 +10,7 @@ Last reconciled: 2026-11-02
 ## Active milestone
 
 Milestone: Local V1.2 core with four-channel billing/refunds; current full audit records remaining implementation and deferred real-provider gates.
-Active task: IDLE-000
+Active task: CI-001
 
 Definition of Ready: AUD-009 recorded; Owner requested historical lint/dependency cleanup preserving existing business flows.
 Definition of Done: actual265lint fixes, zero waivers/raw source/repository diagnostics, zero dependency advisories with narrow version scope; mail/security/retained/browser/storage/isolation/type/build gates, unchanged financial snapshot and source recovery.

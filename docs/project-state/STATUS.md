@@ -1,8 +1,8 @@
 # Project Status
 
 Last updated: 2026-11-02
-Current stage: AUD-010 zero lint and zero known dependency advisories QA passed
-Active task: IDLE-000
+Current stage: CI-001 GitHub-hosted quality verification in progress
+Active task: CI-001
 Canonical specification: docs/project-state/contract.md
 Current registry: None required
 Capability registry: docs/project-state/capabilities.json
@@ -12,7 +12,7 @@ Current usage: parent AUD-010-LINT-SECURITY-GUIDE.md. Evidence docs/project-stat
 ## Critical Resume State
 
 ### Active objective
-No active implementation. AUD-010 source lint/dependency cleanup and local regression passed; deployment/platform acceptance remains separate.
+CI-001 authorized: publish a dedicated branch to the owned fork, obtain actual GitHub-hosted source/integration results, preserving local services and deferring deployment/platform acceptance.
 
 ### Verified completed
 - 265original source diagnostics fixed under unchanged Biome rules/exclusions/hash.448src/scripts files and460Git-aware root files pass with0diagnostics. Baseline is empty and nonempty waivers are refused; no suppression added. Button submit semantics/status layout/fieldsets, ASCII redirect/storage guards and declaration order verified.
